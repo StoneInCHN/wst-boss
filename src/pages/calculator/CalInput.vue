@@ -1,18 +1,18 @@
 <template>
 	<div>
-		<van-field v-model="num1" placeholder="num1" />
-		<van-field v-model="num2" placeholder="num2" />
+		<field v-model="num1" placeholder="num1" />
+		<field v-model="num2" placeholder="num2" />
 		<br/>
-		<van-button type="default" @click="calResult('add')" >加</van-button>
-		<van-button type="primary" @click="calResult('sub')" >减</van-button>
-		<van-button type="danger"  @click="calResult('mul')" >乘</van-button>
-		<van-button type="danger"  @click="calResult('divi')" >除</van-button>
-		<van-button type="default"  @click="getUserInfo" >getUserInfo</van-button>
+		<Button type="default" @click="calResult('add')" >加</Button>
+		<Button type="primary" @click="calResult('sub')" >减</Button>
+		<Button type="danger"  @click="calResult('mul')" >乘</Button>
+		<Button type="danger"  @click="calResult('divi')" >除</Button>
+		<Button type="default"  @click="getUserInfo" >getUserInfo</Button>
 		<hr/>
 		<cal-output/>
 		<hr/>
 		<div v-if="isShwoUser">
-			<van-address-edit
+			<address-edit
 			  :area-list="areaList"
 			  show-postal
 			  show-set-default
@@ -31,14 +31,13 @@ import { Button, Field, AddressEdit } from 'vant'
 import CalOutput from "./CalOutput"
 import * as utils from "../../utils"
 
-vue.use(Button)
-vue.use(Field)
-vue.use(AddressEdit)
-
 export default{
 	name: 'CalInput',
 	components: {
-		CalOutput
+		CalOutput,
+		Button,
+		Field,
+		AddressEdit
 	},
 	data () {
 		return{
