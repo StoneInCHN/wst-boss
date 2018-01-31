@@ -2,7 +2,7 @@ const mutations = {
 	increment(state, payload){
 		state.count++
 	},
-	setResultNum(state, {resultNum}){
+	setResultNum(state, resultNum){
 		state.resultNum = resultNum
 	}
 }

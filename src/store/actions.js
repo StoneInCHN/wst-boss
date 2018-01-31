@@ -2,8 +2,9 @@ const actions = {
 	increment({commit}){
 		commit("increment")
 	},
-	setResultNum({commit}, payload){
-		commit("setResultNum", payload)
+	setResultNum({commit}, resultNum){
+		console.info(resultNum)
+		commit("setResultNum", resultNum)
 	}
 }
 

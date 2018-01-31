@@ -22,7 +22,7 @@ export function numAdd (arg1, arg2) {
       arg2 = Number(arg2.toString().replace('.', '')) * cm
     } else {
       arg1 = Number(arg1.toString().replace('.', '')) * cm
-      arg2 = Number(arg2.toString().replace('.', ''))
+      arg2 = Number(arg2.toString().replace('.', ''))  
     }
   } else {
     arg1 = Number(arg1.toString().replace('.', ''))
@@ -42,7 +42,8 @@ export function numSub (arg1, arg2) {
   m = Math.pow(10, Math.max(r1, r2))
   // 动态控制精度长度
   n = (r1 >= r2) ? r1 : r2
-  return ((arg1 * m - arg2 * m) / m).toFixed(n)
+  // return ((arg1 * m - arg2 * m) / m).toFixed(n)   //toFixed返回字符串
+  return ((arg1 * m - arg2 * m) / m)
 }
 
 //  乘
