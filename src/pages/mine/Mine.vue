@@ -3,7 +3,7 @@
 		<Header backUrl="/"/>
 		<h2 class="sub_title">我的</h2>
 		<CellGroup>
-		    <Cell title="管理" icon="shop" is-link />
+		    <Cell title="管理" icon="shop" is-link to="/manage" />
 			<Cell title="统计" icon="balance-details" is-link to="/statistics">
 			    <Icon slot="right-icon" name="search" class="right_icon" />
 			</Cell>
@@ -17,7 +17,7 @@ import { Cell, CellGroup, Icon } from 'vant'
 import Header from "../wechat/Header"
 import Footer from "../wechat/Footer"
 export default{
-	name: "Boss",
+	name: "Mine",
 	components: { Header, Footer, Cell, CellGroup, Icon },
 	data () {
 		return {

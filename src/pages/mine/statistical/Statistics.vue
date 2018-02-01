@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<Header backUrl="/boss"/>
+		<Header backUrl="/mine"/>
 		<div class="title" @click="withdrawView">总资产：16000.00</div>
 		<div class="container">
 			<div class="item" @click="monthIncome">
@@ -21,10 +21,10 @@
 		</div>
 		<p>累计收入：230000.00</p>
 		<div class="container">
-			<div class="item" @click="">
+			<div class="item" @click="cutSpending">
 				<span>本月提成支出 5000.00</span>
 			</div>
-			<div class="item" @click="">
+			<div class="item" @click="cutSpending">
 				<span>今日提成支出 200.00</span>
 			</div>
 		</div>
@@ -51,6 +51,9 @@ export default{
         },
         monthIncome () {
  			this.$router.push('/statistics/monthIncome');
+        },
+        cutSpending () {
+ 			this.$router.push('/statistics/cutSpending');
         }
     }
 }

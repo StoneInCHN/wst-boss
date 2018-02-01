@@ -3,7 +3,7 @@
 		<Tabbar v-model="active">
 		  <TabbarItem icon="records">订单</TabbarItem>
 		  <TabbarItem icon="contact" dot>用户</TabbarItem>
-		  <TabbarItem icon="wap-home" info="5" to="/boss">我的</TabbarItem>
+		  <TabbarItem icon="wap-home" info="5" to="/mine">我的</TabbarItem>
 		</Tabbar>
 	</div>
 </template>

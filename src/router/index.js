@@ -3,12 +3,20 @@ import Router from 'vue-router'
 
 // 异步加载组件 减少首屏等待时间
 const Home = () => import('@/pages/home/Home')
-const Boss = () => import('@/pages/boss/Boss')
-const Statistics = () => import('@/pages/boss/statistical/Statistics')
-const WithdrawView = () => import('@/pages/boss/statistical/WithdrawView')
-const WithdrawInput = () => import('@/pages/boss/statistical/WithdrawInput')
-const AddAccount = () => import('@/pages/boss/statistical/AddAccount')
-const MonthIncome = () => import('@/pages/boss/statistical/MonthIncome')
+
+const Mine = () => import('@/pages/mine/Mine')
+//我的-->统计
+const Statistics = () => import('@/pages/mine/statistical/Statistics')
+const WithdrawView = () => import('@/pages/mine/statistical/WithdrawView')
+const WithdrawInput = () => import('@/pages/mine/statistical/WithdrawInput')
+const AddAccount = () => import('@/pages/mine/statistical/AddAccount')
+const MonthIncome = () => import('@/pages/mine/statistical/MonthIncome')
+const CutSpending = () => import('@/pages/mine/statistical/CutSpending')
+
+//我的-->管理
+const Manage = () => import('@/pages/mine/manage/Manage')
+const GoodsManage = () => import('@/pages/mine/manage/GoodsManage')
+
 
 const Calcul = () => import('@/pages/calculator/Index')
 
@@ -24,9 +32,9 @@ export default new Router({
     },
     //我的
     {
-      path: '/boss',
-      name: 'Boss',
-      component: Boss
+      path: '/mine',
+      name: 'Mine',
+      component: Mine
     },
     {
       path: '/statistics',
@@ -52,7 +60,22 @@ export default new Router({
       path: '/statistics/monthIncome',
       name: 'MonthIncome',
       component: MonthIncome
-    },    
+    },   
+    {
+      path: '/statistics/cutSpending',
+      name: 'CutSpending',
+      component: CutSpending
+    },  
+    {
+      path: '/manage',
+      name: 'Manage',
+      component: Manage
+    },
+    {
+      path: '/manage/goodsManage',
+      name: 'GoodsManage',
+      component: GoodsManage
+    },
     {
       path: '/cal',
       name: 'Calcul',
