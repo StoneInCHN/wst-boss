@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<Header backUrl="/manage/goodsManage"/>
-		<Panel title="编辑" status="状态">
+		<Panel>
 			<div slot="header">
 				<Cell title="编辑" class="cell">
 			    	<Button type="primary" size="small" @click="save">完成</Button>
@@ -12,7 +12,7 @@
 				  <Field label="品牌" v-model="goods.goodsBrand" placeholder="请选择"  @click="showAllBrand"/>
 				  <Field label="子产品" v-model="goods.goodsName" placeholder="请选择"  @click="showAllGoodsName"/>
 				  <Field label="规格" v-model="goods.size" placeholder="请选择"  @click="showAllSize"/>
-				  <Field label="原价"  v-model="price" disabled/>
+				  <Field label="原价"  v-model="price" placeholder="请输入原价" disabled/>
 				  <Field label="折扣价"  placeholder="请输入折扣价，可不用填写"/>
 				</CellGroup>
 			</div>	

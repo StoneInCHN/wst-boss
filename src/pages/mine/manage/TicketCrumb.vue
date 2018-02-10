@@ -6,39 +6,35 @@
 		  		</div>
 		  		
 		  		<div class="goods_thumb">
-		  			<img :src="goods.goodsUrl" width="90" height="90">
+		  			<img :src="ticket.goodsUrl" width="90" height="90">
 		  			<div class="goods_status">
-		  				<span v-if="goods.status == 0" class="invalid">下架</span>
-		  				<span v-if="goods.status == 1" class="valid">上架</span>
+		  				<span class="valid">上架</span>
 		  			</div>
 		  		</div> 
 		  		<div class="goods_content">
-		  			<div class="goods_row">
-		  				
-		  				<div class="goods_title">{{goods.goodsName}}</div> 
-		  				<div class="goods_edit"><Icon name="edit" @click="editGoods"/></div>
+		  			<div class="goods_row">		  				
+		  				<div class="goods_title">{{ticket.goodsName}}</div>
 		  			</div> 
 		  			<div class="goods_row">
-		  					<div class="goods_price">押金 {{formatPrice(goods.deposit)}}</div> 
-		  			</div> 
-		  			<div class="goods_row">
-		  					<div class="goods_price">{{formatPrice(goods.salePrice)}}
-		  						<span>{{formatPrice(goods.price)}}</span>
+		  					<div class="goods_price">{{formatPrice(ticket.salePrice)}}
+		  						<span v-if="ticket.price != null">{{formatPrice(ticket.price)}}</span>
 		  					</div> 
 		  			</div>
+		  			<div class="goods_row">		  				
+		  				<div class="goods_ticket">{{ticket.ticketInfo}}</div>
+		  			</div> 
 		  		</div>
 		  	</div>
-
 	</div>
 </template>
 
 <script>
 import { Icon, Toast, Checkbox } from 'vant'
 export default{
-	name: "Mine",
+	name: "TicketCrumb",
 	components: { Icon, Toast, Checkbox },
 	props: {
-        goods: Object,
+        ticket: Object,
         editable: Boolean
     },
     data () {
@@ -47,15 +43,13 @@ export default{
 		}
 	},
 	methods: {
-	    editGoods () {
-	 		if(this.goods.status == 1){
-	 			this.$toast('商品下架后才能被编辑');
-	 		}else{
-	 			this.$router.push('/manage/goodsEdit');
-	 		}
-	    },
 	    formatPrice(num){
-	    	return "￥"+num.toFixed(2);
+	    	if(num){
+				return "￥"+num.toFixed(2);
+	    	}else{
+	    		return "";
+	    	}
+	    	
 	    }
 
     }
@@ -102,14 +96,6 @@ export default{
 	    -webkit-line-clamp: 2;
 	    -webkit-box-orient: vertical;
 	}
-	.goods_edit {
-	    -webkit-box-flex: 1;
-	    -webkit-flex: 1;
-	    flex: 1;
-	    min-width: 80px;
-	    line-height: 20px;
-	    text-align: right;
-	}
 	.goods_price {
 	    color: #666;
 	    font-size: 12px;
@@ -123,6 +109,15 @@ export default{
 		padding-left: 5px;
 		text-decoration: line-through;
 	}
+	.goods_ticket{
+		color: #3F91D2;
+	    font-size: 14px;
+	    max-height: 18px;
+	    margin-top:15px;
+	    overflow: hidden;
+	    white-space: nowrap;
+	    text-overflow: ellipsis;
+	}
 	.goods_status span{
 		left: 60%;
 	    top: -10px;
@@ -132,9 +127,6 @@ export default{
 	    border-radius: 2px;
 	    font-size: 12px;
 	    color: #fff;
-	}
-	.invalid {
-	    background-color: #DD4F9B;
 	}
 	.valid {
 	    background-color: #B6DF6E;

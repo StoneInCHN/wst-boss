@@ -17,6 +17,8 @@ const CutSpending = () => import('@/pages/mine/statistical/CutSpending')
 const Manage = () => import('@/pages/mine/manage/Manage')
 const GoodsManage = () => import('@/pages/mine/manage/GoodsManage')
 const GoodsEdit = () => import('@/pages/mine/manage/GoodsEdit')
+const TicketManage = () => import('@/pages/mine/manage/TicketManage')
+const TicketAdd = () => import('@/pages/mine/manage/TicketAdd')
 
 const Calcul = () => import('@/pages/calculator/Index')
 
@@ -80,6 +82,16 @@ export default new Router({
       path: '/manage/goodsEdit',
       name: 'GoodsEdit',
       component: GoodsEdit
+    },
+    {
+      path: '/manage/ticketManage',
+      name: 'TicketManage',
+      component: TicketManage
+    },
+    {
+      path: '/manage/ticketAdd',
+      name: 'TicketAdd',
+      component: TicketAdd
     },
     {
       path: '/cal',

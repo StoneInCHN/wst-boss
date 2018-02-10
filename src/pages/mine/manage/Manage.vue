@@ -6,7 +6,7 @@
 			<div class="item" @click="goodsManage">
 				<span>商品管理</span>
 			</div>
-			<div class="item">
+			<div class="item" @click="ticketManage">
 				<span>水票管理</span>
 			</div>
 			<div class="item">
@@ -43,6 +43,9 @@ export default{
 	methods: {
 	    goodsManage () {
 	 		this.$router.push('/manage/goodsManage');
+	    },
+	   ticketManage () {
+	 		this.$router.push('/manage/ticketManage');
 	    }
 
     }
