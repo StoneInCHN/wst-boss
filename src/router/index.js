@@ -16,7 +16,7 @@ const CutSpending = () => import('@/pages/mine/statistical/CutSpending')
 //我的-->管理
 const Manage = () => import('@/pages/mine/manage/Manage')
 const GoodsManage = () => import('@/pages/mine/manage/GoodsManage')
-
+const GoodsEdit = () => import('@/pages/mine/manage/GoodsEdit')
 
 const Calcul = () => import('@/pages/calculator/Index')
 
@@ -75,6 +75,11 @@ export default new Router({
       path: '/manage/goodsManage',
       name: 'GoodsManage',
       component: GoodsManage
+    },
+    {
+      path: '/manage/goodsEdit',
+      name: 'GoodsEdit',
+      component: GoodsEdit
     },
     {
       path: '/cal',
