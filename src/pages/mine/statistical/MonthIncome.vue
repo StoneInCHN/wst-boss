@@ -51,11 +51,11 @@ export default{
 <style scoped>
 	p{
 		font-size:14px;
-		margin-left:15px;
+		margin:10px 0 10px 15px;
 	}
 	.order{
 		font-size:14px;
-		padding-left:15px;
+		margin:10px 0 10px 15px;
 	}
 
 

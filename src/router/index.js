@@ -19,6 +19,9 @@ const GoodsManage = () => import("@/pages/mine/manage/GoodsManage");
 const GoodsEdit = () => import("@/pages/mine/manage/GoodsEdit");
 const TicketManage = () => import("@/pages/mine/manage/TicketManage");
 const TicketAdd = () => import("@/pages/mine/manage/TicketAdd");
+const StoreManage = () => import("@/pages/mine/manage/StoreManage");
+const WorkerManage = () => import("@/pages/mine/manage/WorkerManage");
+const WorkerAdd = () => import("@/pages/mine/manage/WorkerAdd");
 
 //订单
 const Order = () => import("@/pages/order/Index");
@@ -96,6 +99,21 @@ export default new Router({
       name: "TicketAdd",
       component: TicketAdd
     },
+    {
+      path: "/manage/storeManage",
+      name: "StoreManage",
+      component: StoreManage
+    },
+    {
+      path: "/manage/workerManage",
+      name: "WorkerManage",
+      component: WorkerManage
+    },
+    {
+      path: "/manage/workerAdd",
+      name: "WorkerAdd",
+      component: WorkerAdd
+    },  
     {
       path: "/order",
       name: "Order",

@@ -62,7 +62,7 @@ export default{
 <style scoped>
 	p{
 		font-size:14px;
-		margin-left:15px;
+		margin:10px 0 10px 15px;
 	}
 	.order{
 		padding-top: 40px;

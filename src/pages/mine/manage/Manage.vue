@@ -9,12 +9,12 @@
 			<div class="item" @click="ticketManage">
 				<span>水票管理</span>
 			</div>
-			<div class="item">
+			<div class="item" @click="workerManage">
 				<span>员工管理</span>
 			</div>
 		</div>
 		<div class="container">
-			<div class="item">
+			<div class="item" @click="storeManage">
 				<span>店铺管理</span>
 			</div>
 			<div class="item">
@@ -44,9 +44,16 @@ export default{
 	    goodsManage () {
 	 		this.$router.push('/manage/goodsManage');
 	    },
-	   ticketManage () {
+	    ticketManage () {
 	 		this.$router.push('/manage/ticketManage');
+	    },
+	    storeManage () {
+	 		this.$router.push('/manage/storeManage');
+	    },
+	    workerManage () {
+	 		this.$router.push('/manage/workerManage');
 	    }
+	    
 
     }
 }
