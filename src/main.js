@@ -4,6 +4,7 @@ import router from './router'
 import store from './store'
 import FastClick from 'fastclick'
 import api from './apis'
+import "./assets/css/reset.css"
 
 Vue.prototype.$api = api
 FastClick.attach(document.body)

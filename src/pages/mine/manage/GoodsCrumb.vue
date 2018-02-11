@@ -3,8 +3,7 @@
 		  	<div class="goods">
 		  		<div class="goods_checkbox" v-if="editable">
 		  			<Checkbox  v-model="checked"/>
-		  		</div>
-		  		
+		  		</div>		  		
 		  		<div class="goods_thumb">
 		  			<img :src="goods.goodsUrl" width="90" height="90">
 		  			<div class="goods_status">
@@ -89,6 +88,8 @@ export default{
 	    width: 90px;
 	    height: 90px;
 	    position: absolute;
+	    border: 1px solid #eee;
+	    border-radius: 5px;
 	}
 	.goods_thumb {
 	    align-items: center;

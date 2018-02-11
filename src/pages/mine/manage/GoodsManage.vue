@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<Header backUrl="/manage"/>
-		<p>商品管理 
+		<p class="cell-title">商品管理 
 			<a @click="manage" class="right">
 				<span v-if="editable">取消</span>
 				<span v-else>管理</span>
@@ -106,9 +106,9 @@ export default{
 	  padding: 10px 0;
 	  margin: 0;
 	}
-	p{
+	.cell-title{
+		margin:10px 0 10px 15px;
 		font-size:14px;
-		margin-left:15px;
 	}
 	.right{
 		float:right;

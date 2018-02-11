@@ -1,102 +1,110 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import Vue from "vue";
+import Router from "vue-router";
 
 // 异步加载组件 减少首屏等待时间
-const Home = () => import('@/pages/home/Home')
+const Home = () => import("@/pages/home/Home");
 
-const Mine = () => import('@/pages/mine/Mine')
+const Mine = () => import("@/pages/mine/Mine");
 //我的-->统计
-const Statistics = () => import('@/pages/mine/statistical/Statistics')
-const WithdrawView = () => import('@/pages/mine/statistical/WithdrawView')
-const WithdrawInput = () => import('@/pages/mine/statistical/WithdrawInput')
-const AddAccount = () => import('@/pages/mine/statistical/AddAccount')
-const MonthIncome = () => import('@/pages/mine/statistical/MonthIncome')
-const CutSpending = () => import('@/pages/mine/statistical/CutSpending')
+const Statistics = () => import("@/pages/mine/statistical/Statistics");
+const WithdrawView = () => import("@/pages/mine/statistical/WithdrawView");
+const WithdrawInput = () => import("@/pages/mine/statistical/WithdrawInput");
+const AddAccount = () => import("@/pages/mine/statistical/AddAccount");
+const MonthIncome = () => import("@/pages/mine/statistical/MonthIncome");
+const CutSpending = () => import("@/pages/mine/statistical/CutSpending");
 
 //我的-->管理
-const Manage = () => import('@/pages/mine/manage/Manage')
-const GoodsManage = () => import('@/pages/mine/manage/GoodsManage')
-const GoodsEdit = () => import('@/pages/mine/manage/GoodsEdit')
-const TicketManage = () => import('@/pages/mine/manage/TicketManage')
-const TicketAdd = () => import('@/pages/mine/manage/TicketAdd')
+const Manage = () => import("@/pages/mine/manage/Manage");
+const GoodsManage = () => import("@/pages/mine/manage/GoodsManage");
+const GoodsEdit = () => import("@/pages/mine/manage/GoodsEdit");
+const TicketManage = () => import("@/pages/mine/manage/TicketManage");
+const TicketAdd = () => import("@/pages/mine/manage/TicketAdd");
 
-const Calcul = () => import('@/pages/calculator/Index')
+//订单
+const Order = () => import("@/pages/order/Index");
 
+//其他
+const Calcul = () => import("@/pages/calculator/Index");
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   routes: [
     {
-      path: '/',
-      name: 'Home',
+      path: "/",
+      name: "Home",
       component: Home
     },
     //我的
     {
-      path: '/mine',
-      name: 'Mine',
+      path: "/mine",
+      name: "Mine",
       component: Mine
     },
     {
-      path: '/statistics',
-      name: 'Statistics',
+      path: "/statistics",
+      name: "Statistics",
       component: Statistics
     },
     {
-      path: '/statistics/withdrawView',
-      name: 'WithdrawView',
+      path: "/statistics/withdrawView",
+      name: "WithdrawView",
       component: WithdrawView
     },
     {
-      path: '/statistics/withdrawInput',
-      name: 'WithdrawInput',
+      path: "/statistics/withdrawInput",
+      name: "WithdrawInput",
       component: WithdrawInput
     },
     {
-      path: '/statistics/addAccount',
-      name: 'AddAccount',
+      path: "/statistics/addAccount",
+      name: "AddAccount",
       component: AddAccount
     },
     {
-      path: '/statistics/monthIncome',
-      name: 'MonthIncome',
+      path: "/statistics/monthIncome",
+      name: "MonthIncome",
       component: MonthIncome
-    },   
+    },
     {
-      path: '/statistics/cutSpending',
-      name: 'CutSpending',
+      path: "/statistics/cutSpending",
+      name: "CutSpending",
       component: CutSpending
-    },  
+    },
     {
-      path: '/manage',
-      name: 'Manage',
+      path: "/manage",
+      name: "Manage",
       component: Manage
     },
     {
-      path: '/manage/goodsManage',
-      name: 'GoodsManage',
+      path: "/manage/goodsManage",
+      name: "GoodsManage",
       component: GoodsManage
     },
     {
-      path: '/manage/goodsEdit',
-      name: 'GoodsEdit',
+      path: "/manage/goodsEdit",
+      name: "GoodsEdit",
       component: GoodsEdit
     },
     {
-      path: '/manage/ticketManage',
-      name: 'TicketManage',
+      path: "/manage/ticketManage",
+      name: "TicketManage",
       component: TicketManage
     },
     {
-      path: '/manage/ticketAdd',
-      name: 'TicketAdd',
+      path: "/manage/ticketAdd",
+      name: "TicketAdd",
       component: TicketAdd
     },
     {
-      path: '/cal',
-      name: 'Calcul',
+      path: "/order",
+      name: "Order",
+      component: Order
+    },
+    {
+      path: "/cal",
+      name: "Calcul",
       component: Calcul
     }
   ]
-})
+});

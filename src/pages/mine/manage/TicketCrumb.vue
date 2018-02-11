@@ -83,6 +83,8 @@ export default{
 	    width: 90px;
 	    height: 90px;
 	    position: absolute;
+	    border: 1px solid #eee;
+	    border-radius: 5px;
 	}
 	.goods_thumb {
 	    align-items: center;
