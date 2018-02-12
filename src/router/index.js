@@ -23,6 +23,9 @@ const StoreManage = () => import("@/pages/mine/manage/StoreManage");
 const WorkerManage = () => import("@/pages/mine/manage/WorkerManage");
 const WorkerAdd = () => import("@/pages/mine/manage/WorkerAdd");
 
+//用户
+const UserManage = () => import("@/pages/user/UserManage");
+
 //订单
 const Order = () => import("@/pages/order/Index");
 
@@ -114,6 +117,11 @@ export default new Router({
       name: "WorkerAdd",
       component: WorkerAdd
     },  
+    {
+      path: "/userManage",
+      name: "UserManage",
+      component: UserManage
+    },    
     {
       path: "/order",
       name: "Order",
