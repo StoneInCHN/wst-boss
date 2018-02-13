@@ -1,12 +1,12 @@
 <template>
 	<div>
 		<div class="card_border">
-			<div class="code">{{userCard.code}}</div>
+			<div class="code">{{currentCode}}</div>
 			<p>联系方式：<span v-for="item in userCard.tel">{{item}} </span></p>
 			<p>地址：{{userCard.address}}</p>
 			<p>姓名：{{userCard.name}}</p>
 			<div class="card_footer">
-				<span>添加优惠</span>
+				<span @click="addCoupon">添加优惠</span>
 				<span>添加订单</span>
 			</div>
 		</div>
@@ -20,7 +20,8 @@ export default{
 	name: "UserCard",
 	components: { },
 	props: {
-        userCard: Object
+        userCard: Object,
+        currentCode: String
     },
     data () {
 		return {			
@@ -28,7 +29,9 @@ export default{
 		}
 	},
 	methods: {
-
+		addCoupon(){
+			this.$router.push('/user/addCoupon');
+		}
     }
 }
 </script>
@@ -36,11 +39,10 @@ export default{
 <style scoped>
 	.card_border{
 		color:#555;
-		font-size:14px;
+		font-size:12px;
 		margin:10px 5%;
-		width:80%;
-		height:140px;
-		padding:5%;
+		width:90%;
+		height:150px;
 		border:1px solid #aaa;
 	}
 	.code{
@@ -50,14 +52,14 @@ export default{
 	}
 	.card_border p{
 		text-align: center;
-		margin:5px 0;
+		margin:10px 0;
 	}
 	.card_footer{
 		color:#4CC78D;		
 		float:right;
-		margin-top:20px;
+		margin-top:10px;
 	}
 	.card_footer span{
-		padding:0 5px;
+		padding:0 10px;
 	}
 </style>

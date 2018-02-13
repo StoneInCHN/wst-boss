@@ -6,9 +6,9 @@
 			<Row>
 				<Col span="5">
 					<select class="selectText" v-model="type" @change="searchType">
-						<option value="0">用户编号</option>
-						<option value="1">用户手机</option>
-						<option value="2">用户地址</option>
+						<option value=0>用户编号</option>
+						<option value=1>用户手机</option>
+						<option value=2>用户地址</option>
 					</select>
 				</Col>
 				<Col span="19">
@@ -21,7 +21,7 @@
 				</Col>
 			</Row>
 		</div>
-		<div v-if="userCard.id == null">
+		<div v-if="userCard == null">
 			<div class="container">
 				<div class="item" >
 					<span>店铺总用户 3653</span>
@@ -48,30 +48,31 @@
 			</div>			
 		</div>
 		<div v-else>
-			<UserCard :userCard="userCard"/>
+			<div v-if="type==0">
+				<UserCard :userCard="userCard" :currentCode="userCard.code"/>	
+			</div>
+			<div v-else-if="memberInfoList.length>0">				
+				<UserCard :userCard="userCard" :currentCode="memberInfoList[0].code"/>		
+				<div v-for="memberInfo in memberInfoList">
+					<MemberInfo :memberInfo="memberInfo" :type="type" :currentCode="memberInfoList[0].code"/>
+				</div>						
+			</div>			
 		</div>
-
-		<Footer/>
 	</div>
 </template>
 
 <script>
 import { Search, Row, Col, Button } from 'vant'
 import Header from "../wechat/Header"
-import Footer from "../wechat/Footer"
 import UserCard from "./UserCard"
+import MemberInfo from "./MemberInfo"
 export default{
 	name: "UserManage",
-	components: { Header, Footer, Search, Row, Col, Button, UserCard },
+	components: { Header, Search, Row, Col, Button, UserCard, MemberInfo },
 	data () {
 		return {
-			userCard:{
-				id:null,
-				code:null,
-				tel:null,
-				address:null,
-				name:null
-			},
+			userCard:null,
+			memberInfoList:[],
 			keyWords:"",
 			type:0,
 			searchTips:"请输入用户编号"
@@ -81,31 +82,63 @@ export default{
 	methods: {
 	    onSearch () {
 	    	if(this.keyWords){
+	    		this.userCard = {};
 		    	this.userCard.id=1;
 		 		this.userCard.code=this.keyWords;
 		 		this.userCard.tel=["18030506785","13542589685"];
 		 		this.userCard.address="中德英伦联邦19栋1345室";
 		 		this.userCard.name="王麻子";
+		 		this.memberInfoList=[];
+	    		if(this.type==1){//为 用户手机搜索 准备数据
+	    			let member1={};
+	    			member1.tel="18030506785";
+	    			member1.code="108";
+	    			member1.name="习大大";
+	    			member1.address="中铁西城19栋1658室";
+	    			member1.createAt="2018.01.18 21:45:36";
+	    			this.memberInfoList.push(member1);
+	    		}
+	    		if(this.type==2){//为 用户地址搜索 准备数据
+	    			let member1={};
+	    			member1.tel="18030506785";
+	    			member1.code="108";
+	    			member1.name="习大大";
+	    			member1.address="中铁西城19栋1658室";
+	    			member1.createAt="2018.01.18 21:45:36";
+	    			this.memberInfoList.push(member1);
+	    			let member2={};
+	    			member2.tel="18030505689";
+	    			member2.code=null;
+	    			member2.name="李明";
+	    			member2.address="中铁西城19栋1658室";
+	    			member2.createAt="2018.01.19 21:45:36";
+	    			this.memberInfoList.push(member2);
+	    		}
+
 	    	}else{
-	    		this.userCard.id=null;
-		 		this.userCard.code=null;
-		 		this.userCard.tel=null;
-		 		this.userCard.address=null;
-		 		this.userCard.name=null;
+	    		this.userCard=null;
+	    		this.memberInfoList=[];
 	    	}
 
 	    },
 	    searchType(){
 	    	if(this.type == 0){
 	    		this.searchTips = "请输入用户编号";
+	    		this.keyWords = "";
+	    		this.userCard=null;
+	    		this.memberInfoList=[];
 	    	}else if(this.type == 1){
 				this.searchTips = "请输入用户手机号";
+				this.keyWords = "";
+				this.userCard=null;
+				this.memberInfoList=[];
 	    	}else if(this.type == 2){
 				this.searchTips = "请输入用户地址";
+				this.keyWords = "";
+				this.userCard=null;
+				this.memberInfoList=[];
 	    	}
-	    }
-	    
-
+	    }	    
     }
 }
 </script>
@@ -155,5 +188,10 @@ export default{
 		position: relative;
 		padding:10px;
 		vertical-align: middle;
+	}
+	.tel_title{
+		font-size:14px;
+		color:#aaa;
+		margin-left:15px;
 	}
 </style>

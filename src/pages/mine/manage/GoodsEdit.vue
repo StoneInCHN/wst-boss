@@ -50,16 +50,16 @@ export default{
 		        { name: '蓝剑', callback: this.setBrand },
 		        { name: '蓝光', callback: this.setBrand },
 		        { name: '乐百氏', callback: this.setBrand }
-		      ],
+		    ],
 		    allGoodsName:[
 		        { name: '冰川时代', callback: this.setGoodsName },
 		        { name: '蓝剑矿泉水', callback: this.setGoodsName },
 		        { name: '蓝剑纯净水', callback: this.setGoodsName }
-		      ],
+		    ],
 		    allSize:[
 		        { name: '15L', callback: this.setSize },
 		        { name: '18L', callback: this.setSize }
-		      ],
+		    ]
 		}
 	},
 	methods: {
@@ -80,12 +80,15 @@ export default{
 	    },
 	    setBrand(item) {
 	      	this.goods.goodsBrand = item.name;
+	      	this.brand = false;
 	    },
 	    setGoodsName(item) {
 	      	this.goods.goodsName = item.name;
+	      	this.goodsName = false;
 	    },   
 	    setSize(item) {
 	      	this.goods.size = item.name;
+	      	this.size = false;
 	    }
     },
     mounted(){
