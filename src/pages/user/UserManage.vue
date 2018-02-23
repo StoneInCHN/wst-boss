@@ -6,7 +6,7 @@
 			<Row>
 				<Col span="5">
 					<select class="selectText" v-model="type" @change="searchType">
-						<option value=0>用户编号</option>
+						<option value=0>二维码编号</option>
 						<option value=1>用户手机</option>
 						<option value=2>用户地址</option>
 					</select>
@@ -75,7 +75,7 @@ export default{
 			memberInfoList:[],
 			keyWords:"",
 			type:0,
-			searchTips:"请输入用户编号"
+			searchTips:"请输入二维码编号"
 
 		}
 	},

@@ -7,7 +7,7 @@
 			<p>姓名：{{userCard.name}}</p>
 			<div class="card_footer">
 				<span @click="addCoupon">添加优惠</span>
-				<span>添加订单</span>
+				<span @click="addOrder">添加订单</span>
 			</div>
 		</div>
 
@@ -31,6 +31,9 @@ export default{
 	methods: {
 		addCoupon(){
 			this.$router.push('/user/addCoupon');
+		},
+		addOrder(){
+			this.$router.push('/user/addOrder');
 		}
     }
 }

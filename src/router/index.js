@@ -27,6 +27,8 @@ const WorkerAdd = () => import("@/pages/mine/manage/WorkerAdd");
 const UserManage = () => import("@/pages/user/UserManage");
 const AddCoupon = () => import("@/pages/user/AddCoupon");
 const AddCouponGoods = () => import("@/pages/user/AddCouponGoods");
+const AddOrder = () => import("@/pages/user/AddOrder");
+const AddGoods = () => import("@/pages/user/AddGoods");
 
 //订单
 const Order = () => import("@/pages/order/Index");
@@ -133,7 +135,18 @@ export default new Router({
       path: "/user/addCouponGoods",
       name: "AddCouponGoods",
       component: AddCouponGoods
-    },          
+    }, 
+    {
+      path: "/user/addGoods",
+      name: "AddGoods",
+      component: AddGoods
+    }, 
+    {
+      path: "/user/addOrder",
+      name: "AddOrder",
+      component: AddOrder
+    }, 
+            
     {
       path: "/order",
       name: "Order",

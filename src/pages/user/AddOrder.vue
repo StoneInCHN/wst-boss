@@ -3,7 +3,7 @@
 		<Header backUrl="/userManage"/>
 		<Panel>
 			<div slot="header">
-				<Cell title="添加优惠" class="cell">
+				<Cell title="添加订单" class="cell">
 			    	<Button type="primary" size="small" @click="save">完成</Button>
 			  	</Cell>
 			</div>
@@ -12,18 +12,18 @@
 				  <Field label="编号" v-model="userCard.code" disabled/>
 				  <Field label="姓名" v-model="userCard.name" disabled/>
 				  <Field label="用户地址" v-model="userCard.address" disabled/>
-				</CellGroup>				
-				<CouponGoods v-for="(coupon,index) in couponList" :coupon="coupon" :list="couponList" :num="index" :key="index"/>
-				<Row>
-					<Col span="6">
-						<div class="addLable">添加优惠</div>
-					</Col>
-					<Col span="18">
-						<div class="addCoupon" @click="newCoupn"><Icon name="add-o"/></div>	
-					</Col>
-				</Row>					
+				  <Field label="手机号" v-model="userCard.tel" disabled/>
+				</CellGroup>
+				<Panel>
+					<div slot="header">
+						<Cell title="商品信息" class="cell">
+					    	<div class="addCoupon" @click="newGoods"><Icon name="add-o"/></div>
+					  	</Cell>
+					</div>	
+				</Panel>	
+				<GoodsRow v-for="(goods,index) in goodsList" :goods="goods" :list="goodsList" :key="index"/>				
 				<CellGroup>  
-				  <Field label="优惠原因"  placeholder="请填写优惠原因" type="textarea"/>
+				  <Field label="支付方式" value="货到付款"/>
 				</CellGroup>
 			</div>	
 		</Panel>
@@ -33,21 +33,23 @@
 <script>
 import { Panel, CellGroup, Field, Button, Cell, Row, Col, Icon } from 'vant'
 import Header from "../wechat/Header"
-import CouponGoods from "./CouponGoods"
+import GoodsRow from "./GoodsRow"
 export default{
 	name: "StoreManage",
-	components: { Header, Panel, CellGroup, Field, Button, Cell, Row, Col, Icon, CouponGoods },
+	components: { Header, Panel, CellGroup, Field, Button, Cell, Row, Col, Icon, GoodsRow },
 	data () {
 		return {
 			userCard:{
 				code:"108",
 				name:"王三",
-				address:"中德英伦联邦19栋1231室"
+				address:"中德英伦联邦19栋1231室",
+				tel:"18254788784"
 			},
-			couponList:[{
+			goodsList:[{
 				id:1,
 				name:"农夫山泉15L",
-				price:15
+				count:1,
+				url:"#"
 			}]
 		}
 	},
@@ -55,8 +57,8 @@ export default{
         save () {
 			this.$router.push('/userManage');
         },
-		newCoupn(){
-			this.couponList.push({});
+		newGoods(){
+			this.$router.push('/user/addGoods');
 		}
        
     }
@@ -70,7 +72,7 @@ export default{
 	}	
 	.addCoupon{
 		font-size:18px;
-		margin-top:15px;
+		margin-top:8px;
 		color:green
 	}
 	.addLable{
