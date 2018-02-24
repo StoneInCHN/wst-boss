@@ -9,7 +9,7 @@
 			</div>
 			<div>
 				<CellGroup>
-				  <Field label="编号" v-model="userCard.code" disabled/>
+				  <Field label="用户编号" v-model="userCard.code" disabled/>
 				  <Field label="姓名" v-model="userCard.name" disabled/>
 				  <Field label="用户地址" v-model="userCard.address" disabled/>
 				</CellGroup>				
