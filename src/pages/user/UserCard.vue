@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="card_border">
+		<div v-if="userCard.id!=null" class="card_border">
 			<div class="code">{{currentCode}}</div>
 			<p>联系方式：<span v-for="item in userCard.tel">{{item}} </span></p>
 			<p>地址：{{userCard.address}}</p>
@@ -10,7 +10,9 @@
 				<span @click="addOrder">添加订单</span>
 			</div>
 		</div>
-
+		<div v-else class="no_info">
+			暂无该信息
+		</div>
 	</div>
 </template>
 
@@ -64,5 +66,11 @@ export default{
 	}
 	.card_footer span{
 		padding:0 10px;
+	}
+	.no_info{
+		text-align: center;
+		font-size: 14px;
+		color:#aaa;
+		margin-top:20px;
 	}
 </style>

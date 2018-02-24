@@ -1,12 +1,12 @@
 <template>
 	<div>
 		<div class="member_div">
-			<p v-if="type==1" class="tel_title">该手机号已加入编号 {{currentCode}}</p>
+			<p v-if="type==1&&currentCode!=null" class="tel_title">该手机号已加入编号 {{currentCode}}</p>
 			<div>
 				<Row>
-					<Col span="8" :class="type==1?'red':''">{{memberInfo.tel}}</Col>
-					<Col span="8">{{memberInfo.code}}</Col>
-					<Col span="8">{{memberInfo.name}}</Col>
+					<Col span="8" :class="type==1?'red':''"><span>{{memberInfo.tel}}</span></Col>
+					<Col span="8"><span v-if="currentCode!=null">{{memberInfo.code}}</span></Col>
+					<Col span="8"><span>{{memberInfo.name}}</span></Col>
 				</Row>
 			</div>
 			<div>
@@ -15,7 +15,7 @@
 					<Col span="12">{{memberInfo.createAt}}</Col>
 				</Row>
 			</div>
-			<div v-if="type==2 && memberInfo.code==null" class="card_footer">
+			<div v-if="type==2 && memberInfo.code==null && currentCode!=null" class="card_footer">
 				<span @click="addToUserCard">添加联系方式到{{currentCode}}</span>
 			</div>
 	    </div>

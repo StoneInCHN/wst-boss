@@ -29,6 +29,8 @@ const AddCoupon = () => import("@/pages/user/AddCoupon");
 const AddCouponGoods = () => import("@/pages/user/AddCouponGoods");
 const AddOrder = () => import("@/pages/user/AddOrder");
 const AddGoods = () => import("@/pages/user/AddGoods");
+const NewCode = () => import("@/pages/user/NewCode");
+const ScanQr = () => import("@/pages/user/ScanQr");
 
 //订单
 const Order = () => import("@/pages/order/Index");
@@ -146,7 +148,17 @@ export default new Router({
       name: "AddOrder",
       component: AddOrder
     }, 
-            
+    {
+      path: "/user/newCode",
+      name: "NewCode",
+      component: NewCode
+    },    
+    {
+      path: "/user/scanQr",
+      name: "ScanQr",
+      component: ScanQr
+    },      
+        
     {
       path: "/order",
       name: "Order",

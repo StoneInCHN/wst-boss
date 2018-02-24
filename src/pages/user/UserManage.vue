@@ -48,16 +48,17 @@
 			</div>			
 		</div>
 		<div v-else>
-			<div v-if="type==0">
+			<div v-if="type==0">		
 				<UserCard :userCard="userCard" :currentCode="userCard.code"/>	
 			</div>
 			<div v-else-if="memberInfoList.length>0">				
-				<UserCard :userCard="userCard" :currentCode="memberInfoList[0].code"/>		
+				<UserCard :userCard="userCard" :currentCode="memberInfoList[0].code"/>	
 				<div v-for="memberInfo in memberInfoList">
 					<MemberInfo :memberInfo="memberInfo" :type="type" :currentCode="memberInfoList[0].code"/>
 				</div>						
 			</div>			
 		</div>
+		<div class="new_code" v-if="userCard!=null&&userCard.id==null" @click="newCode">新建编号</div>
 	</div>
 </template>
 
@@ -82,17 +83,25 @@ export default{
 	methods: {
 	    onSearch () {
 	    	if(this.keyWords){
-	    		this.userCard = {};
-		    	this.userCard.id=1;
-		 		this.userCard.code=this.keyWords;
-		 		this.userCard.tel=["18030506785","13542589685"];
-		 		this.userCard.address="中德英伦联邦19栋1345室";
-		 		this.userCard.name="王麻子";
-		 		this.memberInfoList=[];
+	    		if(this.keyWords == 'null'){//只供显示用test
+	    			this.userCard = {};
+	    		}else{
+		    		this.userCard = {};
+			    	this.userCard.id=1;
+			 		this.userCard.code=this.keyWords;
+			 		this.userCard.tel=["18030506785","13542589685"];
+			 		this.userCard.address="中德英伦联邦19栋1345室";
+			 		this.userCard.name="王麻子";		 		
+	    		}
+				this.memberInfoList=[];
 	    		if(this.type==1){//为 用户手机搜索 准备数据
 	    			let member1={};
 	    			member1.tel="18030506785";
-	    			member1.code="108";
+	    			if(this.keyWords == 'null'){//只供显示用test
+		    			member1.code=null;
+		    		}else{
+						member1.code="108";
+		    		}
 	    			member1.name="习大大";
 	    			member1.address="中铁西城19栋1658室";
 	    			member1.createAt="2018.01.18 21:45:36";
@@ -101,7 +110,12 @@ export default{
 	    		if(this.type==2){//为 用户地址搜索 准备数据
 	    			let member1={};
 	    			member1.tel="18030506785";
-	    			member1.code="108";
+		    		if(this.keyWords == 'null'){//只供显示用test
+		    			member1.code=null;
+		    		}else{
+						member1.code="108";
+		    		}
+	    			
 	    			member1.name="习大大";
 	    			member1.address="中铁西城19栋1658室";
 	    			member1.createAt="2018.01.18 21:45:36";
@@ -123,21 +137,24 @@ export default{
 	    },
 	    searchType(){
 	    	if(this.type == 0){
-	    		this.searchTips = "请输入用户编号";
+	    		this.searchTips = "请输入编号或null";
 	    		this.keyWords = "";
 	    		this.userCard=null;
 	    		this.memberInfoList=[];
 	    	}else if(this.type == 1){
-				this.searchTips = "请输入用户手机号";
+				this.searchTips = "请输入手机号或null";
 				this.keyWords = "";
 				this.userCard=null;
 				this.memberInfoList=[];
 	    	}else if(this.type == 2){
-				this.searchTips = "请输入用户地址";
+				this.searchTips = "请输入地址或null";
 				this.keyWords = "";
 				this.userCard=null;
 				this.memberInfoList=[];
 	    	}
+	    },
+	    newCode(){
+	    	this.$router.push('/user/newCode');
 	    }	    
     }
 }
@@ -193,5 +210,12 @@ export default{
 		font-size:14px;
 		color:#aaa;
 		margin-left:15px;
+	}
+	.new_code{
+		text-align: right;		
+		font-size: 14px;
+		color:#4CC78D;
+		margin:10px 15px 0 0;
+
 	}
 </style>
