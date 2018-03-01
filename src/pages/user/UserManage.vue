@@ -24,26 +24,22 @@
 		<div v-if="userCard == null">
 			<div class="container">
 				<div class="item" >
-					<span>店铺总用户 3653</span>
+					<div>总编号用户</div>
+					<div>3653</div>
 				</div>
 				<div class="item">
-					<span>本月新增用户 368</span>
-				</div>
-			</div>
-			<div class="container">
-				<div class="item">
-					<span>本月活跃用户 1859</span>
-				</div>
-				<div class="item">
-					<span>两月未订水用户 20</span>
+					<div>本月新增编号用户</div>
+					<div>368</div>
 				</div>
 			</div>
 			<div class="container">
-				<div class="item">
-					<span>编号用户 256</span>
+				<div class="item" @click="totalOrderUsers">
+					<div>总订单用户</div>
+					<div>256</div>
 				</div>
 				<div class="empty">
-					<span></span>
+					<div></div>
+					<div></div>
 				</div>
 			</div>			
 		</div>
@@ -155,6 +151,9 @@ export default{
 	    },
 	    newCode(){
 	    	this.$router.push('/user/newCode');
+	    },
+	    totalOrderUsers(){
+	    	this.$router.push('/user/totalOrderUsers');
 	    }	    
     }
 }
@@ -189,22 +188,24 @@ export default{
 	}
 	.item{
 		flex: 1;
-		height: 60px;
+		height: 40px;
 		border: 1px solid #bbb;
 		margin:10px;
 		position: relative;
-		padding:10px;
+		padding:20px;
 		font-size:14px;
 		vertical-align: middle;
+		text-align: center;
 	}
 	.empty{
 		flex: 1;
-		height: 60px;
-		border-width: 0px;
+		height: 40px;
 		margin:10px;
 		position: relative;
-		padding:10px;
+		padding:20px;
+		font-size:14px;
 		vertical-align: middle;
+		text-align: center;
 	}
 	.tel_title{
 		font-size:14px;
