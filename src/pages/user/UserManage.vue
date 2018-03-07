@@ -6,7 +6,7 @@
 			<Row>
 				<Col span="5">
 					<select class="selectText" v-model="type" @change="searchType">
-						<option value=0>二维码编号</option>
+						<option value=0>用户编号</option>
 						<option value=1>用户手机</option>
 						<option value=2>用户地址</option>
 					</select>
@@ -23,7 +23,7 @@
 		</div>
 		<div v-if="userCard == null">
 			<div class="container">
-				<div class="item" >
+				<div class="item" @click="totalCodeUsers" >
 					<div>总编号用户</div>
 					<div>3653</div>
 				</div>
@@ -154,7 +154,11 @@ export default{
 	    },
 	    totalOrderUsers(){
 	    	this.$router.push('/user/totalOrderUsers');
-	    }	    
+	    },
+	    totalCodeUsers(){
+	    	this.$router.push('/user/totalCodeUsers');
+	    }
+	    	    
     }
 }
 </script>
@@ -163,7 +167,7 @@ export default{
 	.selectText{
 		text-align: right;
 	    font-size: 14px;
-	    color: #aaa;
+	    color: green;
 	    margin-top: 8px;
 	    margin-left: 10px;
 	}
@@ -177,8 +181,8 @@ export default{
 	    margin: 0;
 	    font-weight: 400;
 	    font-size: 14px;
-	    color: #4CC78D;;
-	    padding: 40px 15px 10px;
+	    color: green;
+	    padding: 15px 15px 10px;
 	}
 	.container{
 		display: flex;

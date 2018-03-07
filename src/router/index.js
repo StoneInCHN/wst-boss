@@ -32,6 +32,7 @@ const AddGoods = () => import("@/pages/user/AddGoods");
 const NewCode = () => import("@/pages/user/NewCode");
 const ScanQr = () => import("@/pages/user/ScanQr");
 const TotalOrderUsers = () => import("@/pages/user/TotalOrderUsers");
+const TotalCodeUsers = () => import("@/pages/user/TotalCodeUsers");
 
 //订单
 const Order = () => import("@/pages/order/Index");
@@ -163,7 +164,12 @@ export default new Router({
       path: "/user/totalOrderUsers",
       name: "totalOrderUsers",
       component: TotalOrderUsers
-    },            
+    },  
+    {
+      path: "/user/totalCodeUsers",
+      name: "totalCodeUsers",
+      component: TotalCodeUsers
+    },               
     {
       path: "/order",
       name: "Order",
