@@ -9,13 +9,7 @@ Vue.use(Vuex)
 import actions from "./actions.js"
 import mutations from "./mutations.js"
 import getters from "./getters.js"
-
-const state = {
-	token: '',
-	count: 0,
-	name: 'tanbiao',
-	resultNum: 0
-}
+import state from "./state.js"
 
 const store = new Vuex.Store({
 	state,

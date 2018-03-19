@@ -3,7 +3,7 @@ import App from './App'
 import router from './router'
 import store from './store'
 import FastClick from 'fastclick'
-import api from './apis'
+import api from './apis/index'
 import "./assets/css/reset.css"
 
 Vue.prototype.$api = api

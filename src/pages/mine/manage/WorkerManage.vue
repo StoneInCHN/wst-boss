@@ -10,9 +10,9 @@
 			<Row v-for="(worker,index) in workers" :key="index" class="row">
 				<Col span="2" v-if="editable"><Checkbox/></Col>
 				<Col span="2" v-else><Icon name="contact"/></Col>
-			  	<Col span="5">{{worker.name}}</Col>
-				<Col span="10">{{worker.phone}}</Col>
-				<Col span="5">{{worker.wechat}}</Col>
+			  	<Col span="5">{{worker.realName}}</Col>
+				<Col span="10">{{worker.cellPhoneNum}}</Col>
+				<Col span="5">{{worker.wechatAcct}}</Col>
 				<Col span="2"><Icon name="edit"  @click="editWorker(worker)"/></Col>
 			</Row>
 			<p class="fixed">			
@@ -31,17 +31,18 @@ export default{
 	components: { Header, Row, Col, Icon, Checkbox, Actionsheet },
 	data () {
 		return {
-			workers:[{
-				id:1,
-				name:"李四",
-				wechat:"mousi",
-				phone:"15082247578"
-			},{
-				id:2,
-				name:"王三",
-				wechat:"shansi",
-				phone:"15272247578"
-			}],
+			workers:[],
+			// {
+			// 	id:1,
+			// 	name:"李四",
+			// 	wechat:"mousi",
+			// 	phone:"15082247578"
+			// },{
+			// 	id:2,
+			// 	name:"王三",
+			// 	wechat:"shansi",
+			// 	phone:"15272247578"
+			// }
 			editable:false,
 			checked:true,
 			showAction:false,
@@ -64,6 +65,17 @@ export default{
 			this.showAction = !this.showAction;
         }
        
+    },
+    mounted() {
+	    this.$api.mine
+	      .listShopEmp({ userId: 1 })
+	      .then(res => {
+	        console.log("res", res);
+	        this.workers = res.msg;
+	      })
+	      .catch(error => {
+	        console.log(error);
+	      });
     }
 }
 </script>

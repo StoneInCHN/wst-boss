@@ -1,15 +1,7 @@
+import order from "./order";
+import user from "./user";
+import mine from "./mine";
 
-import {fetch, post, patch, put} from './config'
-
-const baseUrl = "/"
-
-export default{
-
-  login (params) {
-    return post('/login', params)
-  },
-  getUserInfo (params) {
-    return fetch('/getUserInfo', params)
-  }
-
-}
+export default {
+  order,user,mine
+};
