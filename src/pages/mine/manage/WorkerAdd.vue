@@ -1,10 +1,10 @@
 <template>
 	<div>
-		<Header backUrl="/manage/workerManage"/>
+		<Header backUrl="/manage/workerSearch"/>
 		<Panel>
 			<div slot="header">
 				<Cell title="员工新增" class="cell">
-			    	<Button type="primary" size="small" @click="save">完成</Button>
+					<Button type="primary" size="small" @click="save">完成</Button>
 			  	</Cell>
 			</div>
 			<div>
@@ -15,9 +15,7 @@
 				</CellGroup>					
 			</div>	
 			<div slot="footer">
-				<Cell title="向该名配送员指派订单时，发送短信" class="cell">
-			    	<van-switch :value="worker.canSend"  @input="onInput" />
-			  	</Cell>
+				<Cell title="温馨提示：添加员工前，员工必须先微信关注“云水站”。" class="cell"></Cell>
 			</div>
 		</Panel>
 		
@@ -25,11 +23,11 @@
 </template>
 
 <script>
-import { Panel, CellGroup, Field, Button, Cell, Switch, Dialog } from 'vant'
+import { Panel, CellGroup, Field, Button, Cell, Dialog } from 'vant'
 import Header from "../../wechat/Header"
 export default{
 	name: "StoreManage",
-	components: { Header, Panel, CellGroup, Field, Button, Cell, vanSwitch:Switch, Dialog },
+	components: { Header, Panel, CellGroup, Field, Button, Cell, Dialog },
 	data () {
 		return {
 			currentType:0,

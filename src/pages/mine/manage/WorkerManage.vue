@@ -7,16 +7,24 @@
 					<span v-else>编辑</span>
 				</a>
 			</p>
-			<Row v-for="(worker,index) in workers" :key="index" class="row">
-				<Col span="2" v-if="editable"><Checkbox/></Col>
-				<Col span="2" v-else><Icon name="contact"/></Col>
-			  	<Col span="5">{{worker.realName}}</Col>
-				<Col span="10">{{worker.cellPhoneNum}}</Col>
-				<Col span="5">{{worker.wechatAcct}}</Col>
-				<Col span="2"><Icon name="edit"  @click="editWorker(worker)"/></Col>
-			</Row>
+			<table class="list-table">
+				<tr v-for="(worker,index) in workers" :key="index">
+					<td>						
+						<span v-if="editable" @click="selecteWorker(worker.id)">
+							<Checkbox/>
+						</span>
+						<span v-else>
+							<Checkbox disabled/>
+						</span>
+					</td>
+					<td>{{worker.realName}}</td>
+					<td>{{worker.cellPhoneNum}}</td>
+					<td>{{worker.wechatAcct}}</td>
+					<td><Icon name="edit"  @click="editWorker(worker.id)"/></td>
+				</tr>
+			</table>
 			<p class="fixed">			
-				<a v-if="editable==false" @click="addWork" class="add"><Icon name="add-o"/> 添加</a>
+				<a v-if="editable==false" @click="searchWorker" class="add"><Icon name="add-o"/> 添加</a>
 				<a v-else @click="deleteWork" class="delete"><Icon name="delete"/> 删除</a>
 			</p>
 			<Actionsheet v-model="showAction" :actions="actions" cancel-text="取消"/>
@@ -24,31 +32,21 @@
 </template>
 
 <script>
-import { Row, Col, Icon, Checkbox, Actionsheet } from 'vant'
+import { Row, Col, Icon, Checkbox, Actionsheet, Toast, Dialog  } from 'vant'
 import Header from "../../wechat/Header"
 export default{
 	name: "StoreManage",
-	components: { Header, Row, Col, Icon, Checkbox, Actionsheet },
+	components: { Header, Row, Col, Icon, Checkbox, Actionsheet, Toast, Dialog  },
 	data () {
 		return {
 			workers:[],
-			// {
-			// 	id:1,
-			// 	name:"李四",
-			// 	wechat:"mousi",
-			// 	phone:"15082247578"
-			// },{
-			// 	id:2,
-			// 	name:"王三",
-			// 	wechat:"shansi",
-			// 	phone:"15272247578"
-			// }
 			editable:false,
 			checked:true,
 			showAction:false,
 			actions:[
 		        { name: '删除', callback: this.deleteSelected }
 		    ],
+		    selecteWorkerIds:[]
 		}
 	},
 	methods: {
@@ -58,24 +56,70 @@ export default{
         manage(){
         	this.editable = !this.editable;        	
         },
-        addWork(){
-			this.$router.push('/manage/workerAdd');
+        searchWorker(){
+			this.$router.push('/manage/workerSearch');
         },
         deleteWork(){
-			this.showAction = !this.showAction;
+        	if(this.selecteWorkerIds.length == 0){
+        		Toast.fail('请选择删除项');
+        	}else{
+        		this.showAction = !this.showAction;
+        	}			
+        },
+        selecteWorker(id){
+        	if(this.selecteWorkerIds.indexOf(id) == -1){
+        		this.selecteWorkerIds.push(id);
+        	}else{
+        		this.selecteWorkerIds.pop(id);
+        	}
+        },
+        deleteSelected(){
+        	if(this.selecteWorkerIds.length > 0){
+        		Dialog.confirm({
+				  title: '提示',
+				  message: '确认删除选择员工？'
+				}).then(() => {
+					this.deleteEmp();
+					this.showAction = false;
+				}).catch(() => {
+				    this.showAction = false;
+				});
+        	}        	
+        },
+        listShopEmp(){
+        	var req = {};
+		    req.userId = this.$store.state.userId;
+
+			this.$api.mine.listShopEmp(req)
+			.then(res => {
+			    if(res.code = "0000"){
+			      	this.workers = res.msg;
+			    }	        
+			})
+			.catch(error => {
+			        console.log(error);
+			});
+        },
+        deleteEmp(){
+        	var req = {};
+		    req.userId = this.$store.state.userId;
+		    req.entityIds = this.selecteWorkerIds;
+
+			this.$api.mine.deleteEmp(req)
+			.then(res => {
+				if(res.code = "0000"){
+					Toast.success("操作成功");
+					this.listShopEmp();
+				}	        
+			})
+			.catch(error => {
+				console.log(error);
+			});        	
         }
        
     },
     mounted() {
-	    this.$api.mine
-	      .listShopEmp({ userId: 1 })
-	      .then(res => {
-	        console.log("res", res);
-	        this.workers = res.msg;
-	      })
-	      .catch(error => {
-	        console.log(error);
-	      });
+		this.listShopEmp();
     }
 }
 </script>
@@ -113,8 +157,14 @@ export default{
 		color: #6B8C43;
 		font-size:14px;
 	}
-	.row{
-		font-size:14px;
-		margin:10px 15px 0 15px;
+	.list-table{
+		width:90%;
+		margin:0 5%;
+		font-size:14px;	
+		text-align: center;		
+	}
+	.list-table td{
+		padding:5px 0;
+		overflow: hidden;
 	}
 </style>

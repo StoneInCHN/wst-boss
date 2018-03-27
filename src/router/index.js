@@ -22,6 +22,7 @@ const TicketAdd = () => import("@/pages/mine/manage/TicketAdd");
 const StoreManage = () => import("@/pages/mine/manage/StoreManage");
 const WorkerManage = () => import("@/pages/mine/manage/WorkerManage");
 const WorkerAdd = () => import("@/pages/mine/manage/WorkerAdd");
+const WorkerSearch = () => import("@/pages/mine/manage/WorkerSearch");
 
 //用户
 const UserManage = () => import("@/pages/user/UserManage");
@@ -124,6 +125,11 @@ export default new Router({
       path: "/manage/workerAdd",
       name: "WorkerAdd",
       component: WorkerAdd
+    },  
+    {
+      path: "/manage/workerSearch",
+      name: "WorkerSearch",
+      component: WorkerSearch
     },  
     {
       path: "/userManage",
