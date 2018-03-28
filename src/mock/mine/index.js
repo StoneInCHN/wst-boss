@@ -24,6 +24,21 @@ const simpleSuccess = {
   "msg": null
 }
 
+const getInfo = {
+  "code": "0000",
+  "desc": "操作成功",
+  "msg": {
+    "bussBeginTime": "09:00",
+    "shopName": "红魔曼联",
+    "id": 1,
+    "bussEndTime": "19:00",
+    "mobilePhoneNum": "15863254259",
+    "status": "ACTIVED",
+    "telphoneNum": null,
+    "notice": "宾川时代涨价了"
+  }
+}
+
 
 export default {
   listShopEmp: config => {
@@ -37,6 +52,13 @@ export default {
   updateEmp: config => {
     console.info("新增/更新员工", config.body);
     return simpleSuccess;
-  }
-  
+  },
+  getInfo: config => {
+    console.info("获取商家信息", config.body);
+    return getInfo;
+  },
+  updateInfo: config => {
+    console.info("编辑商家信息", config.body);
+    return simpleSuccess;
+  },
 };
