@@ -18,7 +18,7 @@ const listShopEmp = {
   ]
 };
 
-const deleteEmp = {
+const simpleSuccess = {
   "code": "0000",
   "desc": "操作成功",
   "msg": null
@@ -32,7 +32,11 @@ export default {
   },
   deleteEmp: config => {
     console.info("删除员工", config.body);
-    return deleteEmp;
+    return simpleSuccess;
+  },
+  updateEmp: config => {
+    console.info("新增/更新员工", config.body);
+    return simpleSuccess;
   }
   
 };

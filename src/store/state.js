@@ -1,8 +1,10 @@
 const state = {
 	token: '',
 	userId:1,
+	worker:{},
+
 	count: 0,
-	name: 'tanbiao',
+	name: '',
 	resultNum: 0
 };
 

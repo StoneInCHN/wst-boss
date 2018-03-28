@@ -10,6 +10,9 @@ const  mine = {
   },
   deleteEmp (params) {
     return post('/shopEmp/deleteEmp', params)
+  },
+  updateEmp (params) {
+    return post('/shopEmp/updateEmp', params)
   }
 }
 

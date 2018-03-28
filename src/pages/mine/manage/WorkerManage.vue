@@ -20,7 +20,7 @@
 					<td>{{worker.realName}}</td>
 					<td>{{worker.cellPhoneNum}}</td>
 					<td>{{worker.wechatAcct}}</td>
-					<td><Icon name="edit"  @click="editWorker(worker.id)"/></td>
+					<td><Icon name="edit"  @click="editWorker(worker)"/></td>
 				</tr>
 			</table>
 			<p class="fixed">			
@@ -50,7 +50,12 @@ export default{
 		}
 	},
 	methods: {
-        editWorker (id) {
+        editWorker (worker) {
+        	var emp = {};
+			emp.cellPhoneNum = worker.cellPhoneNum;
+			emp.userName = worker.realName;
+			emp.wxAcct = worker.wechatAcct;
+			this.$store.state.worker = emp;
 			this.$router.push('/manage/workerAdd');
         },
         manage(){

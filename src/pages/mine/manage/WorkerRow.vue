@@ -1,6 +1,6 @@
 <template>
 	<div>
-			<div class="workerDiv"  @click="addWorker">
+			<div class="workerDiv"  @click="selectedRow">
 				<Row>
 					<Col span="6">
 					<img src="//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg" width="60px" height="60px"/></Col>
@@ -25,11 +25,14 @@ export default{
 	},
 	methods: {
 		selectedRow(){
-        	console.info(this.worker);
-        },
-        addWorker(){
+			var emp = {};
+			emp.cellPhoneNum = null;
+			emp.userName = null;
+			emp.wxAcct = this.worker.wxAcct;
+			this.$store.state.worker = emp;
+			//this.$store.dispatch('setWorker', emp);
 			this.$router.push('/manage/workerAdd');
-        },
+        }
     }
 }
 </script>

@@ -1,9 +1,12 @@
 const mutations = {
 	increment(state, payload){
-		state.count++
+		state.count++;
 	},
 	setResultNum(state, resultNum){
-		state.resultNum = resultNum
+		state.resultNum = resultNum;
+	},
+	setWorker(state, worker){
+		state.worker = worker;
 	}
 }
 
