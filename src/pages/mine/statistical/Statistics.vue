@@ -1,60 +1,67 @@
 <template>
 	<div>
-		<Header backUrl="/mine"/>
-		<div class="title" @click="withdrawView">总资产：16000.00</div>
+		<Header backUrl="/mine"/>	
+		<p></p>
+		<p>
+			<Button type="primary" size="small" @click="monthIncome"><span style="padding:0 15px">收支明细</span></Button>
+		</p>
 		<div class="container">
-			<div class="item" @click="monthIncome">
-				<span>本月流水 15000.00</span>
+			<div class="item1">
+				<div>本月收入</div>
+				<div>{{report.monIncome}}</div>
 			</div>
-			<div class="item" @click="monthIncome">
-				<span>今日流水 2000.00</span>
+			<div class="item2" >
+				<div>今日收入</div>
+				<div>{{report.dayIncome}}</div>
 			</div>
 		</div>
-		<p>累计流水：250000.00</p>
+		<p>累计收入：{{report.totalIncome}}</p>
 		<div class="container">
-			<div class="item" @click="monthIncome">
-				<span>本月收入 1300.00</span>
+			<div class="item1">
+				<div>本月提成支出</div>
+				<div>{{report.monEmpExp}}</div>
 			</div>
-			<div class="item" @click="monthIncome">
-				<span>今日收入 1800.00</span>
+			<div class="item2">
+				<div>今日提成支出</div>
+				<div>{{report.dayEmpExp}}</div>
 			</div>
 		</div>
-		<p>累计收入：230000.00</p>
-		<div class="container">
-			<div class="item" @click="cutSpending">
-				<span>本月提成支出 5000.00</span>
-			</div>
-			<div class="item" @click="cutSpending">
-				<span>今日提成支出 200.00</span>
-			</div>
-		</div>
-		<p>累计提成支出：63000.00</p>
+		<p>累计提成支出：{{report.totalEmpExp}}</p>
 		<Footer/>
 	</div>
 </template>
 
 <script>
-import { Row, Col } from 'vant'
+import { Row, Col, Button } from 'vant'
 import Header from "../../wechat/Header"
 import Footer from "../../wechat/Footer"
 export default{
 	name: "Statistics",
-	components: { Header, Footer, Row, Col},
+	components: { Header, Footer, Row, Col, Button},
 	data () {
 		return {
-
+			report: {}
 		}
 	},
 	methods: {
-        withdrawView () {
-            this.$router.push('/statistics/withdrawView');
-        },
         monthIncome () {
  			this.$router.push('/statistics/monthIncome');
         },
-        cutSpending () {
- 			this.$router.push('/statistics/cutSpending');
-        }
+        finReport(){
+		    var req = {};
+		    	req.userId = this.$store.state.userId;
+		    	this.$api.mine.finReport(req)
+		    	.then(res =>{
+		    		if(res.code = '0000'){
+		    			this.report = res.msg;
+		    		}
+		    	}).catch(error => {
+		    		console.error(error);
+		    	})
+		}
+    },
+    mounted(){
+		this.finReport();
     }
 }
 </script>
@@ -69,19 +76,30 @@ export default{
 	p{
 		color: #6B8C43;
 		font-size:14px;
-		margin-left:10px;
+		margin:5px auto 15px 15px;
 	}
 	.container{
 		display: flex;
 		align-content: center;
 		justify-content: space-around;
 		color: #6B8C43;
+		text-align: center;
 	}
-	.item{
+	.item1{
 		flex: 1;
-		height: 60px;
+		height: 40px;
 		border: 1px solid #bbb;
-		margin:10px;
+		margin:5px 5px 5px 15px;
+		position: relative;
+		padding:10px;
+		font-size:14px;
+		vertical-align: middle;
+	}
+	.item2{
+		flex: 1;
+		height: 40px;
+		border: 1px solid #bbb;
+		margin:5px 15px 5px 5px;
 		position: relative;
 		padding:10px;
 		font-size:14px;

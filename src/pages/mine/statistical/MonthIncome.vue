@@ -1,61 +1,282 @@
 <template>
 	<div>
 		<Header backUrl="/statistics"/>
-		<p>本月收入（13000.00）</p>
-		<div class="order">
-			<Row>
-				<Col span="16">
-					2018.1.18 22:52:23
-				</Col>
-				<Col span="3">
-					+15
-				</Col>
-				<Col span="5">
-					余256.00
-				</Col>				
-			</Row>
-			<p/>	
-			<Row>
-				<Col span="16">
-					2018.1.18 22:52:23
-				</Col>
-				<Col span="3">
-					+15
-				</Col>
-				<Col span="5">
-					余256.00
-				</Col>				
-			</Row>				
-		</div>
+		<Row>
+			<Col span="8">&nbsp;</Col>
+			<Col span="8" class="h">收支明细</Col>
+			<Col span="8" class="right"><Icon  v-if="bType" name="search" @click="search"/></Col>
+		</Row>	
+		<Tabs :active="active" @click="clickType">
+			<Tab v-for="type in allType" :title="type.name">
+				<div class="sub-title">
+					<CellGroup>
+						<Cell :title="ym" :value="reportValue" icon="edit" @click="selectMonth">
+						</Cell>
+					</CellGroup>
+				</div>				
+				<div class="order" v-for="(detail, index) in detailList" :key="index">
+					<Row class="address">
+						<Col span="24">{{detail.addrInfo}}</Col>
+					</Row>
+					<Row class="detail">
+						<Col span="14">
+							{{formatDate(detail.createDate)}}
+						</Col>
+						<Col span="6">
+							<div v-if="detail.type == 'INCOME'">{{formatPayType(detail.payType)}}</div>
+							<div v-if="detail.type == 'OUTCOME'">{{detail.empName}}</div>
+						</Col>
+						<Col span="4">
+							<div v-if="detail.type == 'INCOME'" class="income">+{{detail.amount}}</div>
+							<div v-if="detail.type == 'OUTCOME'" class="outcome">-{{detail.amount}}</div>
+							
+						</Col>				
+					</Row>			
+				</div>
+			</Tab>	
+		</Tabs>
+		<Actionsheet v-model="show" title="选择年月">
+			<DatetimePicker @confirm="confirmMonth" @cancel="cancelSelect"
+			  v-model="minDate"
+			  type="date"
+			  :min-hour="minHour"
+			  :max-hour="maxHour"
+			/>
+		</Actionsheet>
+		<Actionsheet v-model="showSelectType"  :actions="payways" cancel-text="取消"/>
+		<Actionsheet v-model="showSelectEmp"  :actions="emps" cancel-text="取消"/>
 		<Footer/>
 	</div>
 </template>
 
 <script>
-import { Row, Col} from 'vant'
+import { Row, Col, Tab, Tabs, Cell, CellGroup, Actionsheet, DatetimePicker, Icon, Picker } from 'vant'
 import Header from "../../wechat/Header"
 import Footer from "../../wechat/Footer"
+import * as utils from "../../../utils"
 export default{
 	name: "AddAccount",
-	components: { Header, Footer, Row, Col},
+	components: { Header, Footer, Row, Col, Tab, Tabs, Cell, CellGroup, Actionsheet, DatetimePicker, Icon, Picker },
 	data () {
 		return {
+			show:false,
+			showSelectType:false,
+			showSelectEmp:false,
+			payways: [
+		        {
+		          name: '微信',
+		          key:'WECHAT',
+		          callback: this.searchPay
+		        },
+		        {
+		          name: '支付宝',
+		          key:'ALIPAY',
+		          callback: this.searchPay
+		        },
+		        {
+		          name: '现金',
+		          key:'CASH',
+		          callback: this.searchPay
+		        },
+		        {
+		          name: '纸质水票',
+		          key:'PICKET',
+		          callback: this.searchPay
+		        }
+		      ],
+		    emps:[],
+			minHour: 0,
+		    maxHour: 31,
+		    minDate: null,
+			active: 0,
+			allType: [{
+				key:'ALL',
+				name:'全部'
+			},{
+				key:'INCOME',
+				name:'收入'
+			},{
+				key:'OUTCOME',
+				name:'支出'
+			}],
+			bType:null,
+			ym: null,		
+			payType:null,	
+			empId:null,
+			report: {},
+			reportValue:'',
+			detailList:[]
 		}
 	},
 	methods: {
+		allDetail(){
+			    this.finReport();
+				var req = {};
+		    	req.userId = this.$store.state.userId;
+		    	req.ym = this.ym;
+		    	req.pageSize = 10;
+		    	req.pageNumber = 1;
+		    	req.bType = this.bType;
+		    	req.payType = this.payType;
+		    	req.empId = this.empId;
+		    	this.$api.mine.pageFinDetail(req)
+		    	.then(res =>{
+		    		if(res.code = '0000'){
+		    			this.detailList = res.msg;
+		    		}
+		    	}).catch(error => {
+		    		console.error(error);
+		    	})		    
+		},
+		finReport(){
+		    	var req = {};
+		    	req.userId = this.$store.state.userId;
+		    	this.$api.mine.finReport(req)
+		    	.then(res =>{
+		    		if(res.code = '0000'){
+		    			this.report = res.msg;
+		    			if(this.bType){
+		    				if(this.bType == 'INCOME'){
+								this.reportValue = "收入："+ this.report.monIncome;
+		    				}else if(this.bType == 'OUTCOME'){
+								this.reportValue = "支出："+ this.report.monEmpExp;
+		    				}
+		    			}else{
+		    				this.reportValue = "收入："+ this.report.monIncome+ "，支出："+ this.report.monEmpExp;
+		    			}
+		    			
+		    		}
+		    	}).catch(error => {
+		    		console.error(error);
+		    	})
+		},
+		formatDate(dateTime) {
+      		return utils.formatDateTime(dateTime);
+    	},
+    	formatPayType(payKey){
+    		if(payKey == 'ALIPAY'){
+    			return "支付宝";
+    		} else if(payKey == 'WECHAT'){
+				return "微信";
+    		}
+    	},
+    	selectMonth(){
+    		this.show = true;
+    	},
+    	clickType(index){
+    		if(index == 0){
+    			this.bType = null;
+    		}else if(index == 1){
+    			this.bType = 'INCOME';
+    		}else if(index == 2){
+    			this.bType = 'OUTCOME';
+    		}
+    		this.allDetail();
+    	},
+    	cancelSelect(){
+    		this.show = !this.show; 
+    	},
+    	confirmMonth(value){
+    		this.ym = value.getFullYear()+"-"+(value.getMonth()+1);
+    		this.allDetail();     	
+        	this.show = !this.show;
+    	},
+    	searchPay(item){
+    		this.empId = null;
+    		this.payType = item.key;
+    		this.allDetail();     	
+        	this.showSelectType = !this.showSelectType;
+    	},
+    	searchEmp(item){
+    		this.empId = item.key;
+    		this.payType = null;
+    		this.allDetail();     	
+        	this.showSelectEmp = !this.showSelectEmp;
+    	},
+    	search(){
+    		if(this.bType == 'INCOME'){
+				this.showSelectType = true;
+		    }else if(this.bType == 'OUTCOME'){
+		    	this.listShopEmp(); 
+				this.showSelectEmp = true;
+		    }
+    	},
+    	listShopEmp(){
+        	var req = {};
+		    req.userId = this.$store.state.userId;
 
+			this.$api.mine.listShopEmp(req)
+			.then(res => {
+			    if(res.code = "0000"){
+			    	this.emps = [];
+			    	for(var i=0; i<res.msg.length;i++){
+			    		var emp = {};
+			    		emp.key = res.msg[i].id;
+			    		emp.name = res.msg[i].realName;
+			    		emp.callback=this.searchEmp;
+			    		this.emps.push(emp);
+			    	}
+			    }	        
+			})
+			.catch(error => {
+			        console.log(error);
+			});
+        },
+    },
+    computed:{
+    	
+    },
+    mounted(){
+    	var now = new Date();
+    	this.ym = now.getFullYear()+"-"+(now.getMonth()+1);
+    	this.allDetail();
+    	this.listShopEmp();
     }
+
 }
 </script>
 
 <style scoped>
+	.search{
+		margin-left: 40px;
+		text-align: right;
+	}
+	.address{
+		margin-bottom:10px;
+	}
+	.detail{
+		padding-bottom:5px;
+		border-bottom:1px solid #e8e8e8;
+	}
+	.income{
+		color:green;
+		font-size:16px;
+		text-align: right;
+	}
+	.outcome{
+		color:red;
+		font-size:16px;
+		text-align: right;
+	}
+	.sub-title div{
+		background-color: #f8f8f8;
+	}
+	.h{
+		text-align: center;
+		margin:15px auto;
+	}
+	.right{
+		text-align: right;
+		margin:15px auto;
+		padding-right: 15px;
+	}
 	p{
 		font-size:14px;
 		margin:10px 0 10px 15px;
 	}
 	.order{
-		font-size:14px;
-		margin:10px 0 10px 15px;
+		font-size:13px;
+		margin:10px 15px 10px 15px;
 	}
 
 

@@ -60,14 +60,14 @@ export default{
 				deposit:20,
 				price:17.2,
 				salePrice:16,
-				goodsUrl:"../../../assets/images/water.png"
+				goodsUrl:"//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg"
 			},{
 				status:1,
 				goodsName:"蓝剑矿泉水（15L）",
 				deposit:20,
 				price:18.5,
 				salePrice:15,
-				goodsUrl:"../../../assets/images/water1.png"
+				goodsUrl:"//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg"
 			}]
 		}
 	},
