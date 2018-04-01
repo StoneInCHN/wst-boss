@@ -35,7 +35,7 @@ const getInfo = {
     "mobilePhoneNum": "15863254259",
     "status": "ACTIVED",
     "telphoneNum": null,
-    "notice": "宾川时代涨价了"
+    "notice": "冰川时代涨价了"
   }
 }
 
@@ -135,6 +135,112 @@ var outcomeDetail = {
     }
   ]
 }
+const getGList = {
+  "code": "0000",
+  "desc": "操作成功",
+  "msg": {
+    "gList": [
+      {
+        "brandName": "蓝剑",
+        "brandId": "1",
+        "gInfo": [
+          {
+            "gSpec": "15L",
+            "distPrice": 15,
+            "picUrl": "//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
+            "gName": "冰川时代",
+            "brandId": 1,
+            "id": 1,
+            "originPrice": 16,
+            "gStatus": "ON",
+            "gDeposit": null
+          },
+          {
+            "gSpec": "10L",
+            "distPrice": 10,
+            "picUrl": "//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
+            "gName": "蓝剑",
+            "brandId": 1,
+            "id": 2,
+            "originPrice": 10,
+            "gStatus": "OFF",
+            "gDeposit": null
+          }
+        ]
+      },
+      {
+        "brandName": "乐百氏",
+        "brandId": "2",
+        "gInfo": [
+          {
+            "gSpec": "10L",
+            "distPrice": 10,
+            "picUrl": "//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
+            "gName": "乐百氏",
+            "brandId": 2,
+            "id": 3,
+            "originPrice": 10,
+            "gStatus": "ON",
+            "gDeposit": null
+          }
+        ]
+      }
+    ]
+  }
+}
+const allBrands = {
+  "code": "0000",
+  "desc": "操作成功",
+  "msg": {
+    "brands": [
+      {
+        "name": "蓝剑",
+        "id": 14
+      },
+      {
+        "name": "农夫山泉",
+        "id": 15
+      }
+    ]
+  }
+}
+const allGoodsName = {
+  "code": "0000",
+  "desc": "操作成功",
+  "msg": {
+    "brands": [
+      {
+        "name": "冰川时代1",
+        "id": 14
+      },
+      {
+        "name": "蓝剑矿泉水",
+        "id": 15
+      }
+    ]
+  }
+}
+const getSpec={
+  "code": "0000",
+  "desc": "操作成功",
+  "msg": {
+    "specs": [
+      {
+        "picUrl": "/path/11.jpg",
+        "unit": "L",
+        "specValue": 15,
+        "id": 2
+      },
+      {
+        "picUrl": "/path/11.jpg",
+        "unit": "L",
+        "specValue": 20,
+        "id": 3
+      }
+    ]
+  }
+}
+
 export default {
   listShopEmp: config => {
     console.info("请求【员工列表】接口, 请求参数：", config.body);
@@ -173,7 +279,35 @@ export default {
           return outcomeDetail; 
         }
       }          
-  }
-
-  
+  },
+  getGList: config => {
+    console.info("请求【商品管理列表】接口, 请求参数：", config.body);
+    return getGList;
+  },
+  editGStatus: config => {
+    console.info("请求【修改商品状态】接口, 请求参数：", config.body);
+    return simpleSuccess;
+  },  
+  getWBrand: config => {
+    var req = eval('(' + config.body + ')');
+    if(req.entityId != null){
+      console.info("请求【获取子产品】接口, 请求参数：", config.body);
+      return allGoodsName;
+    }else{
+      console.info("请求【获取水品牌】接口, 请求参数：", config.body);
+      return allBrands;
+    }       
+  },  
+  getSpec: config => {
+    console.info("请求【获取品牌规格】接口, 请求参数：", config.body);
+    return getSpec;
+  }, 
+  addWG: config => {
+    console.info("请求【商家新增商品】接口, 请求参数：", config.body);
+    return simpleSuccess;
+  },
+  editWG: config => {
+    console.info("请求【商家编辑商品】接口, 请求参数：", config.body);//好像接口文档没有这个接口
+    return simpleSuccess;
+  },
 };

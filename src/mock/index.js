@@ -10,4 +10,10 @@ Mock.mock(/getInfo/, "post", mine.getInfo);//获取商家信息
 Mock.mock(/updateInfo/, "post", mine.updateInfo);//获取商家信息
 Mock.mock(/finReport/, "post", mine.finReport);//商家收支统计
 Mock.mock(/pageFinDetail/, "post", mine.pageFinDetail);//商家收支统计
+Mock.mock(/getGList/, "post", mine.getGList);//商品管理列表
+Mock.mock(/editGStatus/, "post", mine.editGStatus);//修改商品状态
+Mock.mock(/getWBrand/, "post", mine.getWBrand);//获取水品牌
+Mock.mock(/getSpec/, "post", mine.getSpec);//获取规格
+Mock.mock(/addWG/, "post", mine.addWG);//商家新增商品
+Mock.mock(/editWG/, "post", mine.editWG);//商家编辑商品
 export default Mock

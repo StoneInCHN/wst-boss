@@ -8,8 +8,8 @@
 			</a>
 		</p>
 		<Tabs :active="active">
-			<Tab v-for="(brand, index) in allBrands" :title="brand.brandName" :key="index">
-				<GoodsCrumb v-for="(goods, index) in goodsList" :goods="goods" :editable="editable" :key="index"/>
+			<Tab v-for="(brand, index) in gList" :title="brand.brandName" :key="index">
+				<GoodsCrumb v-for="(goods, index) in brand.gInfo" :goods="goods" :editable="editable" :editIds="editIds" :key="index"/>
 			</Tab>	
 		</Tabs>
 		<p class="fixed" v-if="editable==false">			
@@ -26,49 +26,20 @@
 </template>
 
 <script>
-import { Tabbar, TabbarItem, Tab, Tabs } from 'vant'
+import { Tabbar, TabbarItem, Tab, Tabs, Toast } from 'vant'
 import Header from "../../wechat/Header"
 import Footer from "../../wechat/Footer"
 import GoodsCrumb from "./GoodsCrumb"
 export default{
 	name: "Mine",
-	components: { Header, Footer, GoodsCrumb, Tab, Tabs, Tabbar, TabbarItem},
+	components: { Header, Footer, GoodsCrumb, Tab, Tabs, Tabbar, TabbarItem, Toast},
 	data () {
 		return {
 			editable: false,
 			active: 0,
 			menu: 1,
-			allBrands:[{
-				id: 0,
-				brandName: "全部"
-			},{
-				id: 1,
-				brandName: "乐百氏"
-			},{
-				id: 2,
-				brandName: "蓝剑"
-			},{
-				id: 3,
-				brandName: "蓝关"
-			},{
-				id: 4,
-				brandName: "农夫山泉"
-			}],
-			goodsList:[{
-				status:0,
-				goodsName:"冰川时代",
-				deposit:20,
-				price:17.2,
-				salePrice:16,
-				goodsUrl:"//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg"
-			},{
-				status:1,
-				goodsName:"蓝剑矿泉水（15L）",
-				deposit:20,
-				price:18.5,
-				salePrice:15,
-				goodsUrl:"//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg"
-			}]
+			gList:[],
+			editIds:[]
 		}
 	},
 	methods: {
@@ -79,20 +50,82 @@ export default{
 	    	this.editable = !this.editable;
 	    },
 	    goodsDel(){
-	    	//删除商品
-	    	this.editable = !this.editable;
+	    	//删除商品	    	
+	    	if(this.editIds.length > 0){
+	    		this.goodsEdit(this.editIds, 'DELETE');
+	    		this.editable = !this.editable;
+	    	}else{
+	    		Toast.fail('请选择编辑项');
+	    	}
 	    },
 	    goodsUp(){
-	    	//商品上架
-	    	this.editable = !this.editable;
+	    	//商品上架	    	
+	    	if(this.editIds.length > 0){
+	    		this.goodsEdit(this.editIds, 'ON');
+	    		this.editable = !this.editable;
+	    	}else{
+	    		Toast.fail('请选择编辑项');
+	    	}
 	    },
 	    goodsDown(){
-	    	//商品下架
-	    	this.editable = !this.editable;
+	    	//商品下架	    	
+			if(this.editIds.length > 0){
+	    		this.goodsEdit(this.editIds, 'OFF');
+	    		this.editable = !this.editable;
+	    	}else{
+	    		Toast.fail('请选择编辑项');
+	    	}
+	    },
+	    goodsEdit(editIds,status){
+	    	var req = {};
+		    req.userId = this.$store.state.userId;
+		    req.oprStatus = status;
+		    req.entityIds = editIds;
+			this.$api.mine.editGStatus(req)
+			.then(res => {
+			    if(res.code = "0000"){
+			    	Toast.success("操作成功");
+			    	this.getGList();
+			    }	        
+			})
+			.catch(error => {
+			        console.log(error);
+			});
+	    },
+	    getGList(){	    	
+	    	var req = {};
+		    req.userId = this.$store.state.userId;
+			this.$api.mine.getGList(req)
+			.then(res => {
+			    if(res.code = "0000"){
+			    	var all = {};
+			    	all.brandName = '全部';
+			    	all.brandId = 0;
+			    	var gInfo=[];
+			    	for (var i = 0; i < res.msg.gList.length; i++) {
+			    		for (var j = 0; j < res.msg.gList[i].gInfo.length; j++) {
+			    			gInfo.push(res.msg.gList[i].gInfo[j]);
+			    		}			    		
+			    	}
+			    	all.gInfo = gInfo;
+			    	this.gList = [];
+			    	this.gList.push(all);
+			    	for (var i = 0; i < res.msg.gList.length; i++) {
+			    		this.gList.push(res.msg.gList[i]);    		
+			    	}
+			    }	        
+			})
+			.catch(error => {
+			        console.log(error);
+			});
 	    }
 
-
+    },
+    mounted(){
+    	this.getGList();
+    	
     }
+
 }
 </script>
 

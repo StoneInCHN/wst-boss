@@ -204,7 +204,6 @@ export default{
     	listShopEmp(){
         	var req = {};
 		    req.userId = this.$store.state.userId;
-
 			this.$api.mine.listShopEmp(req)
 			.then(res => {
 			    if(res.code = "0000"){

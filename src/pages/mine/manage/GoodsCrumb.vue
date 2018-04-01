@@ -2,27 +2,27 @@
 	<div>
 		  	<div class="goods">
 		  		<div class="goods_checkbox" v-if="editable">
-		  			<Checkbox  v-model="checked"/>
+		  			<Checkbox v-model="checked" @change="editGoods"/>
 		  		</div>		  		
 		  		<div class="goods_thumb">
-		  			<img :src="goods.goodsUrl" width="90" height="90">
+		  			<img :src="goods.picUrl" width="90" height="90">
 		  			<div class="goods_status">
-		  				<span v-if="goods.status == 0" class="invalid">下架</span>
-		  				<span v-if="goods.status == 1" class="valid">上架</span>
+		  				<span v-if="goods.gStatus == 'OFF'" class="invalid">下架</span>
+		  				<span v-if="goods.gStatus == 'ON'" class="valid">上架</span>
 		  			</div>
 		  		</div> 
 		  		<div class="goods_content">
 		  			<div class="goods_row">
 		  				
-		  				<div class="goods_title">{{goods.goodsName}}</div> 
-		  				<div class="goods_edit"><Icon name="edit" @click="editGoods"/></div>
+		  				<div class="goods_title">{{goods.gName}}</div> 
+		  				<div class="goods_edit"><Icon name="edit" @click="edit"/></div>
 		  			</div> 
 		  			<div class="goods_row">
-		  					<div class="goods_price">押金 {{formatPrice(goods.deposit)}}</div> 
+		  					<div class="goods_price">押金 {{formatPrice(goods.gDeposit)}}</div> 
 		  			</div> 
 		  			<div class="goods_row">
-		  					<div class="goods_price">{{formatPrice(goods.salePrice)}}
-		  						<span>{{formatPrice(goods.price)}}</span>
+		  					<div class="goods_price">{{formatPrice(goods.distPrice)}}
+		  						<span>{{formatPrice(goods.originPrice)}}</span>
 		  					</div> 
 		  			</div>
 		  		</div>
@@ -38,23 +38,46 @@ export default{
 	components: { Icon, Toast, Checkbox },
 	props: {
         goods: Object,
-        editable: Boolean
+        editable: Boolean,
+        editIds: Array,
     },
     data () {
 		return {			
-			checked: true
+			checked: false
 		}
 	},
 	methods: {
-	    editGoods () {
-	 		if(this.goods.status == 1){
-	 			this.$toast('商品下架后才能被编辑');
+	    edit () {
+	 		if(this.goods.gStatus == 'ON'){
+	 			Toast.fail('商品下架后才能被编辑');
 	 		}else{
+	 			var req={};
+	 			req.brandId = this.goods.brandId;
+			    req.brandName = this.goods.brandName;
+			    req.gName = this.goods.gName;
+			    req.specId = this.goods.specId;
+			    req.originPrice = this.goods.originPrice;
+			    req.distPrice = this.goods.distPrice;
+			    req.id= this.goods.id;
+		    	this.$store.state.goods = req;
 	 			this.$router.push('/manage/goodsEdit');
 	 		}
 	    },
 	    formatPrice(num){
-	    	return "￥"+num.toFixed(2);
+	    	if(num){
+	    		return "￥"+num.toFixed(2);
+	    	}else{
+	    		return "无";
+	    	}
+	    	
+	    },
+	    editGoods(item){
+	    	if(item == true){
+	    		this.editIds.push(this.goods.id);
+	    	}else{
+	    		this.editIds.pop(this.goods.id);
+	    	}
+	    	console.info(this.editIds);
 	    }
 
     }

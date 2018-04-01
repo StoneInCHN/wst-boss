@@ -24,7 +24,7 @@
 				</tr>
 			</table>
 			<p class="fixed">			
-				<a v-if="editable==false" @click="searchWorker" class="add"><Icon name="add-o"/> 添加</a>
+				<a v-if="editable==false" @click="searchWorker" class="add">添加</a>
 				<a v-else @click="deleteWork" class="delete"><Icon name="delete"/> 删除</a>
 			</p>
 			<Actionsheet v-model="showAction" :actions="actions" cancel-text="取消"/>
