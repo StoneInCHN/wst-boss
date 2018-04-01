@@ -4,18 +4,18 @@
 			<p v-if="type==1&&currentCode!=null" class="tel_title">该手机号已加入编号 {{currentCode}}</p>
 			<div>
 				<Row>
-					<Col span="10" :class="type==1?'red':''"><span>{{memberInfo.tel}}</span></Col>
-					<Col span="8"><span v-if="currentCode!=null">{{memberInfo.code}}</span></Col>
-					<Col span="6"><span class="right">{{memberInfo.name}}</span></Col>
+					<Col span="10" :class="type==1?'red':''"><span>{{memberInfo.cellPhoneNum}}</span></Col>
+					<Col span="8"><span v-if="currentCode!=null">{{memberInfo.serialNo}}</span></Col>
+					<Col span="6"><span class="right">{{memberInfo.addr.contactName}}</span></Col>
 				</Row>
 			</div>
 			<div>
 				<Row>
-					<Col span="12" :class="type==2?'red':''"><span>{{memberInfo.address}}</span></Col>
-					<Col span="12"><span class="right">{{memberInfo.createAt}}</span></Col>
+					<Col span="12" :class="type==2?'red':''"><span>{{memberInfo.addr.fullAddr}}</span></Col>
+					<Col span="12"><span class="right">{{formatDate(memberInfo.createDate)}}</span></Col>
 				</Row>
 			</div>
-			<div v-if="type==2 && memberInfo.code==null && currentCode!=null" class="card_footer">
+			<div v-if="type==2 && memberInfo.serialNo==null && currentCode!=null" class="card_footer">
 				<span @click="addToUserCard">添加联系方式到{{currentCode}}</span>
 			</div>
 	    </div>
@@ -24,12 +24,13 @@
 
 <script>
 import { Row, Col } from 'vant'
+import * as utils from "../../utils"
 export default{
 	name: "UserCard",
 	components: { Row, Col },
 	props: {
         memberInfo: Object,
-        type: String,
+        type: Number,
         currentCode: String
     },
     data () {
@@ -40,7 +41,10 @@ export default{
 	methods: {
 		addToUserCard(){
 			this.memberInfo.code = this.currentCode;
-		}
+		},
+	    formatDate(dateTime) {
+      		return utils.formatDateTime(dateTime);
+    	},
     }
 }
 </script>

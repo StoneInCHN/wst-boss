@@ -17,7 +17,7 @@
 			</Row>
 		</div>
 			<div v-for="memberInfo in memberInfoList">
-				<MemberInfo :memberInfo="memberInfo" :type="type" :currentCode="memberInfo.code"/>
+				<MemberInfo :memberInfo="memberInfo" :type="type" :currentCode="memberInfo.serialNo"/>
 			</div>								
 				
 	</div>
@@ -32,19 +32,7 @@ export default{
 	components: { Header, Search, Row, Col, Button, MemberInfo },
 	data () {
 		return {
-			memberInfoList:[{
-				tel:"18030506785",
-				code:"108",
-				name:"习大大",
-				address:"中铁西城19栋1658室",
-				createAt:"2018.01.18 21:45:36"
-			},{
-				tel:"18030506785",
-				code:"108",
-				name:"习大大",
-				address:"中铁西城19栋1658室",
-				createAt:"2018.01.18 21:45:36"				
-			}],
+			memberInfoList:[],
 			keyWords:"",
 			type:0,
 
@@ -52,15 +40,30 @@ export default{
 	},
 	methods: {
 	    onSearch () {
-	    			this.memberInfoList = [];
-	    			let member1={};
-	    			member1.tel="18030506785";
-	    			member1.code="108";	    			
-	    			member1.name="习大大";
-	    			member1.address="中铁西城19栋1658室";
-	    			member1.createAt="2018.01.18 21:45:36";
-	    			this.memberInfoList.push(member1);
-	    }  
+	    	this.pageShopUsers();
+	    },
+	    pageShopUsers(){
+	    	var req = {};
+		    req.userId = this.$store.state.userId;
+		    req.pageNumber = 1; 
+		    req.pageSize = 5
+		    if(this.keyWords != ""){
+		    	req.cellPhoneNum=this.keyWords;
+		    }
+			this.$api.user.pageShopUsers(req)
+			.then(res => {
+				console.info(res);
+			    if(res.code = "0000"){
+			    	this.memberInfoList = res.msg;
+			    }	        
+			})
+			.catch(error => {
+			        console.log(error);
+			});
+	    }
+    },
+    mounted(){
+    	this.pageShopUsers();
     }
 }
 </script>

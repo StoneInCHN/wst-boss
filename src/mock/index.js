@@ -1,8 +1,10 @@
 import Mock from 'mockjs';
 import api from './api';
 import mine from "./mine";
+import user from "./user";
 
 Mock.mock(/getUserInfo/, 'get', api.getUserInfo);
+//我的
 Mock.mock(/listShopEmp/, "post", mine.listShopEmp);//员工列表
 Mock.mock(/deleteEmp/, "post", mine.deleteEmp);//删除员工
 Mock.mock(/updateEmp/, "post", mine.updateEmp);//新增/更新员工
@@ -16,4 +18,10 @@ Mock.mock(/getWBrand/, "post", mine.getWBrand);//获取水品牌
 Mock.mock(/getSpec/, "post", mine.getSpec);//获取规格
 Mock.mock(/addWG/, "post", mine.addWG);//商家新增商品
 Mock.mock(/editWG/, "post", mine.editWG);//商家编辑商品
+
+//用户
+Mock.mock(/summar/, "post", user.summar);//用户管理-主页
+Mock.mock(/pageShopUsers/, "post", user.pageShopUsers);//用户管理-订单用户列表
+Mock.mock(/pageSeriUsers/, "post", user.pageSeriUsers);//用户管理-查询编号用户
+
 export default Mock
