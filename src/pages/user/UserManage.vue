@@ -44,7 +44,7 @@
 		</div>
 		<div v-else>
 			<div>		
-				<UserCard v-for="userCard in userCards" :userCard="userCard" :currentCode="userCard.serialNo"/>	
+				<UserCard v-for="userCard in userCards" :key="userCard.id" :userCard="userCard" :currentCode="userCard.serialNo"/>	
 			</div>		
 		</div>
 		<!-- <div class="new_code" v-if="userCard!=null&&userCard.id==null" @click="newCode">新建编号</div> -->

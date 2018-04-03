@@ -1,11 +1,11 @@
+import { fetch, post, patch, put } from "../config";
 
-import {fetch, post, patch, put} from '../config'
+const baseUrl = "/";
 
-const baseUrl = "/"
-
-const  order = {
-
-
-}
+const order = {
+  pageShopOrders(params) {
+    return post("/sorder/pageShopOrders", params);
+  }
+};
 
 export default order;

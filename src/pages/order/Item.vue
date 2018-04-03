@@ -1,35 +1,38 @@
 <template>
-   <div class="order-item">
+<div>
+   <div  v-if="item" class="order-item">
        <section class="order-item-section">
-           <p>2018-02-11 12:23:10</p>
-           <Tag type="primary">水票支付</Tag>
+           <p>{{item.createDate }}</p>
+           <Tag type="primary">{{payType}}</Tag>
        </section>
        <section class="order-item-section">
-         <h6>成都市高新区软件园E区</h6>
+         <h6>{{item.addrInfo.fullAddr}}</h6>
        </section>
        <section class="order-item-section" v-if="isPending">
-         <p>13568952709</p>
+         <p>{{item.addrInfo.contactPhone}}</p>
+       </section>
+       <section v-for="orderItem in item.orderItems" :key="orderItem.gName" class="order-item-section">
+          <p> 
+            {{`${orderItem.gName} X ${orderItem.count}`}}
+          </p>
+           <span>{{`￥${item.amount}`}}</span>
        </section>
        <section class="order-item-section">
-           <p>冰川时代矿泉水 (15L) X 1 </p>
-           <span>￥18.00</span>
+         <p class="total-price">{{`合计:￥${item.amount}`}}</p>
        </section>
-       <section class="order-item-section">
-         <p class="total-price">合计:￥18.00</p>
-       </section>
-       <section class="order-item-section" v-if="isDelivery">
-           <p>配送员<span>李丽</span> </p>
-           <p>提成金额:<span>￥18.00</span></p>
+       <section class="order-item-section" v-if="isProcessing">
+           <p>配送员<span>{{item.empName}}</span> </p>
+           <p>提成金额:<span>{{`${item.empAmout|| 0 } 元`}}</span></p>
        </section>
        <div class="order-item-footer" v-if="isPending">
-           <ul>
+           <ul :disabled="eventDisabled">
                <li class="refuse"><a @click="refuse">拒绝</a></li>
-               <li><a @click="assign">指派</a></li>
+               <li><a  @click="assign">指派</a></li>
                <li><a @click="service">送达</a></li>
                <li><a @click="call">电话</a></li>
            </ul>
        </div>
-       <div class="order-item-footer" v-if="isDelivery">
+       <div class="order-item-footer" v-if="isProcessing">
            <ul>
                <li class="refuse"><a @click="unDelivery">无法送到</a></li>
                <li><a @click="reassignment">改派</a></li>
@@ -37,29 +40,69 @@
                <li><a @click="call">电话</a></li>
            </ul>
        </div>
-       <div v-if="isCompleted" class="order-item-footer">
+       <div v-if="isOther" class="order-item-footer">
              <ul class="complete-status">
                <li class="state">
-                 <Tag plain type="primary">已完成</Tag>
+                 <Tag plain type="primary">{{otherStatusText}}</Tag>
                </li>
-               <li>李丽丽</li>
+               <li>{{item.empName}}</li>
                <li>提成金额:</li>
-               <li>5元</li>
+               <li>{{`${item.empAmout|| 0 } 元`}}</li>
            </ul>
        </div>
        <Checkbox class="order-item-checkbox" v-model="checked" v-if="editable"/>
    </div>
+   <p v-else>
+     暂无订单信息
+   </p>
+   <Actionsheet v-model="showCall" :actions="callActions" cancel-text="取消"/>
+   <Popup v-model="showAssignSelect" position="bottom">
+         <Picker 
+          show-toolbar  
+          title="请指派人选"
+          confirm-button-text="确定"
+          :columns="assignColumns"
+          @cancel="assignPickerCancel"
+          @confirm="assignPickerConfirm"/>
+    </Popup>
+   <Popup v-model="showServiceSelect" position="bottom">
+         <Picker 
+          show-toolbar  
+          title="请选择送达的人"
+          confirm-button-text="确定"
+          :columns="serviceColumns"
+          @cancel="onPickerCancel"
+          @confirm="onPickerConfirm"/>
+    </Popup>
+    <Popup v-model="showPayMethod" position="bottom">
+         <Picker 
+          show-toolbar  
+          title="请选择支付方式"
+          confirm-button-text="确定"
+          :columns="payMethodColumns"
+          @cancel="payMethodPickerCancel"
+          @confirm="payMethodPickerConfirm"/>
+    </Popup>
+  </div>
 </template>
 <script>
-import { Tag, Checkbox } from "vant";
+import { Tag, Checkbox, Actionsheet, Popup, Picker } from "vant";
+import { CobPayTypeEnum } from "@/shared/consts";
 export default {
   name: "orderItem",
   components: {
     Tag,
-    Checkbox
+    Checkbox,
+    Actionsheet,
+    Popup,
+    Picker
   },
-  props:{
-    state:{
+  props: {
+    item: {
+      require: true,
+      type: Object
+    },
+    state: {
       require: true,
       type: String
     },
@@ -71,40 +114,104 @@ export default {
   },
   data() {
     return {
-      checked: true
+      checked: false,
+      showCall: false,
+      showAssignSelect: false,
+      showServiceSelect: false,
+      showPayMethod: false,
+      callActions: [],
+      assignColumns: ["王二小", "查胜男", "李维斯"],
+      serviceColumns: ["王二小", "查胜男", "李维斯"],
+      payMethodColumns: ["纸质水票支付", "现金支付", "微信支付", "支付宝支付"],
+      otherStatus: {
+        FINISH: "已完成",
+        UNDELIVER: "无法送达",
+        REJECT: "已拒绝",
+        CANCEL: "已取消"
+      }
     };
   },
-  computed:{
-    isPending(){
-      return this.state === "pending"
+  computed: {
+    isPending() {
+      return this.state === "PENDING";
     },
-    isDelivery(){
-      return this.state === "delivery"
+    isProcessing() {
+      return this.state === "PROCESSING";
     },
-    isCompleted(){
-      return this.state === "complete"
+    isOther() {
+      return this.state === "OTHER";
+    },
+    payType() {
+      const type = this.item.payType;
+      return CobPayTypeEnum[type];
+    },
+    eventDisabled() {
+      return this.editable;
+    },
+    otherStatusText(){
+      const {oStatus} = this.item
+      const {otherStatus} = this
+      return otherStatus[oStatus] || ""
     }
   },
   methods: {
     call() {
       console.log("call");
+      this.callActions = [];
+      this.callActions.push({
+        name: this.item.addrInfo.contactPhone,
+        callback: this.callSomeone
+      });
+      this.showCall = !this.showCall;
+    },
+    callSomeone(item) {
+      console.log("打电话", item.name);
     },
     assign() {
       console.log("assign");
-      this.showAssign = !this.showAssign;
+      //this.showAssign = !this.showAssign;
+      this.showAssignSelect = !this.showAssignSelect;
     },
     service() {
       console.log("service");
-      this.showPayMethod = !this.showPayMethod;
+      this.showServiceSelect = !this.showServiceSelect;
     },
     refuse() {
       console.log("refuse");
     },
-    unDelivery(){
-      console.log("unDelivery")
+    unDelivery() {
+      console.log("unDelivery");
     },
-    reassignment(){
-      console.log("reassignment")
+    reassignment() {
+      console.log("reassignment");
+    },
+    onPickerConfirm(value, index) {
+      console.log("onPickerConfirm", value, index);
+      //this.showPayMethod = !this.showPayMethod
+      this.showServiceSelect = !this.showServiceSelect;
+    },
+    onPickerCancel() {
+      console.log("onPickerCancel");
+      this.showServiceSelect = !this.showServiceSelect;
+    },
+    assignPickerConfirm(value, index) {
+      console.log("assignPickerConfirm", value, index);
+      this.showAssignSelect = !this.showAssignSelect;
+    },
+    assignPickerCancel() {
+      console.log("assignPickerConfirm");
+      this.showAssignSelect = !this.showAssignSelect;
+    },
+    payMethodPickerConfirm(value, index) {
+      console.log("payMethodPickerConfirm", value, index);
+      this.showpayMethod = !this.showpayMethod;
+    },
+    payMethodPickerCancel() {
+      console.log("payMethodPickerConfirm");
+      this.showpayMethod = !this.showpayMethod;
+    },
+    payMethodConfirm() {
+      this.pendingPay = !this.pendingPay;
     }
   }
 };
@@ -131,7 +238,7 @@ export default {
     p {
       font-size: 12px;
       flex: 1;
-      span{
+      span {
         margin-left: 20px;
       }
     }
@@ -156,12 +263,12 @@ export default {
         padding: 5px 2px;
         a {
           color: #06bf04;
+          padding: 0 10px;
         }
       }
       li:not(:last-child) {
         a {
           border-left: 2px solid #06bf04;
-          padding: 0 10px;
         }
       }
       li.refuse {
@@ -171,17 +278,24 @@ export default {
         }
       }
     }
-    .complete-status{
+    ul[disabled="disabled"] {
+      a {
+        pointer-events: none;
+        color: #ddd;
+        border-color: #ddd !important;
+      }
+    }
+    .complete-status {
       font-size: 14px;
       display: flex;
-      li{
+      li {
         clear: both;
         flex: 1;
       }
-      li.state{
-         flex: 1;
+      li.state {
+        flex: 1;
       }
-      li:last-child{
+      li:last-child {
         text-align: right;
       }
     }
@@ -195,7 +309,7 @@ export default {
       background-color: #4db1e5;
     }
   }
-  .order-item-section-delivery{
+  .order-item-section-delivery {
     display: flex;
   }
 }
