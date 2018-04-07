@@ -27,16 +27,16 @@
        <div class="order-item-footer" v-if="isPending">
            <ul :disabled="eventDisabled">
                <li class="refuse"><a @click="refuse">拒绝</a></li>
-               <li><a  @click="assign">指派</a></li>
-               <li><a @click="service">送达</a></li>
+               <li><a  @click="toggleAssign">指派</a></li>
+               <li><a @click="toggleFinish">送达</a></li>
                <li><a @click="call">电话</a></li>
            </ul>
        </div>
        <div class="order-item-footer" v-if="isProcessing">
-           <ul>
+           <ul :disabled="eventDisabled">
                <li class="refuse"><a @click="unDelivery">无法送到</a></li>
-               <li><a @click="reassignment">改派</a></li>
-               <li><a @click="service">送达</a></li>
+               <li><a @click="toggleReassignment">改派</a></li>
+               <li><a @click="toggleFinish">送达</a></li>
                <li><a @click="call">电话</a></li>
            </ul>
        </div>
@@ -55,38 +55,16 @@
    <p v-else>
      暂无订单信息
    </p>
-   <Actionsheet v-model="showCall" :actions="callActions" cancel-text="取消"/>
-   <Popup v-model="showAssignSelect" position="bottom">
-         <Picker 
-          show-toolbar  
-          title="请指派人选"
-          confirm-button-text="确定"
-          :columns="assignColumns"
-          @cancel="assignPickerCancel"
-          @confirm="assignPickerConfirm"/>
-    </Popup>
-   <Popup v-model="showServiceSelect" position="bottom">
-         <Picker 
-          show-toolbar  
-          title="请选择送达的人"
-          confirm-button-text="确定"
-          :columns="serviceColumns"
-          @cancel="onPickerCancel"
-          @confirm="onPickerConfirm"/>
-    </Popup>
-    <Popup v-model="showPayMethod" position="bottom">
-         <Picker 
-          show-toolbar  
-          title="请选择支付方式"
-          confirm-button-text="确定"
-          :columns="payMethodColumns"
-          @cancel="payMethodPickerCancel"
-          @confirm="payMethodPickerConfirm"/>
-    </Popup>
+   <AssignPicker v-if="openAssign" :close="toggleAssign"/>
+   <AssignPicker v-if="openReassignment" :close="toggleReassignment"/>
+   <PayMethodPicker v-if="openFinish" :isBatch="true" :close="toggleFinish"/>
   </div>
 </template>
 <script>
-import { Tag, Checkbox, Actionsheet, Popup, Picker } from "vant";
+import { Tag, Checkbox, Actionsheet, Popup, Picker, Dialog, Toast } from "vant";
+import AssignPicker from "@/components/AssignPicker";
+import PayMethodPicker from "@/components/PayMethodPicker";
+import { mapActions, mapGetters } from "vuex";
 import { CobPayTypeEnum } from "@/shared/consts";
 export default {
   name: "orderItem",
@@ -95,7 +73,11 @@ export default {
     Checkbox,
     Actionsheet,
     Popup,
-    Picker
+    Picker,
+    Dialog,
+    Toast,
+    AssignPicker,
+    PayMethodPicker
   },
   props: {
     item: {
@@ -115,6 +97,9 @@ export default {
   data() {
     return {
       checked: false,
+      openAssign: false,
+      openReassignment: false,
+      openFinish: false,
       showCall: false,
       showAssignSelect: false,
       showServiceSelect: false,
@@ -132,6 +117,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(["checkedOrders"]),
     isPending() {
       return this.state === "PENDING";
     },
@@ -148,13 +134,34 @@ export default {
     eventDisabled() {
       return this.editable;
     },
-    otherStatusText(){
-      const {oStatus} = this.item
-      const {otherStatus} = this
-      return otherStatus[oStatus] || ""
+    otherStatusText() {
+      const { oStatus } = this.item;
+      const { otherStatus } = this;
+      return otherStatus[oStatus] || "";
+    }
+  },
+  watch: {
+    checked(newVal, oldVal) {
+      const { id } = this.item;
+      const desc = `的checked 监听:`;
+      console.log({ id, desc, newVal, oldVal });
+      if (this.editable && id) {
+        const checkedOrders = this.checkedOrders || [];
+        if (newVal) {
+          checkedOrders.push(id);
+          this.setCheckedOrders(checkedOrders);
+        } else {
+          const lists = checkedOrders.filter(val => {
+            console.log({ val, id });
+            return val !== id;
+          });
+          this.setCheckedOrders(lists);
+        }
+      }
     }
   },
   methods: {
+    ...mapActions(["setCheckedOrders"]),
     call() {
       console.log("call");
       this.callActions = [];
@@ -167,51 +174,73 @@ export default {
     callSomeone(item) {
       console.log("打电话", item.name);
     },
-    assign() {
-      console.log("assign");
-      //this.showAssign = !this.showAssign;
-      this.showAssignSelect = !this.showAssignSelect;
+    toggleAssign() {
+      this.openAssign = !this.openAssign;
     },
-    service() {
-      console.log("service");
-      this.showServiceSelect = !this.showServiceSelect;
+    toggleReassignment() {
+      this.openReassignment = !this.openReassignment;
+    },
+    toggleFinish() {
+      this.openFinish = !this.openFinish;
     },
     refuse() {
       console.log("refuse");
+      Dialog.confirm({
+        title: "拒绝订单",
+        message: `确定要拒绝[${this.item.addrInfo.contactPhone}]的订单吗?`
+      })
+        .then(() => {
+          // on confirm
+          const { id } = this.item;
+          const params = {
+            entityIds: [id],
+            oprStatus: "REJECT",
+            userId: 1
+          };
+          this.oprSO(params);
+        })
+        .catch(() => {
+          // on cancel
+        });
     },
     unDelivery() {
       console.log("unDelivery");
+      console.log("refuse");
+      Dialog.confirm({
+        title: "无法送达",
+        message: `确定要酱[ ${
+          this.item.addrInfo.contactPhone
+        } ]的订单状态修改为[ 无法送达 ]吗?`
+      })
+        .then(() => {
+          // on confirm
+          const { id } = this.item;
+          const params = {
+            entityIds: [id],
+            oprStatus: "UNDELIVER",
+            userId: 1
+          };
+          this.oprSO(params);
+        })
+        .catch(() => {
+          // on cancel
+        });
     },
-    reassignment() {
-      console.log("reassignment");
-    },
-    onPickerConfirm(value, index) {
-      console.log("onPickerConfirm", value, index);
-      //this.showPayMethod = !this.showPayMethod
-      this.showServiceSelect = !this.showServiceSelect;
-    },
-    onPickerCancel() {
-      console.log("onPickerCancel");
-      this.showServiceSelect = !this.showServiceSelect;
-    },
-    assignPickerConfirm(value, index) {
-      console.log("assignPickerConfirm", value, index);
-      this.showAssignSelect = !this.showAssignSelect;
-    },
-    assignPickerCancel() {
-      console.log("assignPickerConfirm");
-      this.showAssignSelect = !this.showAssignSelect;
-    },
-    payMethodPickerConfirm(value, index) {
-      console.log("payMethodPickerConfirm", value, index);
-      this.showpayMethod = !this.showpayMethod;
-    },
-    payMethodPickerCancel() {
-      console.log("payMethodPickerConfirm");
-      this.showpayMethod = !this.showpayMethod;
-    },
-    payMethodConfirm() {
-      this.pendingPay = !this.pendingPay;
+    oprSO(params) {
+      if (params) {
+        this.$api.order
+          .oprSO(params)
+          .then(r => {
+            if (r.code === "0000") {
+              Toast.success(r.desc);
+            } else {
+              Toast.fail(r.desc);
+            }
+          })
+          .catch(e => {
+            console.log({ e });
+          });
+      }
     }
   }
 };

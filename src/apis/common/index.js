@@ -10,6 +10,9 @@ const common = {
   getUserInfo () {
     return fetch('/getUserInfo')
   },
+  getCobType(){
+    return fetch('/common/cobType')
+  }
 };
 
 export default common;

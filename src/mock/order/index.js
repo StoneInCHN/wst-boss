@@ -115,8 +115,17 @@ const pageShopOrders = {
   ]
 };
 
+const oprSO = {
+    "code": "0000",
+    "desc": "操作成功",
+    "msg": null
+  }
+
 export default {
   pageShopOrders: config => {
     return pageShopOrders;
+  },
+  oprSO: config => {
+    return oprSO;
   }
 };

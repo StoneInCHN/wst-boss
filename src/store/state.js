@@ -6,7 +6,8 @@ const state = {
 
 	count: 0,
 	name: '',
-	resultNum: 0
+	resultNum: 0,
+	checkedOrders:[]
 };
 
 export default state;

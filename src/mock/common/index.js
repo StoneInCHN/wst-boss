@@ -10,8 +10,24 @@ const wxApiConfig = {
     appId: "wx3598eb401cb80f00"
   }
 };
+const CobType = {
+  code: "0000",
+  desc: "操作成功",
+  msg: {
+    cobPayType: [
+      "OFFLINE_TICKET", //纸质水票
+      "CASH", //现金
+      "WECHAT", //微信
+      "ALIPAY", //支付宝
+      "CREDIT" //赊账
+    ]
+  }
+};
 export default {
   wxApiConfig: config => {
     return wxApiConfig;
+  },
+  getCobType: config => {
+    return CobType;
   }
 };

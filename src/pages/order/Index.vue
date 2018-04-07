@@ -2,11 +2,11 @@
   <div class="order" :class="{ 'order-edit': editable }">
       <Button v-if="currentState !== 'OTHER'" class="order-setting" size="small" @click="setting">{{settingText}}</Button>
       <ul class="order-setting-edit" >
-          <li v-if="currentState === 'PENDING'"><a @click="refuse">拒绝</a></li>
-          <li v-if="currentState === 'PENDING'"><a @click="assign">指派</a></li>
-          <li v-if="currentState === 'PROCESSING'"><a @click="assign">改派</a></li>
-          <li v-if="currentState !== 'OTHER'"><a @click="service">送达</a></li>
-          <li v-if="currentState === 'PROCESSING'"><a @click="call">无法送达</a></li>
+          <li v-if="currentState === 'PENDING'"><a @click="batchRefuse">拒绝</a></li>
+          <li v-if="currentState === 'PENDING'"><a @click="batchAssign">指派</a></li>
+          <li v-if="currentState === 'PROCESSING'"><a @click="batchReassignment">改派</a></li>
+          <li v-if="currentState !== 'OTHER'"><a @click="batchService">送达</a></li>
+          <li v-if="currentState === 'PROCESSING'"><a @click="batchUnDelivery">无法送达</a></li>
       </ul>
       <Tabs :actice="active"  class="order-tabs" @click="onTabsClick">
           <Tab title="待处理">
@@ -38,14 +38,19 @@
           </Tab>
       </Tabs>
       <Footer/>
+      <AssignPicker v-if="openAssign" :isBatch="true" :close="closeAssgin"/>
+      <AssignPicker v-if="openReassignment" :isBatch="true" :close="closeReassignment"/>
+      <FinishPicker v-if="openFinish" :isBatch="true" :close="closeFinish"/>
   </div>
 </template>
 <script>
 import Header from "@/pages/wechat/Header";
 import Footer from "@/pages/wechat/Footer";
 import OrderItem from "@/pages/order/OrderItem";
+import AssignPicker from "@/components/AssignPicker";
 import Item from "@/pages/order/Item";
-import { Tab, Tabs, Icon, Button } from "vant";
+import { Tab, Tabs, Icon, Button, Toast, Dialog } from "vant";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "order",
@@ -56,8 +61,11 @@ export default {
     OrderItem,
     Item,
     Button,
+    Toast,
+    Dialog,
     Header,
-    Footer
+    Footer,
+    AssignPicker
   },
   data() {
     return {
@@ -71,30 +79,36 @@ export default {
         ["PENDING"],
         ["PROCESSING"],
         ["FINISH", "UNDELIVER", "REJECT", "CANCEL"]
-      ]
+      ],
+      openAssign: false,
+      openReassignment: false,
+      openFinish: false
     };
   },
   mounted() {
     this.getListByStatus(["PENDING"], "PENDING");
   },
   computed: {
+    ...mapGetters(["checkedOrders"]),
     settingText() {
       return this.editable ? "取消" : "管理";
     }
   },
   methods: {
+    ...mapActions(["setCheckedOrders"]),
     setting() {
+      this.setCheckedOrders([]);
       this.editable = !this.editable;
     },
     onTabsClick(i) {
       this.editable = false;
       const status = this.tabTitles[i];
       if (i === 0) {
-        this.currentState = "PENDING"
+        this.currentState = "PENDING";
       } else if (i === 1) {
-        this.currentState = "PROCESSING"
-      }else{
-        this.currentState = "OTHER"
+        this.currentState = "PROCESSING";
+      } else {
+        this.currentState = "OTHER";
       }
       this.getListByStatus(status, this.currentState);
     },
@@ -123,17 +137,112 @@ export default {
           console.log({ e });
         });
     },
-    refuse() {
-      console.log("refuse");
+    batchRefuse() {
+      const ids = this.checkedOrders;
+      const desc = `批量拒绝`;
+      console.log({ desc, ids });
+      if (ids && ids.length > 0) {
+        Dialog.confirm({
+          title: "拒绝订单",
+          message: `确定要拒绝当前选择的订单吗?`
+        })
+          .then(() => {
+            const params = {
+              entityIds: ids,
+              oprStatus: "REJECT",
+              userId: 1
+            };
+            this.oprSO(params);
+            this.oprSO(params);
+          })
+          .catch(() => {
+            // on cancel
+          });
+      } else {
+        Toast("请先选择订单");
+      }
     },
-    assign() {
-      console.log("assign");
+    batchAssign() {
+      this.batchOption(this.openAssign, "请先选择要指派的订单");
     },
-    service() {
-      console.log("service");
+    closeAssgin() {
+      this.openAssign = false;
     },
-    call() {
-      console.log("call");
+    batchService() {
+      const ids = this.checkedOrders;
+      const desc = `批量送达`;
+      console.log({ desc, ids });
+      if (ids && ids.length > 0) {
+        const params = {
+          entityIds: ids,
+          cobType: "OFFLINE_TICKET",
+          oprStatus: "FINISH",
+          userId: 1,
+          empId: 2,
+          empIncome: "8"
+        };
+        this.oprSO(params);
+      }
+    },
+    batchReassignment() {
+      this.batchOption(this.openReassignment, "请先选择要改派的订单");
+    },
+    closeReassignment() {
+      this.openReassignment = false;
+    },
+    batchFinish() {
+      this.batchOption(this.openFinish, "请先选择订单");
+    },
+    closeFinish() {
+      this.openFinish = false;
+    },
+    batchUnDelivery() {
+      const ids = this.checkedOrders;
+      const desc = `批量无法送达`;
+      console.log({ desc, ids });
+      if (ids && ids.length > 0) {
+        Dialog.confirm({
+          title: "批量无法送达",
+          message: `确定要将当前选择的订单的状态改为无法送达吗`
+        })
+          .then(() => {
+            const params = {
+              entityIds: ids,
+              oprStatus: "UNDELIVER",
+              userId: 1
+            };
+            this.oprSO(params);
+          })
+          .catch(() => {
+            // on cancel
+          });
+      } else {
+        Toast("请先选择订单");
+      }
+    },
+    batchOption(openFlag, msg) {
+      const ids = this.checkedOrders;
+      if (ids && ids.length > 0) {
+        openFlag = true;
+      } else {
+        Toast(msg);
+      }
+    },
+    oprSO(params) {
+      if (params) {
+        this.$api.order
+          .oprSO(params)
+          .then(r => {
+            if (r.code === "0000") {
+              Toast.success(r.desc);
+            } else {
+              Toast.fail(r.desc);
+            }
+          })
+          .catch(e => {
+            console.log({ e });
+          });
+      }
     }
   }
 };
