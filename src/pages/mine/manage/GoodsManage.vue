@@ -1,9 +1,9 @@
 <template>
-	<div>
+	<div  class="goods">
 		<Header backUrl="/manage"/>
 		<p class="cell-title">商品管理 
 			<a @click="manage" class="right">
-				<span v-if="editable">取消</span>
+				<span v-if="editable">完成</span>
 				<span v-else>管理</span>
 			</a>
 		</p>
@@ -138,6 +138,7 @@ export default{
 	  background-color: #fafafa;
 	  padding: 10px 0;
 	  margin: 0;
+	  color: #46af44;
 	}
 	.cell-title{
 		margin:10px 0 10px 15px;
@@ -146,7 +147,23 @@ export default{
 	.right{
 		float:right;
 		margin-right:15px;
-		color: #6B8C43;
+		color: #46af44;
 		font-size:14px;
 	}	
+	.goods {
+		.van-tab--active {
+		    color: #46af44;
+		}
+		.van-tabs__nav-bar {
+    		background-color: #46af44;
+  		}
+  		.order-item-checkbox {
+		    position: absolute;
+		    .van-checkbox__control:checked + .van-icon-success {
+		      border-color: #46af44;
+		      background-color: #46af44;
+		    }
+		  }
+	}
+
 </style>

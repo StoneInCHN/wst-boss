@@ -24,6 +24,30 @@ const simpleSuccess = {
   "msg": null
 }
 
+const getWxByNickName = {
+  "code": "0000",
+  "desc": "操作成功",
+  "msg": [
+    {
+      "headImgUrl": "//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
+      "subscribeTime": null,
+      "openId": "dfdfdf",
+      "sex": null,
+      "nickname": "aaaa",
+      "id": 1
+    },
+    {
+      "headImgUrl": "//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
+      "subscribeTime": null,
+      "openId": "11111111111f",
+      "sex": null,
+      "nickname": "bbbb",
+      "id": 2
+    }
+  ]
+}
+
+
 const getInfo = {
   "code": "0000",
   "desc": "操作成功",
@@ -250,8 +274,12 @@ export default {
     console.info("请求【删除员工】接口, 请求参数：", config.body);
     return simpleSuccess;
   },
+  getWxByNickName: config => {
+    console.info("请求【微信昵称获取人信息】接口, 请求参数：", config.body);
+    return getWxByNickName;
+  },
   updateEmp: config => {
-    console.info("请求【新增/更新员工】接口, 请求参数：", config.body);
+    console.info("请求【新增/更新员工】接口, 请求参数：", config.body); //好像没有新增接口？？
     return simpleSuccess;
   },
   getInfo: config => {

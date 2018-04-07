@@ -136,7 +136,6 @@ export default{
 		    req.entityId = goodsNameId;
 			this.$api.mine.getSpec(req)
 			.then(res => {
-				console.info("res.msg",res.msg);
 			    if(res.code = "0000"){
 			    	this.allSize = [];
 			    	for (var i = 0; i < res.msg.specs.length; i++) {

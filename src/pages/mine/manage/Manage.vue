@@ -1,26 +1,26 @@
 <template>
 	<div>
 		<Header backUrl="/"/>
-		<h2 class="sub_title">管理</h2>
+		<br>
 		<div class="container">
-			<div class="item" @click="goodsManage">
+			<div class="item item-left" @click="goodsManage">
 				<span>商品管理</span>
 			</div>
-			<div class="item" @click="ticketManage">
+			<div class="item item-middle" @click="ticketManage">
 				<span>水票管理</span>
 			</div>
-			<div class="item" @click="workerManage">
+			<div class="item item-right" @click="workerManage">
 				<span>员工管理</span>
 			</div>
 		</div>
 		<div class="container">
-			<div class="item" @click="storeManage">
+			<div class="item item-left" @click="storeManage">
 				<span>店铺管理</span>
 			</div>
-			<div class="item">
+			<div class="item item-middle">
 				<span>用户管理</span>
 			</div>
-			<div class="item">
+			<div class="item item-right" @click="qrManage">
 				<span>二维码管理</span>
 			</div>
 		</div>
@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import {} from 'vant';
 import Header from "../../wechat/Header"
 import Footer from "../../wechat/Footer"
 export default{
@@ -52,6 +53,9 @@ export default{
 	    },
 	    workerManage () {
 	 		this.$router.push('/manage/workerManage');
+	    },
+	    qrManage () {
+	 		this.$router.push('/manage/qrManage');
 	    }
 	    
 
@@ -60,13 +64,6 @@ export default{
 </script>
 
 <style scoped>
-	.sub_title {
-	    margin: 0;
-	    font-weight: 400;
-	    font-size: 14px;
-	    color: rgba(69,90,100,.6);
-	    padding: 40px 15px 10px;
-	}
 	.container{
 		display: flex;
 		align-content: center;
@@ -74,13 +71,28 @@ export default{
 		color: #6B8C43;
 	}
 	.item{
+		text-align: center;
 		flex: 1;
 		height: 60px;
-		border: 1px solid #bbb;
-		margin:10px;
+		line-height: 35px;
+		border: 1px solid #ccc;
 		position: relative;
 		padding:10px;
 		font-size:14px;
 		vertical-align: middle;
+		position: relative;
+    	box-sizing: border-box;
+    	background-color: #fff;
+    	box-shadow: 0 0 4px #aaa;
+    	border-radius: 3px;
+	}
+	.item-left{
+		margin:10px 5px 10px 10px;
+	}
+	.item-middle{
+		margin:10px 5px;
+	}
+	.item-right{
+		margin:10px 10px 10px 5px;
 	}
 </style>

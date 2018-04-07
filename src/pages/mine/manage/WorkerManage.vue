@@ -3,7 +3,7 @@
 		<Header backUrl="/manage"/>
 			<p class="cell-title">员工管理 
 				<a @click="manage" class="right">
-					<span v-if="editable">取消</span>
+					<span v-if="editable">完成</span>
 					<span v-else>编辑</span>
 				</a>
 			</p>

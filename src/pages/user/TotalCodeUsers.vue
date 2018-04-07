@@ -17,7 +17,7 @@
 			</Row>
 		</div>
 		<div v-for="memberInfo in memberInfoList">
-				<MemberInfo1 :memberInfo="memberInfo"/>
+				<MemberInfo1 :memberInfo="memberInfo" @refreshSeriUsers="pageSeriUsers"/>
 		</div>								
 		<p class="fixed">			
 			<a @click="add" class="right">新建</a>
@@ -26,27 +26,15 @@
 </template>
 
 <script>
-import { Search, Row, Col, Button } from 'vant'
+import { Search, Row, Col, Button, Toast } from 'vant'
 import Header from "../wechat/Header"
 import MemberInfo1 from "./MemberInfo1"
 export default{
 	name: "UserManage",
-	components: { Header, Search, Row, Col, Button, MemberInfo1 },
+	components: { Header, Search, Row, Col, Button, MemberInfo1, Toast },
 	data () {
 		return {
-			memberInfoList:[{
-				code:"100",
-				address:"中铁西城19栋1658室",
-				name:"习大大",
-				tel:"1803026478,(028)662536,186458159",
-				relation:false
-			},{
-				code:"101",
-				address:"中德英伦联邦19栋1658室",
-				name:"韩梅梅",
-				tel:"1803026478,(028)662536,186458159",
-				relation:true	
-			}],
+			memberInfoList:[],
 			keyWords:"",
 			type:0,
 
@@ -54,18 +42,36 @@ export default{
 	},
 	methods: {
 	    onSearch () {
-	    	        this.memberInfoList = [];
-	    			let member1={};
-	    			member1.tel="18030506785";
-	    			member1.code="108";	    			
-	    			member1.name="习大大";
-	    			member1.address="中铁西城19栋1658室";
-	    			member1.relation=true;
-	    			this.memberInfoList.push(member1);
+	    	if(this.keyWords){
+	    		this.pageSeriUsers();
+	    	}else{
+	    		Toast.fail("请输入用户编号");
+	    	}    	
 	    },
 	    add() {
         	this.$router.push('/user/newCode');
+	    },
+	    pageSeriUsers(){
+	    	var req = {};
+		    req.userId = this.$store.state.userId;
+		    req.pageNumber = 1; 
+		    req.pageSize = 5
+		    if(this.keyWords != ""){
+		    	req.userNum=this.keyWords;
+		    }
+			this.$api.user.pageSeriUsers(req)
+			.then(res => {
+			    if(res.code = "0000"){
+			    	this.memberInfoList = res.msg;
+			    }	        
+			})
+			.catch(error => {
+			        console.log(error);
+			});
 	    }
+    },
+    mounted(){
+    	this.pageSeriUsers();
     }
 }
 </script>

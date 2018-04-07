@@ -22,17 +22,17 @@
 		</div>
 		<div v-if="this.userCards.length == 0">
 			<div class="container">
-				<div class="item" @click="totalCodeUsers" >
+				<div class="item item-left" @click="totalCodeUsers" >
 					<div>总编号用户</div>
 					<div>{{summar.tSeriUserCount}}</div>
 				</div>
-				<div class="item">
+				<div class="item item-right">
 					<div>本月新增编号用户</div>
 					<div>{{summar.mSeriUserCount}}</div>
 				</div>
 			</div>
 			<div class="container">
-				<div class="item" @click="totalOrderUsers">
+				<div class="item item-left" @click="totalOrderUsers">
 					<div>总订单用户</div>
 					<div>{{summar.tOrderUserCount}}</div>
 				</div>
@@ -47,18 +47,19 @@
 				<UserCard v-for="userCard in userCards" :key="userCard.id" :userCard="userCard" :currentCode="userCard.serialNo"/>	
 			</div>		
 		</div>
-		<!-- <div class="new_code" v-if="userCard!=null&&userCard.id==null" @click="newCode">新建编号</div> -->
+		<Footer/>
 	</div>
 </template>
 
 <script>
 import { Search, Row, Col, Button } from 'vant'
 import Header from "../wechat/Header"
+import Footer from "../wechat/Footer"
 import UserCard from "./UserCard"
 import MemberInfo from "./MemberInfo"
 export default{
 	name: "UserManage",
-	components: { Header, Search, Row, Col, Button, UserCard, MemberInfo },
+	components: { Header, Footer, Search, Row, Col, Button, UserCard, MemberInfo },
 	data () {
 		return {
 			summar:{},
@@ -171,13 +172,19 @@ export default{
 	.item{
 		flex: 1;
 		height: 40px;
-		border: 1px solid #bbb;
-		margin:10px;
+		border: 1px solid #bbb;		
 		position: relative;
 		padding:20px;
 		font-size:14px;
 		vertical-align: middle;
 		text-align: center;
+		border-radius: 3px;
+	}
+	.item-left{
+		margin:10px 5px 10px 10px;
+	}
+	.item-right{
+		margin:10px 10px 10px 5px;
 	}
 	.empty{
 		flex: 1;

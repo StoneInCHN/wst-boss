@@ -2,7 +2,7 @@
 	<div>
 		  	<div class="goods">
 		  		<div class="goods_checkbox" v-if="editable">
-		  			<Checkbox v-model="checked" @change="editGoods"/>
+		  			<Checkbox class="order-item-checkbox" v-model="checked" @change="editGoods"/>
 		  		</div>		  		
 		  		<div class="goods_thumb">
 		  			<img :src="goods.picUrl" width="90" height="90">

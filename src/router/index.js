@@ -15,6 +15,7 @@ const CutSpending = () => import("@/pages/mine/statistical/CutSpending");
 
 //我的-->管理
 const Manage = () => import("@/pages/mine/manage/Manage");
+const QrManage = () => import("@/pages/mine/manage/QrManage");
 const GoodsManage = () => import("@/pages/mine/manage/GoodsManage");
 const GoodsEdit = () => import("@/pages/mine/manage/GoodsEdit");
 const TicketManage = () => import("@/pages/mine/manage/TicketManage");
@@ -91,6 +92,11 @@ export default new Router({
       path: "/manage",
       name: "Manage",
       component: Manage
+    },
+    {
+      path: "/manage/qrManage",
+      name: "QrManage",
+      component: QrManage
     },
     {
       path: "/manage/goodsManage",

@@ -3,7 +3,7 @@
 			<div class="workerDiv"  @click="selectedRow">
 				<Row>
 					<Col span="6">
-					<img src="//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg" width="60px" height="60px"/></Col>
+					<img :src="worker.headImgUrl" width="60px" height="60px"/></Col>
 					<Col span="18"><span class="wxAcct">{{worker.wxAcct}}</span></Col>				
 				</Row>				
 			</div>	
@@ -28,7 +28,9 @@ export default{
 			var emp = {};
 			emp.cellPhoneNum = null;
 			emp.userName = null;
+			emp.headImgUrl = this.worker.headImgUrl;
 			emp.wxAcct = this.worker.wxAcct;
+			emp.wxOpenId = this.worker.wxOpenId;
 			this.$store.state.worker = emp;
 			//this.$store.dispatch('setWorker', emp);
 			this.$router.push('/manage/workerAdd');

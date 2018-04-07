@@ -30,21 +30,39 @@ export default{
 	methods: {
 		onSearch(){
 			if(this.keyWords){
-				this.worderList = [];
-				for(var i = 1; i < 4; i++){
-					var worker = {};
-					worker.id = i;
-					worker.imageUrl = "";
-					worker.wxAcct = this.keyWords + i;
-					this.worderList.push(worker);
-				}
+				this.getWxByNickName();
 			}else{
 				Toast.fail('请输入微信号');
 			}
 			
 		},
-
+		getWxByNickName(){
+			var req = {};
+			req.userId = this.$store.state.userId;
+			req.userName = this.keyWords;
+			this.$api.mine.getWxByNickName(req)
+			.then(res => {
+			    if(res.code = "0000"){
+			      	console.info(res.msg);
+			      	var wokers = res.msg;
+			      	for (var i = 0; i < wokers.length; i++) {
+			      		var worker = {};
+						worker.headImgUrl = wokers[i].headImgUrl;
+						worker.wxOpenId = wokers[i].id;
+						worker.wxAcct = wokers[i].nickname;
+						this.worderList.push(worker);
+			      	}
+			      	
+			    }	        
+			})
+			.catch(error => {
+			    console.log(error);
+			});
+		}
        
+    },
+    mounted(){
+
     }
 }
 </script>

@@ -1,4 +1,9 @@
 
+const simpleSuccess = {
+  "code": "0000",
+  "desc": "操作成功",
+  "msg": null
+}
 const userSummar = {
   "code": "0000",
   "desc": "操作成功",
@@ -10,13 +15,6 @@ const userSummar = {
     "tSeriUserCount": 55    //总编号用户数
   }
 };
-
-
-const simpleSuccess = {
-  "code": "0000",
-  "desc": "操作成功",
-  "msg": null
-}
 const pageShopUsers = {
   "code": "0000",
   "desc": "操作成功",
@@ -38,7 +36,7 @@ const pageShopUsers = {
         "fullAddr": "金南园1202"
       },
       "createDate": 1517208229000,
-      "serialNo": "108,111",
+      "serialNo": "108,11111",
       "cellPhoneNum": "15892999217"
     }
   ]
@@ -51,13 +49,31 @@ const pageSeriUsers={
       "contactPhone2": "1589645454",
       "addrInfo": "天府新区兴龙湖123栋1209",
       "realName": "王文武",
-      "contactPhone3": null,
+      "contactPhone3": "",
       "id": 2,
       "distCause": null,
-      "qrCodeId": null,
-      "contactPhone": "12345698",
+      "qrCodeId": 1,
+      "contactPhone": "18425578457",
       "createDate": 1517208229000,
-      "serialNo": "222"
+      "serialNo": "222",
+      "fixPhone":"(028)84572457",
+      "fixPhone2":null,
+      "fixPhone3":null
+    },
+    {
+      "contactPhone2": "1889645450",
+      "addrInfo": "高兴区兴龙湖23434ghao",
+      "realName": "习大大",
+      "contactPhone3": "",
+      "id": 1,
+      "distCause": null,
+      "qrCodeId": null,
+      "contactPhone": "15687745789",
+      "createDate": 1517208229000,
+      "serialNo": "242",
+      "fixPhone":"(028)84572457",
+      "fixPhone2":"",
+      "fixPhone3":null
     }
   ]
 }
@@ -75,8 +91,16 @@ export default {
   },
   pageSeriUsers: config => {
     console.info("请求【用户管理-查询编号用户】接口, 请求参数：", config.body);
-
     return pageSeriUsers;
   },
+  deleteSeriUser: config => {
+    console.info("请求【用户管理-删除编号用户】接口, 请求参数：", config.body);
+    return simpleSuccess;
+  },
+  createSeriUser: config => {
+    console.info("请求【用户管理-新建编号用户】接口, 请求参数：", config.body);
+    return simpleSuccess;
+  },
+
 
 };

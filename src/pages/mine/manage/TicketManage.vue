@@ -52,13 +52,13 @@ export default{
 					goodsName:"冰川时代",
 					price:17.2,
 					salePrice:16,
-					goodsUrl:"../../../assets/images/water.png",
+					goodsUrl:"//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
 					ticketInfo:""
 				},{
 					goodsName:"蓝剑矿泉水（15L）",
 					price:18.5,
 					salePrice:15,
-					goodsUrl:"../../../assets/images/water1.png",
+					goodsUrl:"//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
 					ticketInfo:""
 				}]
 			},{
@@ -66,12 +66,12 @@ export default{
 				ticketList:[{
 					goodsName:"乐开杯",
 					salePrice:14,
-					goodsUrl:"../../../assets/images/water.png",
+					goodsUrl:"//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
 					ticketInfo:""
 				},{
 					goodsName:"乐百氏矿泉水（15L）",
 					salePrice:12,
-					goodsUrl:"../../../assets/images/water1.png",
+					goodsUrl:"//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
 					ticketInfo:""
 				}]
 			}],
@@ -81,13 +81,13 @@ export default{
 					goodsName:"农夫山泉矿",
 					price:17.2,
 					salePrice:16,
-					goodsUrl:"../../../assets/images/water.png",
+					goodsUrl:"//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
 					ticketInfo:"10张+1张=120元"
 				},{
 					goodsName:"农夫山泉Mini",
 					price:18.5,
 					salePrice:15,
-					goodsUrl:"../../../assets/images/water1.png",
+					goodsUrl:"//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
 					ticketInfo:"10张+0张=120元"
 				}]
 			},{
@@ -95,12 +95,12 @@ export default{
 				ticketList:[{
 					goodsName:"乐开杯",
 					salePrice:14,
-					goodsUrl:"../../../assets/images/water.png",
+					goodsUrl:"//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
 					ticketInfo:"10张+1张=120元"
 				},{
 					goodsName:"乐百氏矿泉水（15L）",
 					salePrice:12,
-					goodsUrl:"../../../assets/images/water1.png",
+					goodsUrl:"//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
 					ticketInfo:"10张+2张=120元"
 				}]
 			}]

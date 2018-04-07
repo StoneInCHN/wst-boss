@@ -3,16 +3,29 @@
 		<div class="member_div">			
 			<div>
 				<Row>
-					<Col span="6"><span>{{memberInfo.code}}</span></Col>
-					<Col span="12">{{memberInfo.address}}</Col>					
-					<Col span="6"><span class="right">{{memberInfo.name}}</span></Col>
+					<Col span="6"><span>{{memberInfo.serialNo}}</span></Col>
+					<Col span="12">{{memberInfo.addrInfo}}</Col>					
+					<Col span="6"><span class="right">{{memberInfo.realName}}</span></Col>
 				</Row>
 			</div>
 			<div>
 				<Row>
-					<Col span="20"><span>{{memberInfo.tel}}</span></Col>
+					<Col span="20">
+						<span>{{memberInfo.contactPhone}}</span>
+						<span v-if="memberInfo.contactPhone2">,</span>
+						<span>{{memberInfo.contactPhone2}}</span>
+						<span v-if="memberInfo.contactPhone3">,</span>
+						<span>{{memberInfo.contactPhone3}}</span>
+
+						<span v-if="memberInfo.fixPhone">,</span>
+						<span>{{memberInfo.fixPhone}}</span>
+						<span v-if="memberInfo.fixPhone2">,</span>
+						<span>{{memberInfo.fixPhone2}}</span>
+						<span v-if="memberInfo.fixPhone3">,</span>
+						<span>{{memberInfo.fixPhone3}}</span>
+					</Col>
 					<Col span="4">
-						<span class="green right" v-if="memberInfo.relation">已关联</span>
+						<span class="green right" v-if="memberInfo.qrCodeId">已关联</span>
 						<span class="red right" v-else>未关联</span>
 					</Col>
 				</Row>
@@ -36,12 +49,14 @@
 </template>
 
 <script>
-import { Row, Col, Dialog } from 'vant'
+import { Row, Col, Dialog, Toast } from 'vant'
 export default{
 	name: "UserCard",
-	components: { Row, Col, Dialog },
+	components: { Row, Col, Dialog, Toast },
 	props: {
-        memberInfo: Object
+        memberInfo: Object,
+        memberList: Array,
+        keyWords: String
     },
     data () {
 		return {			
@@ -54,7 +69,23 @@ export default{
 			  title: '提示',
 			  message: '确认要删除编号用户吗？'
 			}).then(() => {
-			  // on confirm
+				var req = {};
+			    req.userId = this.$store.state.userId;
+			    req.entityIds = [];
+			    req.entityIds.push(this.memberInfo.id); 
+				this.$api.user.deleteSeriUser(req)
+				.then(res => {
+				    if(res.code = "0000"){
+				    	//刷新 编号用户列表 数据
+				    	this.$emit('refreshSeriUsers');
+				    	Toast.success("操作成功");
+				    }	        
+				})
+				.catch(error => {
+				        console.log(error);
+				});
+			  
+			  
 			}).catch(() => {
 			  // on cancel
 			});
