@@ -10,6 +10,9 @@ const mutations = {
   },
   setCheckedOrders(state, checkedOrders) {
     state.checkedOrders = checkedOrders;
+  },
+  setToken(state, token) {
+    state.token = token;
   }
 };
 

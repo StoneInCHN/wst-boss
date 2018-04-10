@@ -10,7 +10,7 @@ Vue.prototype.$api = api
 FastClick.attach(document.body)
 Vue.config.productionTip = false
 
-require('./mock')
+//require('./mock')
 
 new Vue({
   el: '#app',

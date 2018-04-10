@@ -123,19 +123,14 @@ export default {
         .pageShopOrders(params)
         .then(r => {
           console.log({ r });
-          if (r.code === "0000") {
-            if (type === "PENDING") {
-              this.pendingList = r.msg;
+          if (type === "PENDING") {
+              this.pendingList = r;
             } else if (type === "PROCESSING") {
-              this.processingList = r.msg;
+              this.processingList = r;
             } else {
-              this.otherList = r.msg;
+              this.otherList = r;
             }
-          }
         })
-        .catch(e => {
-          console.log({ e });
-        });
     },
     batchRefuse() {
       const ids = this.checkedOrders;

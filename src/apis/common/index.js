@@ -12,6 +12,9 @@ const common = {
   },
   getCobType(){
     return fetch('/common/cobType')
+  },
+  getKey(){
+    return fetch('/common/getKey')
   }
 };
 

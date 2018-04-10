@@ -4,7 +4,7 @@ const baseUrl = "/";
 
 const order = {
   pageShopOrders(params) {
-    return post("/sorder/pageShopOrders", params);
+    return post("/sorder/pageShopOrders", params)
   },
   /**商家操作订单 */
   oprSO(params) {
