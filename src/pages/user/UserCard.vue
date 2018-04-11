@@ -51,7 +51,35 @@ export default{
 			  title: '提示',
 			  message: '确认要解除编号和二维码的关联吗？'
 			}).then(() => {
-			  this.userCard.qrCode = null;
+			    var seriUser = {};
+			    seriUser.userId = this.$store.state.userId;
+			    seriUser.entityId = this.userCard.id;
+			    seriUser.userNum = this.userCard.userNum;
+			    seriUser.realName = this.userCard.realName;
+			    seriUser.addrInfo = this.userCard.addrInfo;
+			    seriUser.doorNum = this.userCard.doorNum;
+			    seriUser.qrCodeId = -1;
+			    seriUser.remark = this.userCard.remark;
+
+			    seriUser.contactPhone = this.userCard.contactPhone;
+			    seriUser.contactPhone2 = this.userCard.contactPhone2;
+			    seriUser.contactPhone3 = this.userCard.contactPhone3;
+
+			    seriUser.fixPhone = this.userCard.fixPhone;
+			    seriUser.fixPhone2 = this.userCard.fixPhone2;
+			    seriUser.fixPhone3 = this.userCard.fixPhone3;
+				this.$api.user.editSeriUser(seriUser)
+				.then(res => {
+				    if(res.code = "0000"){
+				    	//刷新 编号用户列表 数据
+				    	this.$emit('refreshSeriUsers');
+				    	Toast.success("操作成功");
+				    }	        
+				})
+				.catch(error => {
+				        console.log(error);
+				});				
+			 
 			}).catch(() => {
 			  // on cancel
 			});

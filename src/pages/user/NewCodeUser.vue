@@ -3,13 +3,15 @@
 		<Header backUrl="/userManage"/>
 		<Panel>
 			<div slot="header">
-				<Cell title="新建编号" class="cell">
+				<Cell title="新建" class="cell">
 			    	<Button type="primary" size="small" @click="validateInput">完成</Button>
 			  	</Cell>
 			</div>
 			<div>
 				<CellGroup>
-				  <Field label="编号" v-model="userCard.userNum" placeholder="请输入用户编号"/>
+				  <Field label="编号" v-model="userCard.userNum" placeholder="请输入用户编号">
+				  	<span slot="icon" class="last-no">上次编号：{{lastNo}}</span>
+				  </Field>
 				  <Field label="手机号" v-model="phoneList" placeholder="可输入多个手机号，用逗号分隔" required/>
 				  <Field label="座机" v-model="telList" placeholder="例（028）6573158，多个用逗号分隔"/>
 				  <Field label="姓名" v-model="userCard.realName" placeholder="请填写用户姓名" required/>
@@ -43,12 +45,13 @@ export default{
 				doorNum:null,
 				qrCodeId:null,
 				remark:null
-			}
+			},
+			lastNo:null
 		}
 	},
 	methods: {
 		validateInput(){
-				if(this.fixPhoneList && this.userCard.realName && this.userCard.addrInfo && this.userCard.doorNum){
+				if(this.phoneList && this.userCard.realName && this.userCard.addrInfo && this.userCard.doorNum){
 					this.createSeriUser();
 				}else{
 					Toast.fail("请输入必填信息");
@@ -107,15 +110,32 @@ export default{
         },
         addQr(){
         	this.$router.push('/user/scanQr');
+        },
+        getLastSerialNo(){
+        	var req = {};
+		    req.userId = this.$store.state.userId;
+			this.$api.user.getLastSerialNo(req)
+			.then(res => {
+			    if(res.code = "0000"){
+			    	this.lastNo = res.msg.lastNo;
+			    }	        
+			})
+			.catch(error => {
+			        console.log(error);
+			});
         }
     },
     mounted(){
-
+    	this.getLastSerialNo();
     }
 }
 </script>
 
 <style scoped>
+	.last-no{
+		font-size:14px;
+		color:#0a0;
+	}
 	.cell{
 		padding: 0;
 	}	

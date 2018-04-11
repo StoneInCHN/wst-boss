@@ -35,12 +35,18 @@
 					<Col span="4">
 						<span @click="deleteItem">删除</span>
 					</Col>
-					<Col span="5">编辑</Col>
-					<Col span="5">添加优惠</Col>
-					<Col span="5">添加订单</Col>
 					<Col span="5">
-						<span class="right" v-if="memberInfo.relation">解除关联</span>
-						<span class="right" v-else>扫码关联</span>
+						<span  @click="editItem">编辑</span>
+					</Col>
+					<Col span="5">
+						<span @click="addCoupon">添加优惠</span>
+					</Col>
+					<Col span="5">
+						<span @click="addOrder">添加订单</span>
+					</Col>
+					<Col span="5">
+						<span class="right" v-if="memberInfo.qrCodeId"  @click="confirmClear">解除关联</span>
+						<span class="right" v-else @click="scanQr">扫码关联</span>
 					</Col>
 				</Row>
 			</div>
@@ -64,6 +70,14 @@ export default{
 		}
 	},
 	methods: {
+		addCoupon(){
+			this.$store.state.seriUser = this.memberInfo;
+			this.$router.push('/user/addCoupon');
+		},
+		addOrder(){
+			this.$store.state.seriUser = this.memberInfo;
+			this.$router.push('/user/addOrder');
+		},
 		deleteItem(){
 			Dialog.confirm({
 			  title: '提示',
@@ -89,7 +103,52 @@ export default{
 			}).catch(() => {
 			  // on cancel
 			});
-		}
+		},
+		editItem(){
+			this.$store.state.seriUser = this.memberInfo;
+			this.$router.push('/user/editCodeUser');
+		},
+		scanQr(){
+			this.$router.push('/user/scanQr1');
+		},
+		confirmClear(){
+			Dialog.confirm({
+			  title: '提示',
+			  message: '确认要解除编号和二维码的关联吗？'
+			}).then(() => {
+			    var seriUser = {};
+			    seriUser.userId = this.$store.state.userId;
+			    seriUser.entityId = this.memberInfo.id;
+			    seriUser.userNum = this.memberInfo.userNum;
+			    seriUser.realName = this.memberInfo.realName;
+			    seriUser.addrInfo = this.memberInfo.addrInfo;
+			    seriUser.doorNum = this.memberInfo.doorNum;
+			    seriUser.qrCodeId = -1;
+			    seriUser.remark = this.memberInfo.remark;
+
+			    seriUser.contactPhone = this.memberInfo.contactPhone;
+			    seriUser.contactPhone2 = this.memberInfo.contactPhone2;
+			    seriUser.contactPhone3 = this.memberInfo.contactPhone3;
+
+			    seriUser.fixPhone = this.memberInfo.fixPhone;
+			    seriUser.fixPhone2 = this.memberInfo.fixPhone2;
+			    seriUser.fixPhone3 = this.memberInfo.fixPhone3;
+				this.$api.user.editSeriUser(seriUser)
+				.then(res => {
+				    if(res.code = "0000"){
+				    	//刷新 编号用户列表 数据
+				    	this.$emit('refreshSeriUsers');
+				    	Toast.success("操作成功");
+				    }	        
+				})
+				.catch(error => {
+				        console.log(error);
+				});				
+			 
+			}).catch(() => {
+			  // on cancel
+			});
+        },
     }
 }
 </script>

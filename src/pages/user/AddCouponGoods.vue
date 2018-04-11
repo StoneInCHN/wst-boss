@@ -9,15 +9,13 @@
 			</div>
 			<div>
 				<CellGroup>
-				  <Field label="品牌" v-model="goods.goodsBrand" placeholder="请填选择品牌"  @click="showAllBrand"/>
-				  <Field label="子产品" v-model="goods.goodsName" placeholder="请填选择子产品" @click="showAllGoodsName"/>
-				  <Field label="规格" v-model="goods.size" placeholder="请填选择规格" @click="showAllSize"/>
+				  <Field label="优惠商品" v-model="goods.gNameSpec" placeholder="请选择优惠商品"  @click="showAllBrand"/>
+				  <Field label="商品原价" v-model="goods.distPrice" disabled/>
+				  <Field label="优惠价" v-model="goods.distAmount" placeholder="请填写优惠价格"/>
 				</CellGroup>
 			</div>	
 		</Panel>
-		<Actionsheet  v-model="brand" :actions="allBrand" cancel-text="取消"/>
-		<Actionsheet  v-model="goodsName" :actions="allGoodsName" cancel-text="取消"/>
-		<Actionsheet  v-model="size" :actions="allSize" cancel-text="取消"/>
+		<Actionsheet  v-model="dGoods" :actions="allDGoods" cancel-text="取消"/>
 	</div>
 </template>
 
@@ -29,57 +27,53 @@ export default{
 	components: { Header, Panel, CellGroup, Field, Button, Cell, Actionsheet},
 	data () {
 		return {
-			goods: {
-				goodsBrand:null,
-				goodsName:null,
-				size:null,
-			},
-			brand:false,
-			goodsName:false,
-			size:false,
-			allBrand:[
-		        { name: '农夫山泉', callback: this.setBrand },
-		        { name: '蓝剑', callback: this.setBrand },
-		        { name: '蓝光', callback: this.setBrand },
-		        { name: '乐百氏', callback: this.setBrand }
-		    ],
-		    allGoodsName:[
-		        { name: '冰川时代', callback: this.setGoodsName },
-		        { name: '蓝剑矿泉水', callback: this.setGoodsName },
-		        { name: '蓝剑纯净水', callback: this.setGoodsName }
-		    ],
-		    allSize:[
-		        { name: '15L', callback: this.setSize },
-		        { name: '18L', callback: this.setSize }
-		    ]
+			goods: {},
+			dGoods:false,
+			allDGoods:[]
 		}
 	},
 	methods: {
         save () {
+        	this.$store.state.couponGoods = this.goods;
 			this.$router.push('/user/addCoupon');
         },
         showAllBrand(){
-	    	this.brand = true;
+	    	this.dGoods = true;
 	    },
-	    showAllGoodsName(){
-	    	this.goodsName = true;
+       	setGNameSpec(item) {
+	      	this.goods.gNameSpec = item.name;
+	      	this.goods.id = item.id;
+	      	this.goods.picUrl = item.picUrl;
+	      	this.goods.distPrice = item.distPrice;      	
+	      	this.dGoods = false;
 	    },
-	    showAllSize(){
-	    	this.size = true;
-	    },
-       	setBrand(item) {
-	      	this.goods.goodsBrand = item.name;
-	      	this.brand = false;
-	      	console.info(this.brand);
-	    },
-	    setGoodsName(item) {
-	      	this.goods.goodsName = item.name;
-	      	this.goodsName = false;
-	    },   
-	    setSize(item) {
-	      	this.goods.size = item.name;
-	      	this.size = false;
+	    getGsDdList(){
+	    	var req = {};
+		    req.userId = this.$store.state.userId;
+		    req.entityIds = this.$store.state.couponIds;
+	    	this.$api.user.getGsDdList(req)
+			.then(res => {
+			    if(res.code = "0000"){
+			    	this.allDGoods = [];
+			    	for (var i = 0; i < res.msg.length; i++) {
+			    		var cGoods = {};
+			    		cGoods.distPrice = res.msg[i].distPrice;
+			    		cGoods.picUrl = res.msg[i].picUrl;
+			    		cGoods.id = res.msg[i].id;
+			    		cGoods.name = res.msg[i].gNameSpec;
+			    		cGoods.callback = this.setGNameSpec;
+			    		this.allDGoods.push(cGoods);
+			    	}
+			    }	        
+			})
+			.catch(error => {
+			        console.log(error);
+			});
+	    	 
 	    }
+    },
+    mounted(){
+    	this.getGsDdList();
     }
 }
 </script>

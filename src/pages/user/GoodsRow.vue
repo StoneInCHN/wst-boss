@@ -2,10 +2,10 @@
 	<div>
 			<div class="goodsDiv">
 				<Row>
-					<Col span="6"><img src="goods.url"/></Col>
-					<Col span="8"><span>{{goods.name}}</span></Col>
-					<Col span="8"><input type="number" v-model="goods.count" class="num_input"/>桶</Col>
-					<Col span="2" class="red"><div @click="deleteGoods">删除</div></Col>					
+					<Col span="4" class="row"><img :src="goods.gPic" width="45" height="45"/></Col>
+					<Col span="12" class="green row"><span>{{goods.gName}}<span>【{{formatPrice(goods.gAmount)}}】</span></span></Col>
+					<Col span="6" class="row"><input type="number" v-model="goods.gCount" class="num_input"/>桶</Col>
+					<Col span="2" class="red row big"><Icon name="close" @click="deleteGoods"/></Col>					
 				</Row>				
 			</div>	
 	</div>
@@ -27,13 +27,32 @@ export default{
 	},
 	methods: {
 		deleteGoods(){
-        	this.list.pop(this.goods);
-        }
+			for (var i = 0; i < this.list.length; i++) {
+				if (this.goods.gId == this.list[i].gId) {
+					this.list.splice(i, 1);
+					break;
+				}
+			}
+        },
+        formatPrice(num){
+	    	if(num){
+				return "￥" + parseFloat(num).toFixed(2);
+	    	}else{
+	    		return 0;
+	    	}	    	
+	    }
     }
 }
 </script>
 
 <style scoped>
+	.big{
+		padding-top:3px;
+		font-size:16px;
+	}
+	.row{
+		line-height: 45px;
+	}
 	.cell{
 		padding: 0;
 
@@ -55,9 +74,12 @@ export default{
 	.red{
 		color:red;		
 	}
+	.green{
+		color:#0a0;
+	}
 	.goodsDiv{
 		font-size:14px;
-		padding:15px;
+		padding:5px 2px 5px 15px;
 	}
 	.num_input {
 		margin:0 5px;

@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<Header backUrl="/user/newCode"/>
+		<Header backUrl="/user/newCodeUser"/>
 			<div class="qr_container">
 				<div class="qr_item" >
 					<span>扫描二维码</span>

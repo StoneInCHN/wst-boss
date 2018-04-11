@@ -9,77 +9,73 @@
 			</div>
 			<div>
 				<CellGroup>
-				  <Field label="品牌" v-model="goods.goodsBrand" placeholder="请填选择品牌"  @click="showAllBrand"/>
-				  <Field label="子产品" v-model="goods.goodsName" placeholder="请填选择子产品" @click="showAllGoodsName"/>
-				  <Field label="规格" v-model="goods.size" placeholder="请填选择规格" @click="showAllSize"/>
+				  <Field label="购买商品" v-model="goods.gName" placeholder="请选择购买商品"  @click="showAllGoods">
+				  		<Stepper slot="icon" v-model="goods.gCount" :min="1" :max="100"  :default-value="1"/>				 	
+				  </Field>			  
 				</CellGroup>
+				<img :src="goods.gPic" width="100" height="100"/>
 			</div>	
 		</Panel>
-		<Actionsheet  v-model="brand" :actions="allBrand" cancel-text="取消"/>
-		<Actionsheet  v-model="goodsName" :actions="allGoodsName" cancel-text="取消"/>
-		<Actionsheet  v-model="size" :actions="allSize" cancel-text="取消"/>
+		<Actionsheet  v-model="showGoods" :actions="allGoods" cancel-text="取消"/>
 	</div>
 </template>
 
 <script>
-import { Panel, CellGroup, Field, Button, Cell, Actionsheet } from 'vant'
+import { Panel, CellGroup, Field, Button, Cell, Actionsheet,Stepper  } from 'vant'
 import Header from "../wechat/Header"
 export default{
 	name: "StoreManage",
-	components: { Header, Panel, CellGroup, Field, Button, Cell, Actionsheet},
+	components: { Header, Panel, CellGroup, Field, Button, Cell, Actionsheet,Stepper },
 	data () {
 		return {
-			goods: {
-				goodsBrand:null,
-				goodsName:null,
-				size:null,
-			},
-			brand:false,
+			goods: {"gCount":1},
+			showGoods:false,
 			goodsName:false,
 			size:false,
-			allBrand:[
-		        { name: '农夫山泉', callback: this.setBrand },
-		        { name: '蓝剑', callback: this.setBrand },
-		        { name: '蓝光', callback: this.setBrand },
-		        { name: '乐百氏', callback: this.setBrand }
-		    ],
-		    allGoodsName:[
-		        { name: '冰川时代', callback: this.setGoodsName },
-		        { name: '蓝剑矿泉水', callback: this.setGoodsName },
-		        { name: '蓝剑纯净水', callback: this.setGoodsName }
-		    ],
-		    allSize:[
-		        { name: '15L', callback: this.setSize },
-		        { name: '18L', callback: this.setSize }
-		    ]
+			allGoods:[]
 		}
 	},
 	methods: {
         save () {
+        	this.$store.state.orderGoods = this.goods;
 			this.$router.push('/user/addOrder');
         },
-        showAllBrand(){
-	    	this.brand = true;
+        showAllGoods(){
+	    	this.showGoods = true;
 	    },
-	    showAllGoodsName(){
-	    	this.goodsName = true;
+       	setGoods(item) {
+       		this.goods.gId = item.id;
+       		this.goods.gPic = item.picUrl;
+       		this.goods.gAmount = item.distPrice;
+	      	this.goods.gName = item.name;
+	      	this.showGoods = false;
 	    },
-	    showAllSize(){
-	    	this.size = true;
-	    },
-       	setBrand(item) {
-	      	this.goods.goodsBrand = item.name;
-	      	this.brand = false;
-	      	console.info(this.brand);
-	    },
-	    setGoodsName(item) {
-	      	this.goods.goodsName = item.name;
-	      	this.goodsName = false;
-	    },   
-	    setSize(item) {
-	      	this.goods.size = item.name;
-	      	this.size = false;
+	    getOnGsList(){
+	    	var req = {};
+		    req.userId = this.$store.state.userId;
+		    req.entityId = this.$store.state.seriUser.id;
+	    	this.$api.user.getOnGsList(req)
+			.then(res => {
+			    if(res.code = "0000"){
+			    	this.allGoods = [];
+			    	for (var i = 0; i < res.msg.gList.length; i++) {
+			    		var cGoods = {};
+			    		cGoods.distPrice = res.msg.gList[i].distPrice;
+			    		cGoods.picUrl = res.msg.gList[i].picUrl;
+			    		cGoods.id = res.msg.gList[i].id;
+			    		cGoods.name = res.msg.gList[i].gNameSpec;
+			    		cGoods.callback = this.setGoods;
+			    		this.allGoods.push(cGoods);
+			    	}
+			    }	        
+			})
+			.catch(error => {
+			        console.log(error);
+			});
 	    }
+    },
+    mounted(){
+    	this.getOnGsList();
     }
 }
 </script>

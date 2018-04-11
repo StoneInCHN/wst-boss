@@ -49,7 +49,7 @@ export default{
 	    	}    	
 	    },
 	    add() {
-        	this.$router.push('/user/newCode');
+        	this.$router.push('/user/newCodeUser');
 	    },
 	    pageSeriUsers(){
 	    	var req = {};

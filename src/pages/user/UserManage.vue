@@ -44,7 +44,7 @@
 		</div>
 		<div v-else>
 			<div>		
-				<UserCard v-for="userCard in userCards" :key="userCard.id" :userCard="userCard" :currentCode="userCard.serialNo"/>	
+				<UserCard v-for="userCard in userCards" :key="userCard.id" :userCard="userCard" :currentCode="userCard.serialNo"  @refreshSeriUsers="searchUser"/>
 			</div>		
 		</div>
 		<Footer/>
@@ -76,6 +76,13 @@ export default{
 	    		if(this.keyWords == 'null'){//只供显示用test
 	    			this.userCards = [];
 	    		}else{	    			
+	 				this.searchUser();
+	    		}
+	    	}else{
+	    		this.userCards=[];
+	    	}
+	    },
+	    searchUser(){
 			    	var req = {};
 				    req.userId = this.$store.state.userId;
 				    req.pageNumber = 1;
@@ -93,13 +100,7 @@ export default{
 					})
 					.catch(error => {
 					    console.log(error);
-					});		 		
-	    		}
-
-	    	}else{
-	    		this.userCards=[];
-	    	}
-
+					});	
 	    },
 	    searchType(){
 	    	if(this.type == 0){
@@ -138,6 +139,8 @@ export default{
     },
     mounted(){
     	this.getSummar();
+    	this.$store.state.couponGoods = {};
+    	this.$store.state.couponGoodsList = [];
     }
 }
 </script>

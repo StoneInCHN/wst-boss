@@ -48,8 +48,7 @@ export default{
 				return "￥"+num.toFixed(2);
 	    	}else{
 	    		return "";
-	    	}
-	    	
+	    	}	    	
 	    }
 
     }

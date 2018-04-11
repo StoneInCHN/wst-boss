@@ -31,7 +31,8 @@ const AddCoupon = () => import("@/pages/user/AddCoupon");
 const AddCouponGoods = () => import("@/pages/user/AddCouponGoods");
 const AddOrder = () => import("@/pages/user/AddOrder");
 const AddGoods = () => import("@/pages/user/AddGoods");
-const NewCode = () => import("@/pages/user/NewCode");
+const NewCodeUser = () => import("@/pages/user/NewCodeUser");
+const EditCodeUser = () => import("@/pages/user/EditCodeUser");
 const ScanQr = () => import("@/pages/user/ScanQr");
 const ScanQr1 = () => import("@/pages/user/ScanQr1");
 const TotalOrderUsers = () => import("@/pages/user/TotalOrderUsers");
@@ -164,10 +165,15 @@ export default new Router({
       component: AddOrder
     }, 
     {
-      path: "/user/newCode",
-      name: "NewCode",
-      component: NewCode
-    },    
+      path: "/user/newCodeUser",
+      name: "NewCodeUser",
+      component: NewCodeUser
+    },   
+    {
+      path: "/user/editCodeUser",
+      name: "EditCodeUser",
+      component: EditCodeUser
+    },  
     {
       path: "/user/scanQr",
       name: "ScanQr",

@@ -77,6 +77,126 @@ const pageSeriUsers={
     }
   ]
 }
+const getLastSerialNo = {
+  "code": "0000",
+  "desc": "操作成功",
+  "msg": {
+    "lastNo": "333"
+  }
+}
+const getGsDdList = {
+  "code": "0000",
+  "desc": "操作成功",
+  "msg": [
+    {
+      "distPrice": "12",
+      "picUrl": "//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
+      "gNameSpec": "乐百氏10L",
+      "id": 3
+    },
+    {
+      "distPrice": "12",
+      "picUrl": "//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
+      "gNameSpec": "冰川时代12L",
+      "id": 4
+    },
+    {
+      "distPrice": "12",
+      "picUrl": "//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
+      "gNameSpec": "冰川时代20L",
+      "id": 5
+    }
+  ]
+}
+const distInfo = {
+  "code": "0000",
+  "desc": "操作成功",
+  "msg": [
+    {
+      "distAmount": 12,
+      "shopGoods": {
+        "picUrl": "//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
+        "distPrice": 15,
+        "id": 1,
+        "gNameSpec": "冰川时代15L"
+      }
+    },
+    {
+      "distAmount": 15,
+      "shopGoods": {
+        "picUrl": "//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
+        "distPrice": 10,
+        "id": 2,
+        "gNameSpec": "蓝剑10L"
+      }
+    }
+  ]
+}
+const lastSO = {
+  "code": "0000",
+  "desc": "操作成功",
+  "msg": {
+    "gName": "乐百氏10L",
+    "gId": 3,
+    "gPic": "//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
+    "gAmount": 20,
+    "gCount": 1
+  }
+}
+const getOnGsList = {
+  "code": "0000",
+  "desc": "操作成功",
+  "msg": {
+    "distList": {
+      "1": 12,
+      "2": 15,
+      "4": 11,
+      "5": 11
+    },
+    "gList": [
+      {
+        "distPrice": 15,
+        "picUrl": "//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
+        "gNameSpec": "冰川时代15L",
+        "id": 1
+      },
+      {
+        "distPrice": 10,
+        "picUrl": "//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
+        "gNameSpec": "乐百氏10L",
+        "id": 2
+      },
+      {
+        "distPrice": 10,
+        "picUrl": "//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
+        "gNameSpec": "蓝剑10L",
+        "id": 3
+      },
+      {
+        "distPrice": 15,
+        "picUrl": "//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
+        "gNameSpec": "冰川时代12L",
+        "id": 4
+      },
+      {
+        "distPrice": 15,
+        "picUrl": "//img.yzcdn.cn/upload_files/2017/07/02/af5b9f44deaeb68000d7e4a711160c53.jpg",
+        "gNameSpec": "冰川时代20L",
+        "id": 5
+      }
+    ]
+  }
+}
+const addSO = {
+  "code": "0000",
+  "desc": "操作成功",
+  "msg": {
+    "payType": "COB", //返回的支付方式(水票-WATER_TICKET;货到付款-COB;水票部分抵扣混合-TICKET_COB)
+    "cobAmount": 0,  //仍需货到付款金额(支付方式返回混合支付TICKET_COB时显示)
+    "id": 20,
+    "sn": "408995783115800576"   //订单号
+  }
+}
 
 
 export default {
@@ -97,10 +217,42 @@ export default {
     console.info("请求【用户管理-删除编号用户】接口, 请求参数：", config.body);
     return simpleSuccess;
   },
+  getLastSerialNo: config => {
+    console.info("请求【用户管理-获取上次用户编号】接口, 请求参数：", config.body);
+    return getLastSerialNo;
+  },
   createSeriUser: config => {
     console.info("请求【用户管理-新建编号用户】接口, 请求参数：", config.body);
     return simpleSuccess;
   },
-
+  editSeriUser: config => {
+    console.info("请求【用户管理-修改编号用户】接口, 请求参数：", config.body);
+    return simpleSuccess;
+  },
+  getGsDdList: config => {
+    console.info("请求【用户管理-未添加优惠信息商品选择列表】接口, 请求参数：", config.body);
+    return getGsDdList;
+  },  
+  distInfo: config => {
+    console.info("请求【用户管理-用户优惠信息】接口, 请求参数：", config.body);
+    return distInfo;
+  },    
+  saveGsDist: config => {
+    console.info("请求【用户管理-保存优惠信息】接口, 请求参数：", config.body);
+    return simpleSuccess;
+  },  
+  lastSO: config => {
+    console.info("请求【用户管理-获取上次订单商品】接口, 请求参数：", config.body);
+    return lastSO;
+  },  
+  getOnGsList: config => {
+    console.info("请求【用户管理-上架商品选择列表】接口, 请求参数：", config.body);
+    return getOnGsList;
+  },
+  addSO: config => {
+    console.info("请求【用户管理-商家提交订单】接口, 请求参数：", config.body);
+    return addSO;
+  },
+ 
 
 };
