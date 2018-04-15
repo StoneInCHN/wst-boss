@@ -9,6 +9,7 @@
 <script>
 import { Toast } from "vant";
 import WstPicker from "./WstPicker";
+import { mapActions, mapGetters } from "vuex";
 export default {
   name: "PayMethodPicker",
   components: {
@@ -17,7 +18,7 @@ export default {
   },
   props: {
     id: {
-      type: Number,
+      type: Number | String,
       default: 0
     },
     close: {
@@ -33,6 +34,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(["checkedOrders","userId"]),
     columns() {
       let lists = [];
       if (this.listSrc.length > 0) {
@@ -46,6 +48,28 @@ export default {
   methods: {
     confirm(value, index) {
       console.log({ value, index });
+      const ids = this.isBatch ? this.checkedOrders : [this.id];
+      const desc = this.isBatch ? `批量指派` : "单个订单指派";
+      console.log({ desc, ids });
+      const emp = this.listSrc[index];
+      console.log({ emp });
+      const empId = emp? emp.id || 0 : 0
+      if (ids && ids.length > 0) {
+        const params = {
+          entityIds: ids,
+          oprStatus: "FINISH",
+          cobType: "OFFLINE_TICKET",
+          userId: this.userId,
+          empId,
+          empIncome: "8"
+        };
+        this.$api.order
+          .oprSO(params)
+          .then(r => {
+            Toast.success("操作成功");
+            this.close()
+          })
+      }
     }
   }
 };

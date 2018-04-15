@@ -128,7 +128,7 @@ export default {
       const params = {
         oStatus ,
         pageNumber: 1,
-        pageSize: 2,
+        pageSize: 10,
         userId: this.userId
       };
       this.$api.order.pageShopOrders(params).then(r => {
@@ -146,6 +146,7 @@ export default {
       const ids = this.checkedOrders;
       const desc = `批量拒绝`;
       console.log({ desc, ids });
+      console.log( new Date())
       if (ids && ids.length > 0) {
         Dialog.confirm({
           title: "拒绝订单",
@@ -155,9 +156,8 @@ export default {
             const params = {
               entityIds: ids,
               oprStatus: "REJECT",
-              userId: 1
+              userId: this.userId
             };
-            this.oprSO(params);
             this.oprSO(params);
           })
           .catch(() => {

@@ -2,8 +2,9 @@
 <div>
    <div  v-if="item" class="order-item">
        <section class="order-item-section">
-           <p>{{item.createDate }}</p>
-           <Tag type="primary">{{payType}}</Tag>
+           <p>{{item.createDate | formatDate }}</p>
+           <Tag v-if="!isOther" type="primary">{{payType}}</Tag>
+           <Tag v-if="isOther" type="primary">{{item.seriUserNum}}</Tag>
        </section>
        <section class="order-item-section">
          <h6>{{item.addrInfo.fullAddr}}</h6>
@@ -56,8 +57,8 @@
      暂无订单信息
    </p>
    <AssignPicker v-if="openAssign" :close="toggleAssign" :isBatch="false"  :id="item.id"/>
-   <AssignPicker v-if="openReassignment" :close="toggleReassignment"/>
-   <PayMethodPicker v-if="openFinish" :isBatch="false" :close="toggleFinish"/>
+   <AssignPicker v-if="openReassignment" :close="toggleReassignment" :id="item.id"/>
+   <PayMethodPicker v-if="openFinish" :isBatch="false" :close="toggleFinish" :id="item.id"/>
   </div>
 </template>
 <script>
@@ -66,6 +67,7 @@ import AssignPicker from "@/components/AssignPicker";
 import PayMethodPicker from "@/components/PayMethodPicker";
 import { mapActions, mapGetters } from "vuex";
 import { CobPayTypeEnum } from "@/shared/consts";
+import { formatDate } from "@/utils"
 export default {
   name: "orderItem",
   components: {
@@ -129,6 +131,7 @@ export default {
     },
     payType() {
       const type = this.item.payType;
+      console.log(CobPayTypeEnum[type])
       return CobPayTypeEnum[type];
     },
     eventDisabled() {
@@ -181,6 +184,7 @@ export default {
       this.openReassignment = !this.openReassignment;
     },
     toggleFinish() {
+      console.log("关闭 finish ")
       this.openFinish = !this.openFinish;
     },
     refuse() {
@@ -204,8 +208,6 @@ export default {
         });
     },
     unDelivery() {
-      console.log("unDelivery");
-      console.log("refuse");
       Dialog.confirm({
         title: "无法送达",
         message: `确定要酱[ ${
@@ -222,27 +224,23 @@ export default {
           };
           this.oprSO(params);
         })
-        .catch(() => {
-          // on cancel
-        });
     },
     oprSO(params) {
       if (params) {
         this.$api.order
           .oprSO(params)
           .then(r => {
-            if (r.code === "0000") {
-              Toast.success(r.desc);
-            } else {
-              Toast.fail(r.desc);
-            }
+            Toast.success("操作成功");
           })
-          .catch(e => {
-            console.log({ e });
-          });
       }
     }
-  }
+  },
+  filters: {
+        formatDate(time) {
+            var date = new Date(time);
+            return formatDate(date, "yyyy-MM-dd hh:mm");
+        }
+    }
 };
 </script>
 <style lang="less">

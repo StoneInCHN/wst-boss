@@ -8,7 +8,7 @@ const order = {
   },
   /**商家操作订单 */
   oprSO(params) {
-    return post("/sorder/oprSO", params);
+    return lift(post("/sorder/oprSO", params));
   }
 };
 
