@@ -11,34 +11,46 @@
       <Tabs :actice="active"  class="order-tabs" @click="onTabsClick">
           <Tab title="待处理">
             <Item
+              v-if="pendingList.length >0"
               v-for="item in pendingList" 
               :key="item.id"  
               :item="item" 
               state="PENDING" 
               :editable="editable"
             />
+            <p v-else>
+              暂无订单数据
+            </p>
           </Tab>
           <Tab title="配送中">
               <Item
+                v-if="processingList.length >0"
                 v-for="item in processingList" 
                 :key="item.id"  
                 :item="item" 
                 state="PROCESSING" 
                 :editable="editable"
               />
+              <p v-else>
+              暂无订单数据
+              </p>
           </Tab>
           <Tab title="已完成">
               <Item
+                v-if="otherList.length >0"
                 v-for="item in otherList" 
                 :key="item.id"  
                 :item="item" 
                 state="OTHER" 
                 :editable="editable"
               />
+              <p v-else>
+              暂无订单数据
+            </p>
           </Tab>
       </Tabs>
       <Footer/>
-      <AssignPicker v-if="openAssign" :isBatch="true" :close="closeAssgin"/>
+      <AssignPicker v-if="openAssign" :isBatch="true" :close="closeAssgin" />
       <AssignPicker v-if="openReassignment" :isBatch="true" :close="closeReassignment"/>
       <FinishPicker v-if="openFinish" :isBatch="true" :close="closeFinish"/>
   </div>
@@ -86,10 +98,10 @@ export default {
     };
   },
   mounted() {
-    this.getListByStatus(["PENDING"], "PENDING");
+    this.getListByStatus(["PENDING"],"PENDING");
   },
   computed: {
-    ...mapGetters(["checkedOrders"]),
+    ...mapGetters(["checkedOrders", "userId"]),
     settingText() {
       return this.editable ? "取消" : "管理";
     }
@@ -114,23 +126,21 @@ export default {
     },
     getListByStatus(oStatus, type) {
       const params = {
-        oStatus: oStatus,
+        oStatus ,
         pageNumber: 1,
         pageSize: 2,
-        userId: 1
+        userId: this.userId
       };
-      this.$api.order
-        .pageShopOrders(params)
-        .then(r => {
-          console.log({ r });
-          if (type === "PENDING") {
-              this.pendingList = r;
-            } else if (type === "PROCESSING") {
-              this.processingList = r;
-            } else {
-              this.otherList = r;
-            }
-        })
+      this.$api.order.pageShopOrders(params).then(r => {
+        console.log({ r });
+        if (type === "PENDING") {
+          this.pendingList = r;
+        } else if (type === "PROCESSING") {
+          this.processingList = r;
+        } else {
+          this.otherList = r;
+        }
+      });
     },
     batchRefuse() {
       const ids = this.checkedOrders;

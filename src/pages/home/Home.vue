@@ -20,13 +20,15 @@ export default {
     };
   },
   created() {
-    this.$api.common
-      .getKey()
-      .then(r => {
-        this.setToken(r.key)
-      })
+    this.$api.common.auth({ userId: this.userId }).then(r => {
+      console.log({ r });
+      this.setToken(r.token);
+    });
   },
-  methods:{
+  computed: {
+    ...mapGetters(["userId"])
+  },
+  methods: {
     ...mapActions(["setToken"])
   }
 };

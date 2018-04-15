@@ -23,7 +23,7 @@ export default {
       default: false
     },
     id: {
-      type: Number,
+      type: Number | String,
       default: 0
     },
     title: {
@@ -37,7 +37,7 @@ export default {
   mounted() {
     this.$api.mine
       .listShopEmp({
-        userId: 1
+        userId: this.userId
       })
       .then(r => {
         console.log({ r });
@@ -45,9 +45,9 @@ export default {
           this.listSrc = r.msg || [];
         }
       })
-      .catch(e => {
-        console.log({ e });
-      });
+
+    const _this = this
+    console.log({_this})
   },
   data() {
     return {
@@ -55,7 +55,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["checkedOrders"]),
+    ...mapGetters(["checkedOrders","userId"]),
     show() {
       return this.isShow;
     },

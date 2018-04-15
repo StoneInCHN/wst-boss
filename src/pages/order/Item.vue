@@ -15,7 +15,7 @@
           <p> 
             {{`${orderItem.gName} X ${orderItem.count}`}}
           </p>
-           <span>{{`￥${item.amount}`}}</span>
+           <span>{{`￥${orderItem.amount}`}}</span>
        </section>
        <section class="order-item-section">
          <p class="total-price">{{`合计:￥${item.amount}`}}</p>
@@ -27,16 +27,16 @@
        <div class="order-item-footer" v-if="isPending">
            <ul :disabled="eventDisabled">
                <li class="refuse"><a @click="refuse">拒绝</a></li>
-               <li><a  @click="toggleAssign">指派</a></li>
                <li><a @click="toggleFinish">送达</a></li>
+               <li><a @click="toggleAssign">指派</a></li>
                <li><a @click="call">电话</a></li>
            </ul>
        </div>
        <div class="order-item-footer" v-if="isProcessing">
            <ul :disabled="eventDisabled">
                <li class="refuse"><a @click="unDelivery">无法送到</a></li>
-               <li><a @click="toggleReassignment">改派</a></li>
                <li><a @click="toggleFinish">送达</a></li>
+               <li><a @click="toggleReassignment">改派</a></li>
                <li><a @click="call">电话</a></li>
            </ul>
        </div>
@@ -55,9 +55,9 @@
    <p v-else>
      暂无订单信息
    </p>
-   <AssignPicker v-if="openAssign" :close="toggleAssign"/>
+   <AssignPicker v-if="openAssign" :close="toggleAssign" :isBatch="false"  :id="item.id"/>
    <AssignPicker v-if="openReassignment" :close="toggleReassignment"/>
-   <PayMethodPicker v-if="openFinish" :isBatch="true" :close="toggleFinish"/>
+   <PayMethodPicker v-if="openFinish" :isBatch="false" :close="toggleFinish"/>
   </div>
 </template>
 <script>

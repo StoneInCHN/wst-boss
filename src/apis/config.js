@@ -15,11 +15,15 @@ axios.defaults.headers.post["Content-Type"] = "application/json;charset=UTF-8";
 // http请求拦截器
 axios.interceptors.request.use(
   config => {
-    if (store.state.token) {
-      config.headers.post["X-Auth-Token"] = `${store.state.token}`;
+    const {token} = store.state.common
+    console.log({store})
+    if (token) {
+      config.headers.post["X-Auth-Token"] = `${token}`;
+      /** 
       if (config.method === "post") {
         config.data = qs.stringify(config.data);
       }
+      */
     }
     return config;
   },
@@ -32,15 +36,7 @@ axios.interceptors.request.use(
 //返回状态判断
 axios.interceptors.response.use(
   res => {
-    const _CODE = "0000";
-    const { data } = res;
-    const { code, msg, desc } = data;
-
-    if (code !== _CODE) {
-      Toast.fail(desc);
-      return Promise.reject(data);
-    }
-    return msg;
+    return Promise.resolve(res.data);
   },
   error => {
     Toast.fail("网络异常");
@@ -146,6 +142,30 @@ export function put(url, data = {}) {
       )
       .catch(err => {
         reject(err);
+      });
+  });
+}
+
+export function lift(res) {
+  console.log({ res });
+
+  return new Promise((resolve, reject) => {
+    console.log({ resolve, reject });
+    res
+      .then(r => {
+        const _CODE = "0000";
+        console.log({r})
+        console.log(r.code === _CODE)
+        if (r.code === _CODE) {
+          resolve(r.msg);
+          console.log(r.msg)
+        } else {
+          reject(r);
+        }
+      })
+      .catch(e => {
+        Toast.fail("网络异常");
+        return Promise.reject(e);
       });
   });
 }
