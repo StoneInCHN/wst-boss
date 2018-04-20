@@ -97,9 +97,9 @@ export default{
 
 			this.$api.mine.listShopEmp(req)
 			.then(res => {
-			    if(res.code = "0000"){
-			      	this.workers = res.msg;
-			    }	        
+			    //if(res.code = "0000"){
+			      	this.workers = res;
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);

@@ -53,9 +53,9 @@ export default{
 			this.$api.user.pageShopUsers(req)
 			.then(res => {
 				console.info(res);
-			    if(res.code = "0000"){
-			    	this.memberInfoList = res.msg;
-			    }	        
+			    //if(res.code = "0000"){
+			    	this.memberInfoList = res;
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);

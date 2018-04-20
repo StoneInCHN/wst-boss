@@ -4,11 +4,11 @@ const baseUrl = "/";
 
 const order = {
   pageShopOrders(params) {
-    return lift(post("/sorder/pageShopOrders", params))
+    return lift(post("/wst-boss/sorder/pageShopOrders", params))
   },
   /**商家操作订单 */
   oprSO(params) {
-    return lift(post("/sorder/oprSO", params));
+    return lift(post("/wst-boss/sorder/oprSO", params));
   }
 };
 

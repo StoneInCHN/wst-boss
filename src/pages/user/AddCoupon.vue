@@ -60,11 +60,11 @@ export default{
 		    req.entityId = this.seriUser.id;
 	    	this.$api.user.distInfo(req)
 			.then(res => {
-			    if(res.code = "0000"){
-			    	for (var i = 0; i < res.msg.length; i++) {
-			    		this.existIds.push(res.msg[i].shopGoods.id);
+			    //if(res.code = "0000"){
+			    	for (var i = 0; i < res.length; i++) {
+			    		this.existIds.push(res[i].shopGoods.id);
 			    	}
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);
@@ -123,23 +123,23 @@ export default{
 		    req.entityId = this.seriUser.id;
 	    	this.$api.user.distInfo(req)
 			.then(res => {
-			    if(res.code = "0000"){
+			    //if(res.code = "0000"){
 			    	this.existIds = [];
 			    	var allDGoods = [];
-			    	for (var i = 0; i < res.msg.length; i++) {
+			    	for (var i = 0; i < res.length; i++) {
 			    		var cGoods = {};
-			    		cGoods.distAmount = res.msg[i].distAmount;
-			    		cGoods.distPrice = res.msg[i].shopGoods.distPrice;
-			    		cGoods.picUrl = res.msg[i].shopGoods.picUrl;
-			    		cGoods.id = res.msg[i].shopGoods.id;
-			    		cGoods.gNameSpec = res.msg[i].shopGoods.gNameSpec;
+			    		cGoods.distAmount = res[i].distAmount;
+			    		cGoods.distPrice = res[i].shopGoods.distPrice;
+			    		cGoods.picUrl = res[i].shopGoods.picUrl;
+			    		cGoods.id = res[i].shopGoods.id;
+			    		cGoods.gNameSpec = res[i].shopGoods.gNameSpec;
 			    		allDGoods.push(cGoods);
-			    		this.existIds.push(res.msg[i].shopGoods.id);
+			    		this.existIds.push(res[i].shopGoods.id);
 			    	}
 			    	this.$store.state.couponGoodsList = allDGoods;
 			    	this.couponList = this.$store.state.couponGoodsList;
 			    	this.existCouponList = allDGoods;
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);

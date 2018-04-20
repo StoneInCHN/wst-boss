@@ -105,6 +105,7 @@ export default{
 			});
 		},
 		editItem(){
+			console.info(this.memberInfo);
 			this.$store.state.seriUser = this.memberInfo;
 			this.$router.push('/user/editCodeUser');
 		},

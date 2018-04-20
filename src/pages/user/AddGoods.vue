@@ -56,18 +56,18 @@ export default{
 		    req.entityId = this.$store.state.seriUser.id;
 	    	this.$api.user.getOnGsList(req)
 			.then(res => {
-			    if(res.code = "0000"){
+			    //if(res.code = "0000"){
 			    	this.allGoods = [];
-			    	for (var i = 0; i < res.msg.gList.length; i++) {
+			    	for (var i = 0; i < res.gList.length; i++) {
 			    		var cGoods = {};
-			    		cGoods.distPrice = res.msg.gList[i].distPrice;
-			    		cGoods.picUrl = res.msg.gList[i].picUrl;
-			    		cGoods.id = res.msg.gList[i].id;
-			    		cGoods.name = res.msg.gList[i].gNameSpec;
+			    		cGoods.distPrice = res.gList[i].distPrice;
+			    		cGoods.picUrl = res.gList[i].picUrl;
+			    		cGoods.id = res.gList[i].id;
+			    		cGoods.name = res.gList[i].gNameSpec;
 			    		cGoods.callback = this.setGoods;
 			    		this.allGoods.push(cGoods);
 			    	}
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);

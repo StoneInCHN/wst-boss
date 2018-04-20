@@ -23,12 +23,12 @@ module.exports = {
   },
   dev: {
     env: require("./dev.env"),
-    port: 8081,
+    port: 8082,
     autoOpenBrowser: true,
     assetsSubDirectory: "static",
     assetsPublicPath: "/",
     proxyTable: {
-      "/wst-boss/": {
+      "/wst-boss": {
         // 测试环境
         target: "http://47.106.96.230:10002/wst-boss", // 接口域名
         changeOrigin: true, //是否跨域

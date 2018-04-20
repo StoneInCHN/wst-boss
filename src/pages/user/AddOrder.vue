@@ -64,10 +64,10 @@ export default{
 		    //请求参数待定，接口文档有误???
 	    	this.$api.user.addSO(req)
 			.then(res => {
-			    if(res.code = "0000"){
-			    	var tip = "订单号："+res.msg.sn+";  支付方式："+this.getPayType(res.msg.payType);
-			    	if(res.msg.cobAmount){
-			    		tip += ";   仍需货到付款金额:" + this.formatPrice(res.msg.cobAmount);
+			    //if(res.code = "0000"){
+			    	var tip = "订单号："+res.sn+";  支付方式："+this.getPayType(res.payType);
+			    	if(res.cobAmount){
+			    		tip += ";   仍需货到付款金额:" + this.formatPrice(res.cobAmount);
 			    	}
 			    	Dialog.alert({
 					  title: '操作成功',
@@ -75,7 +75,7 @@ export default{
 					}).then(() => {
 					  this.$router.push('/userManage');
 					});			    	
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);
@@ -90,11 +90,11 @@ export default{
 			req.entityId = this.seriUser.id;
 			this.$api.user.lastSO(req)
 			.then(res => {
-			    if(res.code = "0000"){
+			    //if(res.code = "0000"){
 			    	this.goodsList = [];
-			    	this.goodsList.push(res.msg);
+			    	this.goodsList.push(res);
 			    	this.$store.state.goodsList = this.goodsList;
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);

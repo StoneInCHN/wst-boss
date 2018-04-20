@@ -2,7 +2,7 @@ import { fetch, post, patch, put, lift } from "../config";
 
 const common = {
   auth(params) {
-    return lift(post("/common/auth", params));
+    return lift(post("/wst-boss/common/auth", params));
   },
   login (params) {
     return post('/login', params)

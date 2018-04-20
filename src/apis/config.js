@@ -7,7 +7,7 @@ import qs from "qs";
 // 超时时间
 axios.defaults.timeout = 5000;
 
-axios.defaults.baseURL = "http://localhost:8081/wst-boss/";
+//axios.defaults.baseURL = "http://localhost:8081/wst-boss/";
 
 //
 axios.defaults.headers.post["Content-Type"] = "application/json;charset=UTF-8";

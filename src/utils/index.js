@@ -87,7 +87,7 @@ export function numDiv(arg1, arg2) {
   return r1 / r2 * Math.pow(10, t2 - t1);
 }
 
-export function formatDate(date, fmt) {
+export function formatDateTime(date, fmt) {
   if (/(y+)/.test(fmt)) {
     fmt = fmt.replace(
       RegExp.$1,

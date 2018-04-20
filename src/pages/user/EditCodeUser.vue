@@ -79,10 +79,10 @@ export default{
 		    // console.info(seriUser);
 			this.$api.user.editSeriUser(seriUser)
 			.then(res => {
-			    if(res.code = "0000"){
+			    //if(res.code = "0000"){
 			    	Toast.success("操作成功");
 			    	this.$router.push('/user/totalCodeUsers');
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);
@@ -105,7 +105,7 @@ export default{
     },
     mounted(){
     	this.userCard = this.$store.state.seriUser;
-    	console.info(this.userCard);
+    	this.userCard.userNum = this.$store.state.seriUser.serialNo;
     	this.phoneList = this.userCard.contactPhone;
     	if(this.userCard.contactPhone2){
 			this.phoneList = this.phoneList + "," + this.userCard.contactPhone2;

@@ -94,9 +94,9 @@ export default{
 				    }
 					this.$api.user.pageSeriUsers(req)
 					.then(res => {
-					    if(res.code = "0000"){
-					    	this.userCards = res.msg;
-					    }	        
+					    //if(res.code = "0000"){
+					    	this.userCards = res;
+					    //}	        
 					})
 					.catch(error => {
 					    console.log(error);
@@ -125,11 +125,9 @@ export default{
 	    getSummar(){
 	    	var req = {};
 		    req.userId = this.$store.state.userId;
-			this.$api.user.summar(req)
+			this.$api.user.summary(req)
 			.then(res => {
-			    if(res.code = "0000"){
-			    	this.summar = res.msg;
-			    }	        
+				this.summar = res;        
 			})
 			.catch(error => {
 			        console.log(error);

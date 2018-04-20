@@ -42,9 +42,9 @@ export default{
 			req.userName = this.keyWords;
 			this.$api.mine.getWxByNickName(req)
 			.then(res => {
-			    if(res.code = "0000"){
-			      	console.info(res.msg);
-			      	var wokers = res.msg;
+			    //if(res.code = "0000"){
+			      	//console.info(res);
+			      	var wokers = res;
 			      	for (var i = 0; i < wokers.length; i++) {
 			      		var worker = {};
 						worker.headImgUrl = wokers[i].headImgUrl;
@@ -53,7 +53,7 @@ export default{
 						this.worderList.push(worker);
 			      	}
 			      	
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			    console.log(error);

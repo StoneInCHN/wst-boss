@@ -67,7 +67,7 @@ import AssignPicker from "@/components/AssignPicker";
 import PayMethodPicker from "@/components/PayMethodPicker";
 import { mapActions, mapGetters } from "vuex";
 import { CobPayTypeEnum } from "@/shared/consts";
-import { formatDate } from "@/utils"
+import { formatDateTime } from "@/utils"
 export default {
   name: "orderItem",
   components: {
@@ -238,7 +238,7 @@ export default {
   filters: {
         formatDate(time) {
             var date = new Date(time);
-            return formatDate(date, "yyyy-MM-dd hh:mm");
+            return formatDateTime(date, "yyyy-MM-dd hh:mm");
         }
     }
 };

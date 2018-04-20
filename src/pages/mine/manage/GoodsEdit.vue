@@ -94,16 +94,16 @@ export default{
 		    req.userId = this.$store.state.userId;
 			this.$api.mine.getWBrand(req)
 			.then(res => {
-			    if(res.code = "0000"){
+			    //if(res.code = "0000"){
 			    	this.allBrand = [];
-			    	for (var i = 0; i < res.msg.brands.length; i++) {
+			    	for (var i = 0; i < res.brands.length; i++) {
 			    		var b = {};	
-			    		b.id = res.msg.brands[i].id;		    		
-			    		b.name = res.msg.brands[i].name;
+			    		b.id = res.brands[i].id;		    		
+			    		b.name = res.brands[i].name;
 			    		b.callback= this.setBrand;
 			    		this.allBrand.push(b);
 			    	}
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);
@@ -115,16 +115,16 @@ export default{
 		    req.entityId = brandId;
 			this.$api.mine.getWBrand(req)
 			.then(res => {
-			    if(res.code = "0000"){
+			    //if(res.code = "0000"){
 			    	this.allGoodsName = [];
-			    	for (var i = 0; i < res.msg.brands.length; i++) {
+			    	for (var i = 0; i < res.brands.length; i++) {
 			    		var b = {};	
-			    		b.id = res.msg.brands[i].id;		    		
-			    		b.name = res.msg.brands[i].name;
+			    		b.id = res.brands[i].id;		    		
+			    		b.name = res.brands[i].name;
 			    		b.callback= this.setGoodsName;
 			    		this.allGoodsName.push(b);
 			    	}
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);

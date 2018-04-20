@@ -5,7 +5,7 @@
 		  			<Checkbox class="order-item-checkbox" v-model="checked" @change="editGoods"/>
 		  		</div>		  		
 		  		<div class="goods_thumb">
-		  			<img :src="goods.picUrl" width="90" height="90">
+		  			<img :src="'/wst-boss/'+goods.picUrl" width="90" height="90">
 		  			<div class="goods_status">
 		  				<span v-if="goods.gStatus == 'OFF'" class="invalid">下架</span>
 		  				<span v-if="goods.gStatus == 'ON'" class="valid">上架</span>

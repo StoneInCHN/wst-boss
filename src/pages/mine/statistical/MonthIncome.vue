@@ -7,7 +7,7 @@
 			<Col span="8" class="right"><Icon  v-if="bType" name="search" @click="search"/></Col>
 		</Row>	
 		<Tabs :active="active" @click="clickType">
-			<Tab v-for="type in allType" :title="type.name">
+			<Tab v-for="(type,index) in allType" :title="type.name" :key="index">
 				<div class="sub-title">
 					<CellGroup>
 						<Cell :title="ym" :value="reportValue" icon="edit" @click="selectMonth">
@@ -121,9 +121,9 @@ export default{
 		    	req.empId = this.empId;
 		    	this.$api.mine.pageFinDetail(req)
 		    	.then(res =>{
-		    		if(res.code = '0000'){
-		    			this.detailList = res.msg;
-		    		}
+		    		//if(res.code = '0000'){
+		    			this.detailList = res;
+		    		//}
 		    	}).catch(error => {
 		    		console.error(error);
 		    	})		    
@@ -133,8 +133,8 @@ export default{
 		    	req.userId = this.$store.state.userId;
 		    	this.$api.mine.finReport(req)
 		    	.then(res =>{
-		    		if(res.code = '0000'){
-		    			this.report = res.msg;
+		    		//if(res.code = '0000'){
+		    			this.report = res;
 		    			if(this.bType){
 		    				if(this.bType == 'INCOME'){
 								this.reportValue = "收入："+ this.report.monIncome;
@@ -145,13 +145,13 @@ export default{
 		    				this.reportValue = "收入："+ this.report.monIncome+ "，支出："+ this.report.monEmpExp;
 		    			}
 		    			
-		    		}
+		    		//}
 		    	}).catch(error => {
 		    		console.error(error);
 		    	})
 		},
 		formatDate(dateTime) {
-      		return utils.formatDateTime(dateTime);
+      		return utils.formatDateTime(dateTime, "yyyy-MM-dd hh:mm");
     	},
     	formatPayType(payKey){
     		if(payKey == 'ALIPAY'){
@@ -206,16 +206,16 @@ export default{
 		    req.userId = this.$store.state.userId;
 			this.$api.mine.listShopEmp(req)
 			.then(res => {
-			    if(res.code = "0000"){
+			    //if(res.code = "0000"){
 			    	this.emps = [];
-			    	for(var i=0; i<res.msg.length;i++){
+			    	for(var i=0; i<res.length;i++){
 			    		var emp = {};
-			    		emp.key = res.msg[i].id;
-			    		emp.name = res.msg[i].realName;
+			    		emp.key = res[i].id;
+			    		emp.name = res[i].realName;
 			    		emp.callback=this.searchEmp;
 			    		this.emps.push(emp);
 			    	}
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);

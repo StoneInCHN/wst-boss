@@ -77,9 +77,9 @@ export default{
 		    req.userId = this.$store.state.userId;
 			this.$api.mine.getInfo(req)
 			.then(res => {
-				if(res.code = "0000"){
-					this.store = res.msg;
-				}	        
+				//if(res.code = "0000"){
+					this.store = res;
+				//}	        
 			})
 			.catch(error => {
 				console.log(error);

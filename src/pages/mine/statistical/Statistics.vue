@@ -52,9 +52,9 @@ export default{
 		    	req.userId = this.$store.state.userId;
 		    	this.$api.mine.finReport(req)
 		    	.then(res =>{
-		    		if(res.code = '0000'){
-		    			this.report = res.msg;
-		    		}
+		    		//if(res.code = '0000'){
+		    			this.report = res;
+		    		//}
 		    	}).catch(error => {
 		    		console.error(error);
 		    	})

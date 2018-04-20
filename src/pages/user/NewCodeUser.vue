@@ -88,10 +88,10 @@ export default{
 		    // console.info(seriUser);
 			this.$api.user.createSeriUser(seriUser)
 			.then(res => {
-			    if(res.code = "0000"){
+			    //if(res.code = "0000"){
 			    	Toast.success("操作成功");
 			    	this.$router.push('/user/totalCodeUsers');
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);
@@ -116,9 +116,9 @@ export default{
 		    req.userId = this.$store.state.userId;
 			this.$api.user.getLastSerialNo(req)
 			.then(res => {
-			    if(res.code = "0000"){
-			    	this.lastNo = res.msg.lastNo;
-			    }	        
+			    //if(res.code = "0000"){
+			    	this.lastNo = res.lastNo;
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);

@@ -53,18 +53,18 @@ export default{
 		    req.entityIds = this.$store.state.couponIds;
 	    	this.$api.user.getGsDdList(req)
 			.then(res => {
-			    if(res.code = "0000"){
+			    //if(res.code = "0000"){
 			    	this.allDGoods = [];
-			    	for (var i = 0; i < res.msg.length; i++) {
+			    	for (var i = 0; i < res.length; i++) {
 			    		var cGoods = {};
-			    		cGoods.distPrice = res.msg[i].distPrice;
-			    		cGoods.picUrl = res.msg[i].picUrl;
-			    		cGoods.id = res.msg[i].id;
-			    		cGoods.name = res.msg[i].gNameSpec;
+			    		cGoods.distPrice = res[i].distPrice;
+			    		cGoods.picUrl = res[i].picUrl;
+			    		cGoods.id = res[i].id;
+			    		cGoods.name = res[i].gNameSpec;
 			    		cGoods.callback = this.setGNameSpec;
 			    		this.allDGoods.push(cGoods);
 			    	}
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);

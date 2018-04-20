@@ -97,23 +97,23 @@ export default{
 		    req.userId = this.$store.state.userId;
 			this.$api.mine.getGList(req)
 			.then(res => {
-			    if(res.code = "0000"){
+			    //if(res.code = "0000"){
 			    	var all = {};
 			    	all.brandName = '全部';
 			    	all.brandId = 0;
 			    	var gInfo=[];
-			    	for (var i = 0; i < res.msg.gList.length; i++) {
-			    		for (var j = 0; j < res.msg.gList[i].gInfo.length; j++) {
-			    			gInfo.push(res.msg.gList[i].gInfo[j]);
+			    	for (var i = 0; i < res.gList.length; i++) {
+			    		for (var j = 0; j < res.gList[i].gInfo.length; j++) {
+			    			gInfo.push(res.gList[i].gInfo[j]);
 			    		}			    		
 			    	}
 			    	all.gInfo = gInfo;
 			    	this.gList = [];
 			    	this.gList.push(all);
-			    	for (var i = 0; i < res.msg.gList.length; i++) {
-			    		this.gList.push(res.msg.gList[i]);    		
+			    	for (var i = 0; i < res.gList.length; i++) {
+			    		this.gList.push(res.gList[i]);    		
 			    	}
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);
