@@ -16,7 +16,8 @@
     "vant-css": "^0.11.14",
     "vue": "^2.5.0",
     "vue-router": "^3.0.0",
-    "vuex": "^3.0.1"
+    "vuex": "^3.0.1",
+    "weixin-js-sdk": "^1.3.2"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

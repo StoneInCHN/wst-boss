@@ -46,7 +46,8 @@ export default{
 				qrCodeId:null,
 				remark:null
 			},
-			lastNo:null
+			lastNo:null,
+			config: {},
 		}
 	},
 	methods: {
@@ -109,7 +110,23 @@ export default{
 			});
         },
         addQr(){
-        	this.$router.push('/user/scanQr');
+	        this.$wechat.scanQRCode({
+	          needResult: 1,
+	          desc: 'scanQRCode desc',
+	          success: (res) => {
+	            let url = res.resultStr
+	            if (url && url.indexOf(this.urlPre) !== -1) {
+	            	//从url中获取qrCodeId
+	            	//this.userCard.qrCodeId = ?
+	            } else {
+	              alert("请扫描正确的二维码");
+	            }
+	          },
+	          cancel: (res) => {
+	            this.$wechat.closeWindow();
+	          }
+	        })
+        	//this.$router.push('/user/scanQr');
         },
         getLastSerialNo(){
         	var req = {};
@@ -123,7 +140,46 @@ export default{
 			.catch(error => {
 			        console.log(error);
 			});
-        }
+        },
+        getConfig () {
+		      let params = {
+		        userName: this.$store.state.userId,
+		        curUrl: location.href
+		      }
+		      this.$common.jsApiConfig(params).then(res => {
+		        if (res && res.code === '0000' && res.msg) {
+		          this.config.jsapi_ticket = res.msg.jsapi_ticket
+		          this.config.signature = res.msg.signature
+		          this.config.nonceStr = res.msg.nonceStr
+		          this.config.timestamp = res.msg.timestamp
+		          this.config.url = res.msg.url
+		          this.config.appId = res.msg.appId
+		        }
+		        if (this.config) {
+		          this.$wechat.config({
+		            debug: false,
+		            appId: this.config.appId,
+		            timestamp: this.config.timestamp,
+		            nonceStr: this.config.nonceStr,
+		            signature: this.config.signature,
+		            jsApiList: [
+		              'scanQRCode',
+		              'hideAllNonBaseMenuItem',
+		              'closeWindow'
+		            ]
+		          })
+		          this.$wechat.ready(() => {
+		            this.$wechat.hideAllNonBaseMenuItem()
+		            console.log('wx loading success')
+		          })
+		          this.$wechat.error((res) => {
+		            console.log('wx loading error')
+		          })
+		        }
+		      }).catch(error => {
+		        console.log(error)
+		      })
+    	},
     },
     mounted(){
     	this.getLastSerialNo();

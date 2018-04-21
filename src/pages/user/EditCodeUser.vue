@@ -11,7 +11,7 @@
 				<CellGroup>
 				  <Field label="编号" v-model="userCard.userNum" placeholder="请输入用户编号"/>
 				  <Field label="手机号" v-model="phoneList" placeholder="可输入多个手机号，用逗号分隔" required/>
-				  <Field label="座机" v-model="telList" placeholder="例（028）6573158，多个用逗号分隔"/>
+				  <Field label="座机" v-model="telList" placeholder="例 028-6573158，多个用逗号分隔"/>
 				  <Field label="姓名" v-model="userCard.realName" placeholder="请填写用户姓名" required/>
 				  <Field label="小区/大厦/学校" v-model="userCard.addrInfo" placeholder="请填写用户地址" required/>
 				  <Field label="楼号-门牌号" v-model="userCard.doorNum" placeholder="请填写楼号-门牌号" required/>

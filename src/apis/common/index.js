@@ -4,6 +4,9 @@ const common = {
   auth(params) {
     return lift(post("/wst-boss/common/auth", params));
   },
+  jsApiConfig (params) {
+    return post('/wst-boss/wx/jsapiConfig', params)
+  },
   login (params) {
     return post('/login', params)
   },
@@ -15,7 +18,9 @@ const common = {
   },
   getKey(){
     return fetch('/common/getKey')
-  }
+  },
+
+
 };
 
 export default common;

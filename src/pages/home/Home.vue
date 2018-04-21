@@ -21,7 +21,7 @@ export default {
   },
   created() {
     this.$api.common.auth({ userId: this.userId }).then(r => {
-      console.log({ r });
+      //console.log({ r });
       this.setToken(r.token);
     });
   },

@@ -11,7 +11,7 @@ const  user = {
     return lift(post('/wst-boss/sUser/pageSeriUsers', params)); //用户管理-总编号用户（列表，编号查询）  
   },  
   deleteSeriUser (params) {  	
-    return lift(post('/wst-boss/sUser/deleteSeriUser', params)); //用户管理-总编号用户-删除编号用户 
+    return lift(post('/wst-boss/sUser/delSeriUser', params)); //用户管理-总编号用户-删除编号用户 
   },
   getLastSerialNo (params) {   
     return lift(post('/wst-boss/sUser/getLastSerialNo', params)); //用户管理-总编号用户-获取上次用户编号

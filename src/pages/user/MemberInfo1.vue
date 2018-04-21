@@ -85,15 +85,14 @@ export default{
 			}).then(() => {
 				var req = {};
 			    req.userId = this.$store.state.userId;
-			    req.entityIds = [];
-			    req.entityIds.push(this.memberInfo.id); 
+			    req.entityId=this.memberInfo.id;
 				this.$api.user.deleteSeriUser(req)
 				.then(res => {
-				    if(res.code = "0000"){
+				    //if(res.code = "0000"){
 				    	//刷新 编号用户列表 数据
 				    	this.$emit('refreshSeriUsers');
 				    	Toast.success("操作成功");
-				    }	        
+				    //}	        
 				})
 				.catch(error => {
 				        console.log(error);

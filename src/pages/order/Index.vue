@@ -1,5 +1,6 @@
 <template>
-  <div class="order" :class="{ 'order-edit': editable }">
+  <div>
+  <div class="order" :class="{ 'order-edit': editable }">    
       <Button v-if="currentState !== 'OTHER'" class="order-setting" size="small" @click="setting">{{settingText}}</Button>
       <ul class="order-setting-edit" >
           <li v-if="currentState === 'PENDING'"><a @click="batchRefuse">拒绝</a></li>
@@ -8,6 +9,7 @@
           <li v-if="currentState !== 'OTHER'"><a @click="batchService">送达</a></li>
           <li v-if="currentState === 'PROCESSING'"><a @click="batchUnDelivery">无法送达</a></li>
       </ul>
+      
       <Tabs :actice="active"  class="order-tabs" @click="onTabsClick">
           <Tab title="待处理">
             <Item
@@ -49,11 +51,13 @@
             </p>
           </Tab>
       </Tabs>
+      
       <Footer/>
       <AssignPicker v-if="openAssign" :isBatch="true" :close="closeAssgin" />
       <AssignPicker v-if="openReassignment" :isBatch="true" :close="closeReassignment"/>
       <FinishPicker v-if="openFinish" :isBatch="true" :close="closeFinish"/>
   </div>
+ </div>
 </template>
 <script>
 import Header from "@/pages/wechat/Header";
@@ -61,7 +65,7 @@ import Footer from "@/pages/wechat/Footer";
 import OrderItem from "@/pages/order/OrderItem";
 import AssignPicker from "@/components/AssignPicker";
 import Item from "@/pages/order/Item";
-import { Tab, Tabs, Icon, Button, Toast, Dialog } from "vant";
+import { Tab, Tabs, Icon, Button, Toast, Dialog, PullRefresh } from "vant";
 import { mapActions, mapGetters } from "vuex";
 
 export default {
@@ -77,7 +81,8 @@ export default {
     Dialog,
     Header,
     Footer,
-    AssignPicker
+    AssignPicker,
+    PullRefresh
   },
   data() {
     return {
@@ -94,7 +99,9 @@ export default {
       ],
       openAssign: false,
       openReassignment: false,
-      openFinish: false
+      openFinish: false,
+      isLoading:false,
+      count:0
     };
   },
   mounted() {
@@ -106,11 +113,19 @@ export default {
       return this.editable ? "取消" : "管理";
     }
   },
-  methods: {
+  methods: {    
     ...mapActions(["setCheckedOrders"]),
     setting() {
       this.setCheckedOrders([]);
       this.editable = !this.editable;
+    },
+    onRefresh() {
+      alert("123");
+        setTimeout(() => {
+          this.count++;
+          Toast.succes('刷新成功:'+this.count);
+          this.isLoading = false;
+        }, 500);
     },
     onTabsClick(i) {
       this.editable = false;

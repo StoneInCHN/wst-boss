@@ -60,6 +60,7 @@ export function fetch(url, params = {}) {
       .then(
         res => {
           console.log("url", url);
+          console.log("req", params);
           console.log("res", res);
           resolve(res);
         },
@@ -87,6 +88,7 @@ export function post(url, data = {}) {
       .then(
         res => {
           console.log("url", url);
+          console.log("req", data);
           console.log("res", res);
           resolve(res);
         },
@@ -168,7 +170,7 @@ export function lift(res) {
         }
       })
       .catch(e => {
-        Toast.fail("系统错误："+r.code);
+        Toast.fail("系统错误："+res.code);
         return Promise.reject(e);
       });
   });
