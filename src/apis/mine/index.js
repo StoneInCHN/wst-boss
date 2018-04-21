@@ -9,7 +9,7 @@ const  mine = {
     return lift(post('/wst-boss/shopEmp/listShopEmp', params)); //商家送水员信息
   },
   deleteEmp (params) {
-    return lift(post('/wst-boss/shopEmp/deleteEmp', params)); //商家删除送水员
+    return lift(post('/wst-boss/shopEmp/delEmp', params)); //商家删除送水员
   },
   getWxByNickName (params) {
     return lift(post('/wst-boss/shopEmp/getWxByNickName', params)); //微信昵称获取人信息
@@ -39,7 +39,7 @@ const  mine = {
     return lift(post('/wst-boss/sGoods/getWBrand', params)); //获取水品牌
   },
   getSpec (params) {
-    return lift(post('/wst-boss/sGoods/getSpec', params)); //获取品牌规格
+    return lift(post('/wst-boss/sGoods/getWBrandSpec', params)); //获取品牌规格
   },
   addWG (params) {
     return lift(post('/wst-boss/sGoods/addWG', params)); //商家新增商品
@@ -49,8 +49,12 @@ const  mine = {
   },
   genQrPdf (params) {
     console.info("请求【批量生成二维码】接口, 请求参数：", params);
-    var url = "/wst-boss/shopQrcode/genQrPdf?userId=1&pageSize=5?userId="+params.userId+"&pageSize="+params.pageSize;
-    return fetch(url); //批量生成二维码
+    var url = "/wst-boss/shopQrcode/genQrPdf?userId="+params.userId+"&pageSize="+params.pageSize;
+    window.open(url);
+    //return fetch(url); //批量生成二维码
+    var res = {};
+    res.code = "0000";
+    return res;
   }
 }
 

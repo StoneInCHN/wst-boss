@@ -13,7 +13,7 @@
 				  		<Stepper slot="icon" v-model="goods.gCount" :min="1" :max="100"  :default-value="1"/>				 	
 				  </Field>			  
 				</CellGroup>
-				<img :src="goods.gPic" width="100" height="100"/>
+				<img :src="'/wst-boss/'+goods.gPic" width="100" height="100"/>
 			</div>	
 		</Panel>
 		<Actionsheet  v-model="showGoods" :actions="allGoods" cancel-text="取消"/>

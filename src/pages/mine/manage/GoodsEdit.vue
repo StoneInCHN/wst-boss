@@ -44,10 +44,12 @@ export default{
 	},
 	methods: {
         save () {
-        	if(this.goods.id !=null){
+        	if(this.goods.id ==null){
+        		console.info("addWG");
         		this.addWG();
         	}else{
-				this.eidtWG();
+        		console.info("editWG");
+				this.editWG();
         	}			
         },
         formatPrice(num){
@@ -136,16 +138,16 @@ export default{
 		    req.entityId = goodsNameId;
 			this.$api.mine.getSpec(req)
 			.then(res => {
-			    if(res.code = "0000"){
+			    //if(res.code = "0000"){
 			    	this.allSize = [];
-			    	for (var i = 0; i < res.msg.specs.length; i++) {
+			    	for (var i = 0; i < res.specs.length; i++) {
 			    		var b = {};	
-			    		b.id= res.msg.specs[i].id;		    		
-			    		b.name = res.msg.specs[i].specValue+res.msg.specs[i].unit;
+			    		b.id= res.specs[i].id;		    		
+			    		b.name = res.specs[i].specValue+res.specs[i].unit;
 			    		b.callback= this.setSize;
 			    		this.allSize.push(b);
 			    	}
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);
@@ -162,10 +164,10 @@ export default{
 		    req.distPrice = this.goods.distPrice;
 			this.$api.mine.addWG(req)
 			.then(res => {
-			    if(res.code = "0000"){
+			    //if(res.code = "0000"){
 			    	Toast.success("新增成功");
 			    	this.$router.push('/manage/goodsManage');
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);
@@ -181,12 +183,12 @@ export default{
 		    req.originPrice = this.goods.originPrice;
 		    req.distPrice = this.goods.distPrice;
 		    req.id= this.goods.id;
-			this.$api.mine.editWG(req)
+			this.$api.mine.addWG(req)
 			.then(res => {
-			    if(res.code = "0000"){
+			    //if(res.code = "0000"){
 			    	Toast.success("更新成功");
 			    	this.$router.push('/manage/goodsManage');
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);

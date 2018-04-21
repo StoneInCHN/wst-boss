@@ -2,7 +2,9 @@
 	<div>
 				<Row>
 					<Col span="6">
-						<div style="margin:15px"><img :src="coupon.picUrl" width="62" height="62"/></div>
+						<div style="margin:10px 15px">
+							<img :src="'/wst-boss/'+coupon.picUrl" width="50" height="50"/>
+						</div>
 					</Col>
 					<Col span="16" class="coupon">	
 						<div class="couponCard">

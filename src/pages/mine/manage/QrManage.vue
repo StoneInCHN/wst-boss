@@ -38,6 +38,7 @@ export default{
 			    req.pageSize = this.count;
 				this.$api.mine.genQrPdf(req)
 				.then(res => {
+					console.info(res);
 				    const toast = Toast.loading({
 						  duration: 0,       // 持续展示 toast
 						  forbidClick: true, // 禁用背景点击

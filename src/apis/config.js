@@ -16,7 +16,7 @@ axios.defaults.headers.post["Content-Type"] = "application/json;charset=UTF-8";
 axios.interceptors.request.use(
   config => {
     const {token} = store.state.common
-    console.log({store})
+    //console.log({store})
     if (token) {
       config.headers.post["X-Auth-Token"] = `${token}`;
       /** 
@@ -59,6 +59,8 @@ export function fetch(url, params = {}) {
       })
       .then(
         res => {
+          console.log("url", url);
+          console.log("res", res);
           resolve(res);
         },
         err => {
@@ -84,6 +86,8 @@ export function post(url, data = {}) {
       .post(url, data)
       .then(
         res => {
+          console.log("url", url);
+          console.log("res", res);
           resolve(res);
         },
         err => {
@@ -147,24 +151,24 @@ export function put(url, data = {}) {
 }
 
 export function lift(res) {
-  console.log({ res });
+  //console.log({ res });
 
   return new Promise((resolve, reject) => {
-    console.log({ resolve, reject });
+    //console.log({ resolve, reject });
     res
       .then(r => {
         const _CODE = "0000";
-        console.log({r})
-        console.log(r.code === _CODE)
+        //.log({r})
+        //console.log(r.code === _CODE)
         if (r.code === _CODE) {
           resolve(r.msg);
-          console.log(r.msg)
+          //console.log(r.msg)
         } else {
           reject(r);
         }
       })
       .catch(e => {
-        Toast.fail("网络异常");
+        Toast.fail("系统错误："+r.code);
         return Promise.reject(e);
       });
   });

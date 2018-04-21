@@ -23,14 +23,12 @@
 					</Col>
 				</Row>					
 				<CellGroup>  
-				  <Field label="优惠原因"  placeholder="请填写优惠原因" type="textarea"/>
+				  <Field label="优惠原因" v-model="distCause" placeholder="请填写优惠原因" type="textarea"/>
 				</CellGroup>
 			</div>	
 		</Panel>
 	</div>
 </template>
-1 2 3
-2 4
 
 <script>
 import { Panel, CellGroup, Field, Button, Cell, Row, Col, Icon, Toast } from 'vant'
@@ -44,6 +42,7 @@ export default{
 			seriUser:{},
 			couponList:[],
 			existIds:[],
+			distCause:null
 		}
 	},
 	methods: {
@@ -85,22 +84,24 @@ export default{
         			deleteIds.push(this.existIds[i]);
         		}
         	}
-        	var addDistMap = new Map();//需添加的优惠商品信息 (商品ID:优惠价格)
-        	for (var i = 0; i < newCouponList.length; i++) {        		
-        		addDistMap.set(newCouponList[i].id+"", newCouponList[i].distAmount);
+			var addDistMap = {};
+		    for (var i = 0; i < newCouponList.length; i++) {      
+		    	var key = newCouponList[i].id+"";
+		    	addDistMap[key]= newCouponList[i].distAmount;
         	}
-			
 			var req = {};
 		    req.userId = this.$store.state.userId;
 		    req.entityId = this.seriUser.id;
 		    req.addDistMap = addDistMap;
 		    req.entityIds = deleteIds;
+		    req.distCause = this.distCause;
+		    console.info(req);
 	    	this.$api.user.saveGsDist(req)
 			.then(res => {
-			    if(res.code = "0000"){
+			    //if(res.code = "0000"){
 			    	Toast.success("操作成功");
 			    	this.$router.push('/userManage');
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);

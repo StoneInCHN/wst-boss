@@ -35,13 +35,13 @@ const  user = {
     return lift(post('/wst-boss/sUser/saveGsDist', params)); //用户管理-保存优惠信息
   },
   lastSO (params) {    
-    return lift(post('/wst-boss/sUser/seriUser/lastSO', params)); //用户管理-获取上次订单商品
+    return lift(post('/wst-boss/sorder/seriUser/lastSO', params)); //用户管理-获取上次订单商品
   },  
   getOnGsList (params) {    
     return lift(post('/wst-boss/sGoods/getOnGsList', params)); //用户管理-上架商品选择列表
   },  
   addSO (params) {    
-    return lift(post('/wst-boss/sorder/addSO', params)); //用户管理-商家提交订单
+    return lift(post('/wst-boss/sorder/seriUser/addSO', params)); //用户管理-商家提交订单
   },   
 
 }

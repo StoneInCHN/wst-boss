@@ -5,7 +5,7 @@
 		  			<Checkbox class="order-item-checkbox" v-model="checked" @change="editGoods"/>
 		  		</div>		  		
 		  		<div class="goods_thumb">
-		  			<img :src="'/wst-boss/'+goods.picUrl" width="90" height="90">
+		  			<img :src="'/wst-boss/'+goods.picUrl" width="65" height="65">
 		  			<div class="goods_status">
 		  				<span v-if="goods.gStatus == 'OFF'" class="invalid">下架</span>
 		  				<span v-if="goods.gStatus == 'ON'" class="valid">上架</span>
@@ -113,8 +113,6 @@ export default{
 	    position: absolute;
 	    border: 1px solid #eee;
 	    border-radius: 5px;
-	}
-	.goods_thumb {
 	    align-items: center;
 	    justify-content: center;
 	}

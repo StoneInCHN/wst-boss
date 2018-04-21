@@ -112,10 +112,10 @@ export default{
 
 			this.$api.mine.deleteEmp(req)
 			.then(res => {
-				if(res.code = "0000"){
+				//if(res.code = "0000"){
 					Toast.success("操作成功");
 					this.listShopEmp();
-				}	        
+				//}	        
 			})
 			.catch(error => {
 				console.log(error);

@@ -132,7 +132,7 @@ export default {
         userId: this.userId
       };
       this.$api.order.pageShopOrders(params).then(r => {
-        console.log({ r });
+        //console.log({ r });
         if (type === "PENDING") {
           this.pendingList = r;
         } else if (type === "PROCESSING") {
@@ -145,8 +145,8 @@ export default {
     batchRefuse() {
       const ids = this.checkedOrders;
       const desc = `批量拒绝`;
-      console.log({ desc, ids });
-      console.log( new Date())
+      //console.log({ desc, ids });
+      //console.log( new Date())
       if (ids && ids.length > 0) {
         Dialog.confirm({
           title: "拒绝订单",
@@ -176,7 +176,7 @@ export default {
     batchService() {
       const ids = this.checkedOrders;
       const desc = `批量送达`;
-      console.log({ desc, ids });
+      //console.log({ desc, ids });
       if (ids && ids.length > 0) {
         const params = {
           entityIds: ids,
@@ -204,7 +204,7 @@ export default {
     batchUnDelivery() {
       const ids = this.checkedOrders;
       const desc = `批量无法送达`;
-      console.log({ desc, ids });
+      //console.log({ desc, ids });
       if (ids && ids.length > 0) {
         Dialog.confirm({
           title: "批量无法送达",

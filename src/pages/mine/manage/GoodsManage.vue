@@ -83,16 +83,16 @@ export default{
 		    req.entityIds = editIds;
 			this.$api.mine.editGStatus(req)
 			.then(res => {
-			    if(res.code = "0000"){
+			    //if(res.code = "0000"){
 			    	Toast.success("操作成功");
 			    	this.getGList();
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);
 			});
 	    },
-	    getGList(){	    	
+	    getGList(){	
 	    	var req = {};
 		    req.userId = this.$store.state.userId;
 			this.$api.mine.getGList(req)

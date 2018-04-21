@@ -50,20 +50,27 @@ export default{
 		}
 	},
 	methods: {
-        save () {
-        	var gIds = [];
+        save () {        	
+        	var gIds = {};
     		for (var i = 0; i < this.goodsList.length; i++) {
-    			gIds.push(this.goodsList[i].gId);
+    			var key = this.goodsList[i].gId;
+    			gIds[key] = this.goodsList[i].gCount;
     		}
 
         	var req = {};
 		    req.userId = this.$store.state.userId;
-		    req.gIds = gIds;
-		    req.qrCodeId = this.seriUser.qrCodeId;
 		    req.entityId = this.seriUser.id;
-		    //请求参数待定，接口文档有误???
+		    req.addr = this.seriUser.addrInfo;
+		    req.doorNum = null;
+		    req.realName = this.seriUser.realName;
+		    req.contactPhone = this.seriUser.contactPhone;
+		    req.gIds = gIds;
+		    console.info(req);
 	    	this.$api.user.addSO(req)
 			.then(res => {
+				if(res == null){
+					res = {};
+				}
 			    //if(res.code = "0000"){
 			    	var tip = "订单号："+res.sn+";  支付方式："+this.getPayType(res.payType);
 			    	if(res.cobAmount){
@@ -92,7 +99,10 @@ export default{
 			.then(res => {
 			    //if(res.code = "0000"){
 			    	this.goodsList = [];
-			    	this.goodsList.push(res);
+			    	if(res){
+			    		res.gId = 2;
+						this.goodsList.push(res);
+			    	}			    	
 			    	this.$store.state.goodsList = this.goodsList;
 			    //}	        
 			})

@@ -1,23 +1,25 @@
 <template>
 	<div>
 		<Header backUrl="/userManage"/>
-		<div class="search_div">
-			<Row>
-				<Col span="5">
-					<div class="search_title">总编号用户</div>
-				</Col>
-				<Col span="19">
-					<Search v-model="keyWords" placeholder="输入用户编号搜索" 
-							show-action background="#fff" @search="onSearch">
-		  				<div slot="action" @click="onSearch" class="searchBtn">
-		  					<Button type="primary" size="small">搜索</Button>
-		  				</div>
-					</Search>
-				</Col>
-			</Row>
-		</div>
-		<div v-for="memberInfo in memberInfoList">
-				<MemberInfo1 :memberInfo="memberInfo" @refreshSeriUsers="pageSeriUsers"/>
+		<div class="totalCode">
+			<div class="search_div">
+				<Row>
+					<Col span="5">
+						<div class="search_title">总编号用户</div>
+					</Col>
+					<Col span="19">
+						<Search v-model="keyWords" placeholder="输入用户编号搜索" 
+								show-action background="#fff" @search="onSearch">
+			  				<div slot="action" @click="onSearch" class="searchBtn">
+			  					<Button type="primary" size="small">搜索</Button>
+			  				</div>
+						</Search>
+					</Col>
+				</Row>
+			</div>
+			<div v-for="memberInfo in memberInfoList">
+					<MemberInfo1 :memberInfo="memberInfo" @refreshSeriUsers="pageSeriUsers"/>
+			</div>
 		</div>								
 		<p class="fixed">			
 			<a @click="add" class="right">新建</a>
@@ -51,7 +53,7 @@ export default{
 	    	var req = {};
 		    req.userId = this.$store.state.userId;
 		    req.pageNumber = 1; 
-		    req.pageSize = 5
+		    req.pageSize = 10
 		    if(this.keyWords != ""){
 		    	req.userNum=this.keyWords;
 		    }
@@ -73,6 +75,9 @@ export default{
 </script>
 
 <style scoped>
+	.totalCode{
+		margin-bottom: 50px;
+	}
 	.fixed {
 	  position: fixed;
 	  width:100%;
