@@ -7,6 +7,9 @@ export const COM_SET_USER_ID = "COM_SET_USER_ID" //设置userId
 
 
 //order
-
+export const ORDER_PENDING_LIST = 'ORDER_PENDING_LIST' //待处理订单
+export const ORDER_PROCESSING_LIST = 'ORDER_PROCESSING_LIST' //配送中订单
+export const ORDER_OTHER_LIST = 'ORDER_OTHER_LIST' //其他订单 （除去待处理和配送中外的订单）
+export const ORDER_CHECKED_ORDERS = 'ORDER_CHECKED_ORDERS' //批量处理时选中的ID
 
 //mine

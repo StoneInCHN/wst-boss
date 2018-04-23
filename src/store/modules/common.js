@@ -6,8 +6,8 @@ import apis from "../../apis";
  */
 const state = {
   token: sessionStorage.getItem("token") || "",
-  key: "",
-  userId: 1
+  key: sessionStorage.getItem("userId") || "",
+  userId: sessionStorage.getItem("userId") || 1
 };
 
 const actions = {
@@ -31,13 +31,15 @@ const getters = {
 const mutations = {
   [types.COM_SET_TOKEN](state, token) {
     state.token = token;
-    sessionStorage.setItem("token",token)
+    sessionStorage.setItem("token", token);
   },
   [types.COM_SET_KEY](state, key) {
     state.key = key;
+    sessionStorage.setItem("key", key);
   },
   [types.COM_SET_USER_ID](state, userId) {
     state.userId = userId;
+    sessionStorage.setItem("userId", userId);
   }
 };
 

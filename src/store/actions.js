@@ -7,12 +7,6 @@ const actions = {
   },
   setWorker({ commit }, worker) {
     commit("setWorker", worker);
-  },
-  setCheckedOrders({ commit }, checkedOrders) {
-    commit("setCheckedOrders", checkedOrders);
-  },
-  setToken({ commit }, token) {
-    commit("setToken", token );
   }
 };
 

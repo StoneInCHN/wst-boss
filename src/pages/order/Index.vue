@@ -1,5 +1,4 @@
 <template>
-  <div>
   <div class="order" :class="{ 'order-edit': editable }">    
       <Button v-if="currentState !== 'OTHER'" class="order-setting" size="small" @click="setting">{{settingText}}</Button>
       <ul class="order-setting-edit" >
@@ -51,13 +50,11 @@
             </p>
           </Tab>
       </Tabs>
-      
       <Footer/>
       <AssignPicker v-if="openAssign" :isBatch="true" :close="closeAssgin" />
       <AssignPicker v-if="openReassignment" :isBatch="true" :close="closeReassignment"/>
       <FinishPicker v-if="openFinish" :isBatch="true" :close="closeFinish"/>
   </div>
- </div>
 </template>
 <script>
 import Header from "@/pages/wechat/Header";
@@ -65,7 +62,7 @@ import Footer from "@/pages/wechat/Footer";
 import OrderItem from "@/pages/order/OrderItem";
 import AssignPicker from "@/components/AssignPicker";
 import Item from "@/pages/order/Item";
-import { Tab, Tabs, Icon, Button, Toast, Dialog, PullRefresh } from "vant";
+import { Tab, Tabs, Icon, Button, Toast, Dialog } from "vant";
 import { mapActions, mapGetters } from "vuex";
 
 export default {
@@ -81,17 +78,13 @@ export default {
     Dialog,
     Header,
     Footer,
-    AssignPicker,
-    PullRefresh
+    AssignPicker
   },
   data() {
     return {
       active: 2,
       editable: false,
       currentState: "PENDING",
-      pendingList: [],
-      processingList: [],
-      otherList: [],
       tabTitles: [
         ["PENDING"],
         ["PROCESSING"],
@@ -100,32 +93,43 @@ export default {
       openAssign: false,
       openReassignment: false,
       openFinish: false,
-      isLoading:false,
-      count:0
+      isLoading: false,
+      count: 0
     };
   },
   mounted() {
-    this.getListByStatus(["PENDING"],"PENDING");
+    this.getListByStatus(["PENDING"], "PENDING");
   },
   computed: {
-    ...mapGetters(["checkedOrders", "userId"]),
+    ...mapGetters([
+      "checkedOrders",
+      "userId",
+      "pendingList",
+      "processingList",
+      "otherList"
+    ]),
     settingText() {
       return this.editable ? "取消" : "管理";
     }
   },
-  methods: {    
-    ...mapActions(["setCheckedOrders"]),
+  methods: {
+    ...mapActions([
+      "setCheckedOrders",
+      "setPendingList",
+      "setProcessingList",
+      "setOtherList"
+    ]),
     setting() {
       this.setCheckedOrders([]);
       this.editable = !this.editable;
     },
     onRefresh() {
       alert("123");
-        setTimeout(() => {
-          this.count++;
-          Toast.succes('刷新成功:'+this.count);
-          this.isLoading = false;
-        }, 500);
+      setTimeout(() => {
+        this.count++;
+        Toast.succes("刷新成功:" + this.count);
+        this.isLoading = false;
+      }, 500);
     },
     onTabsClick(i) {
       this.editable = false;
@@ -141,27 +145,25 @@ export default {
     },
     getListByStatus(oStatus, type) {
       const params = {
-        oStatus ,
+        oStatus,
         pageNumber: 1,
-        pageSize: 10,
+        pageSize: 50,
         userId: this.userId
       };
       this.$api.order.pageShopOrders(params).then(r => {
         //console.log({ r });
         if (type === "PENDING") {
-          this.pendingList = r;
+          this.setPendingList(r);
         } else if (type === "PROCESSING") {
-          this.processingList = r;
+          this.setProcessingList(r);
         } else {
-          this.otherList = r;
+          this.setOtherList(r);
         }
       });
     },
     batchRefuse() {
       const ids = this.checkedOrders;
       const desc = `批量拒绝`;
-      //console.log({ desc, ids });
-      //console.log( new Date())
       if (ids && ids.length > 0) {
         Dialog.confirm({
           title: "拒绝订单",
@@ -250,18 +252,9 @@ export default {
     },
     oprSO(params) {
       if (params) {
-        this.$api.order
-          .oprSO(params)
-          .then(r => {
-            if (r.code === "0000") {
-              Toast.success(r.desc);
-            } else {
-              Toast.fail(r.desc);
-            }
-          })
-          .catch(e => {
-            console.log({ e });
-          });
+        this.$api.order.oprSO(params).then(r => {
+          Toast.success("操作成功");
+        });
       }
     }
   }

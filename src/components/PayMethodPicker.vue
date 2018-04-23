@@ -29,7 +29,7 @@ export default {
   data() {
     return {
       title: "请选择支付方式",
-      payMethodColumns: ["纸质水票支付", "现金支付", "微信支付", "支付宝支付"],
+      payMethodColumns: ["现金支付", "微信支付", "支付宝支付"],
       listSrc: []
     };
   },

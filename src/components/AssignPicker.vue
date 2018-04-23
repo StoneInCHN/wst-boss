@@ -40,12 +40,8 @@ export default {
         userId: this.userId
       })
       .then(r => {
-        console.log({ r });
-        if (r.code === "0000") {
-          this.listSrc = r.msg || [];
-        }
+        this.listSrc = r;
       })
-
     const _this = this
     console.log({_this})
   },
@@ -82,23 +78,16 @@ export default {
         const params = {
           entityIds: ids,
           oprStatus: "PROCESSING",
-          userId: 1,
+          userId: this.userId,
           empId: emp.id,
           empIncome: "8"
         };
         this.$api.order
           .oprSO(params)
           .then(r => {
-            if (r.code === "0000") {
-              Toast.success(r.desc);
+            Toast.success("指派成功");
               this.close()
-            } else {
-              Toast.fail(r.desc);
-            }
           })
-          .catch(e => {
-            console.log({ e });
-          });
       }
     }
   }

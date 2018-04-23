@@ -18,5 +18,6 @@ export const CobPayTypeEnum = {
   CASH: "现金",
   WECHAT: "微信",
   ALIPAY: "支付宝",
-  CREDIT: "赊账"
+  CREDIT: "赊账",
+  COB: "货到付款"
 };

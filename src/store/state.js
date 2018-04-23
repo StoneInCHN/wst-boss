@@ -1,6 +1,4 @@
 const state = {
-	token: '',
-	userId:1,
 	worker:{},
 	goods:{},
 	seriUser:{},
@@ -12,7 +10,6 @@ const state = {
 	count: 0,
 	name: '',
 	resultNum: 0,
-	checkedOrders:[]
 };
 
 export default state;

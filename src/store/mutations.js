@@ -7,12 +7,6 @@ const mutations = {
   },
   setWorker(state, worker) {
     state.worker = worker;
-  },
-  setCheckedOrders(state, checkedOrders) {
-    state.checkedOrders = checkedOrders;
-  },
-  setToken(state, token) {
-    state.token = token;
   }
 };
 

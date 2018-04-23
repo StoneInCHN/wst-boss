@@ -103,13 +103,7 @@ export default {
       openReassignment: false,
       openFinish: false,
       showCall: false,
-      showAssignSelect: false,
-      showServiceSelect: false,
-      showPayMethod: false,
       callActions: [],
-      assignColumns: ["王二小", "查胜男", "李维斯"],
-      serviceColumns: ["王二小", "查胜男", "李维斯"],
-      payMethodColumns: ["纸质水票支付", "现金支付", "微信支付", "支付宝支付"],
       otherStatus: {
         FINISH: "已完成",
         UNDELIVER: "无法送达",
@@ -131,6 +125,7 @@ export default {
     },
     payType() {
       const type = this.item.payType;
+      console.log({type})
       console.log(CobPayTypeEnum[type])
       return CobPayTypeEnum[type];
     },

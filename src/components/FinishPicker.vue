@@ -37,13 +37,8 @@ export default {
       })
       .then(r => {
         console.log({ r });
-        if (r.code === "0000") {
-          this.listSrc = r.msg || [];
-        }
+        this.listSrc = r [];
       })
-      .catch(e => {
-        console.log({ e });
-      });
   },
   data() {
     return {
@@ -66,34 +61,22 @@ export default {
   methods: {
     ...mapActions(["setCheckedOrders"]),
     confirm(value, index) {
-      console.log({ value, index });
       const ids = this.isBatch ? this.checkedOrders : [this.id];
       const desc = this.isBatch ? `批量完成` : "单个订单完成";
-      console.log({ desc, ids });
       const emp = this.listSrc[index];
-      console.log({ emp });
       if (ids && ids.length > 0) {
         const params = {
           entityIds: ids,
           cobType: "OFFLINE_TICKET",
           oprStatus: "FINISH",
-          userId: 1,
+          userId: this.userId,
           empId: emp.id,
           empIncome: "8"
         };
-        this.$api.order
-          .oprSO(params)
-          .then(r => {
-            if (r.code === "0000") {
-              Toast.success(r.desc);
-              this.close();
-            } else {
-              Toast.fail(r.desc);
-            }
-          })
-          .catch(e => {
-            console.log({ e });
-          });
+        this.$api.order.oprSO(params).then(r => {
+          Toast.success("操作成功");
+          this.close();
+        });
       }
     }
   }

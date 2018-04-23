@@ -7,9 +7,6 @@ const getters = {
   },
   getResultNum: state => {
     return state.resultNum;
-  },
-  checkedOrders: state => {
-    return state.checkedOrders;
   }
 };
 

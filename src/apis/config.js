@@ -7,7 +7,7 @@ import qs from "qs";
 // 超时时间
 axios.defaults.timeout = 5000;
 
-//axios.defaults.baseURL = "http://localhost:8081/wst-boss/";
+axios.defaults.baseURL = "http://localhost:8082/wst-boss/";
 
 //
 axios.defaults.headers.post["Content-Type"] = "application/json;charset=UTF-8";
@@ -15,15 +15,15 @@ axios.defaults.headers.post["Content-Type"] = "application/json;charset=UTF-8";
 // http请求拦截器
 axios.interceptors.request.use(
   config => {
-    const {token} = store.state.common
-    //console.log({store})
+    const { token } = store.state.common;
+    console.log({ store });
+    Toast.loading({
+      mask: true,
+      message: "加载中...",
+      duration: 10000
+    });
     if (token) {
       config.headers.post["X-Auth-Token"] = `${token}`;
-      /** 
-      if (config.method === "post") {
-        config.data = qs.stringify(config.data);
-      }
-      */
     }
     return config;
   },
@@ -36,6 +36,7 @@ axios.interceptors.request.use(
 //返回状态判断
 axios.interceptors.response.use(
   res => {
+    Toast.clear();
     return Promise.resolve(res.data);
   },
   error => {
@@ -51,28 +52,18 @@ axios.interceptors.response.use(
  * @returns {Promise}
  */
 
-export function fetch(url, params = {}) {
+export const fetch = (url, params = {}) => {
   return new Promise((resolve, reject) => {
     axios
-      .get(url, {
-        params: params
+      .get(url, params)
+      .then(data => {
+        return resolve(data);
       })
-      .then(
-        res => {
-          console.log("url", url);
-          console.log("req", params);
-          console.log("res", res);
-          resolve(res);
-        },
-        err => {
-          reject(err);
-        }
-      )
       .catch(err => {
-        reject(err);
+        return reject(err);
       });
   });
-}
+};
 
 /**
  * 封装post请求
@@ -81,26 +72,18 @@ export function fetch(url, params = {}) {
  * @returns {Promise}
  */
 
-export function post(url, data = {}) {
+export const post = (url, params = {}) => {
   return new Promise((resolve, reject) => {
-    axios
-      .post(url, data)
-      .then(
-        res => {
-          console.log("url", url);
-          console.log("req", data);
-          console.log("res", res);
-          resolve(res);
-        },
-        err => {
-          reject(err);
-        }
-      )
-      .catch(err => {
-        reject(err);
-      });
+    axios.post(url, params).then(
+      data => {
+        return resolve(data);
+      },
+      err => {
+        return reject(err);
+      }
+    );
   });
-}
+};
 
 /**
  * 封装patch请求
@@ -109,23 +92,18 @@ export function post(url, data = {}) {
  * @returns {Promise}
  */
 
-export function patch(url, data = {}) {
+export const patch = (url, params = {}) => {
   return new Promise((resolve, reject) => {
-    axios
-      .patch(url, data)
-      .then(
-        res => {
-          resolve(res);
-        },
-        err => {
-          reject(err);
-        }
-      )
-      .catch(err => {
-        reject(err);
-      });
+    axios.patch(url, params).then(
+      data => {
+        return resolve(data);
+      },
+      err => {
+        return reject(err);
+      }
+    );
   });
-}
+};
 
 /**
  * 封装put请求
@@ -134,44 +112,30 @@ export function patch(url, data = {}) {
  * @returns {Promise}
  */
 
-export function put(url, data = {}) {
+export const put = (url, params = {}) => {
   return new Promise((resolve, reject) => {
-    axios
-      .put(url, data)
-      .then(
-        res => {
-          resolve(res);
-        },
-        err => {
-          reject(err);
-        }
-      )
-      .catch(err => {
-        reject(err);
-      });
+    axios.put(url, params).then(
+      data => {
+        return resolve(data);
+      },
+      err => {
+        return reject(err);
+      }
+    );
   });
-}
+};
 
 export function lift(res) {
-  //console.log({ res });
-
   return new Promise((resolve, reject) => {
-    //console.log({ resolve, reject });
-    res
-      .then(r => {
-        const _CODE = "0000";
-        //.log({r})
-        //console.log(r.code === _CODE)
-        if (r.code === _CODE) {
-          resolve(r.msg);
-          //console.log(r.msg)
-        } else {
-          reject(r);
-        }
-      })
-      .catch(e => {
-        Toast.fail("系统错误："+res.code);
-        return Promise.reject(e);
-      });
+    res.then(r => {
+      const _CODE = "0000";
+      if (r.code === _CODE) {
+        Toast.clear();
+        resolve(r.msg);
+      } else {
+        Toast.fail(r.desc);
+        reject(r);
+      }
+    });
   });
 }
