@@ -29,7 +29,9 @@
 <script>
 import { Panel, CellGroup, Field, Button, Cell, Icon, Dialog, Toast } from 'vant'
 import Header from "../wechat/Header"
+import {mapGetters} from 'vuex'
 export default{
+	computed: { ...mapGetters([ "userId"]) },
 	name: "NewCode",
 	components: { Header, Panel, CellGroup, Field, Button, Cell, Icon, Dialog, Toast },
 	data () {
@@ -49,7 +51,7 @@ export default{
 		},
         eidtSeriUser () {
         	var seriUser = {};
-		    seriUser.userId = this.$store.state.userId;
+		    seriUser.userId = this.userId;
 		    seriUser.entityId = this.userCard.id;
 		    seriUser.userNum = this.userCard.userNum;
 		    seriUser.realName = this.userCard.realName;

@@ -38,7 +38,9 @@
 import { Panel, CellGroup, Field, Button, Cell, Row, Col, Icon, Dialog } from 'vant'
 import Header from "../wechat/Header"
 import GoodsRow from "./GoodsRow"
+import {mapGetters} from 'vuex'
 export default{
+	computed: { ...mapGetters([ "userId"]) },
 	name: "StoreManage",
 	components: { Header, Panel, CellGroup, Field, Button, Cell, Row, Col, Icon, GoodsRow,Dialog },
 	data () {
@@ -50,27 +52,20 @@ export default{
 		}
 	},
 	methods: {
-        save () {        	
-        	var gIds = {};
+        save () {
+        	var gIds = [];
     		for (var i = 0; i < this.goodsList.length; i++) {
-    			var key = this.goodsList[i].gId;
-    			gIds[key] = this.goodsList[i].gCount;
+    			gIds.push(this.goodsList[i].gId);
     		}
 
         	var req = {};
-		    req.userId = this.$store.state.userId;
-		    req.entityId = this.seriUser.id;
-		    req.addr = this.seriUser.addrInfo;
-		    req.doorNum = null;
-		    req.realName = this.seriUser.realName;
-		    req.contactPhone = this.seriUser.contactPhone;
+		    req.userId = this.userId;
 		    req.gIds = gIds;
-		    console.info(req);
+		    req.qrCodeId = this.seriUser.qrCodeId;
+		    req.entityId = this.seriUser.id;
+		    //请求参数待定，接口文档有误???
 	    	this.$api.user.addSO(req)
 			.then(res => {
-				if(res == null){
-					res = {};
-				}
 			    //if(res.code = "0000"){
 			    	var tip = "订单号："+res.sn+";  支付方式："+this.getPayType(res.payType);
 			    	if(res.cobAmount){
@@ -93,16 +88,13 @@ export default{
 		},
 		lastSO(){
 			var req = {};
-			req.userId = this.$store.state.userId;
+			req.userId = this.userId;
 			req.entityId = this.seriUser.id;
 			this.$api.user.lastSO(req)
 			.then(res => {
 			    //if(res.code = "0000"){
 			    	this.goodsList = [];
-			    	if(res){
-			    		res.gId = 2;
-						this.goodsList.push(res);
-			    	}			    	
+			    	this.goodsList.push(res);
 			    	this.$store.state.goodsList = this.goodsList;
 			    //}	        
 			})

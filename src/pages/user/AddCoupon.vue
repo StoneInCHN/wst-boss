@@ -34,7 +34,9 @@
 import { Panel, CellGroup, Field, Button, Cell, Row, Col, Icon, Toast } from 'vant'
 import Header from "../wechat/Header"
 import CouponGoods from "./CouponGoods"
+import {mapGetters} from 'vuex'
 export default{
+	computed: { ...mapGetters([ "userId"]) },
 	name: "StoreManage",
 	components: { Header, Panel, CellGroup, Field, Button, Cell, Row, Col, Icon, CouponGoods, Toast },
 	data () {
@@ -55,7 +57,7 @@ export default{
 		},
 		initExistIds(){
 			var req = {};
-		    req.userId = this.$store.state.userId;
+		    req.userId = this.userId;
 		    req.entityId = this.seriUser.id;
 	    	this.$api.user.distInfo(req)
 			.then(res => {
@@ -90,7 +92,7 @@ export default{
 		    	addDistMap[key]= newCouponList[i].distAmount;
         	}
 			var req = {};
-		    req.userId = this.$store.state.userId;
+		    req.userId = this.userId;
 		    req.entityId = this.seriUser.id;
 		    req.addDistMap = addDistMap;
 		    req.entityIds = deleteIds;
@@ -120,7 +122,7 @@ export default{
 		},
 		getDistInfo(){
 			var req = {};
-		    req.userId = this.$store.state.userId;
+		    req.userId = this.userId;
 		    req.entityId = this.seriUser.id;
 	    	this.$api.user.distInfo(req)
 			.then(res => {

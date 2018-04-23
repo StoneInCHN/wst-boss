@@ -31,7 +31,9 @@
 import { Search, Row, Col, Button, Toast } from 'vant'
 import Header from "../wechat/Header"
 import MemberInfo1 from "./MemberInfo1"
+import {mapGetters} from 'vuex'
 export default{
+	computed: { ...mapGetters([ "userId"]) },
 	name: "UserManage",
 	components: { Header, Search, Row, Col, Button, MemberInfo1, Toast },
 	data () {
@@ -51,7 +53,7 @@ export default{
 	    },
 	    pageSeriUsers(){
 	    	var req = {};
-		    req.userId = this.$store.state.userId;
+		    req.userId = this.userId;
 		    req.pageNumber = 1; 
 		    req.pageSize = 10
 		    if(this.keyWords != ""){

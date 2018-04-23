@@ -31,7 +31,9 @@
 <script>
 import { Panel, CellGroup, Field, Button, Cell, Icon, Dialog, Toast } from 'vant'
 import Header from "../wechat/Header"
+import {mapGetters} from 'vuex'
 export default{
+	computed: { ...mapGetters([ "userId"]) },
 	name: "NewCode",
 	components: { Header, Panel, CellGroup, Field, Button, Cell, Icon, Dialog, Toast },
 	data () {
@@ -60,7 +62,7 @@ export default{
 		},
         createSeriUser () {
         	var seriUser = {};
-		    seriUser.userId = this.$store.state.userId;
+		    seriUser.userId = this.userId;
 		    seriUser.userNum = this.userCard.userNum;
 		    seriUser.realName = this.userCard.realName;
 		    seriUser.addrInfo = this.userCard.addrInfo;
@@ -130,7 +132,7 @@ export default{
         },
         getLastSerialNo(){
         	var req = {};
-		    req.userId = this.$store.state.userId;
+		    req.userId = this.userId;
 			this.$api.user.getLastSerialNo(req)
 			.then(res => {
 			    //if(res.code = "0000"){

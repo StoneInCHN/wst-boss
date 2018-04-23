@@ -56,7 +56,9 @@
 
 <script>
 import { Row, Col, Dialog, Toast } from 'vant'
+import {mapGetters} from 'vuex'
 export default{
+	computed: { ...mapGetters([ "userId"]) },
 	name: "UserCard",
 	components: { Row, Col, Dialog, Toast },
 	props: {
@@ -84,7 +86,7 @@ export default{
 			  message: '确认要删除编号用户吗？'
 			}).then(() => {
 				var req = {};
-			    req.userId = this.$store.state.userId;
+			    req.userId = this.userId;
 			    req.entityId=this.memberInfo.id;
 				this.$api.user.deleteSeriUser(req)
 				.then(res => {
@@ -117,7 +119,7 @@ export default{
 			  message: '确认要解除编号和二维码的关联吗？'
 			}).then(() => {
 			    var seriUser = {};
-			    seriUser.userId = this.$store.state.userId;
+			    seriUser.userId = this.userId;
 			    seriUser.entityId = this.memberInfo.id;
 			    seriUser.userNum = this.memberInfo.userNum;
 			    seriUser.realName = this.memberInfo.realName;

@@ -25,7 +25,9 @@
 <script>
 import { Panel, CellGroup, Field, Button, Cell, Dialog, NoticeBar, Toast } from 'vant'
 import Header from "../../wechat/Header"
+import {mapGetters} from 'vuex'
 export default{
+	computed: { ...mapGetters([ "userId"]) },
 	name: "StoreManage",
 	components: { Header, Panel, CellGroup, Field, Button, Cell, Dialog, NoticeBar, Toast },
 	data () {
@@ -38,7 +40,7 @@ export default{
 	},
 	methods: {
         save () {
-			this.worker.userId = this.$store.state.userId;
+			this.worker.userId = this.userId;
 			this.$api.mine.updateEmp(this.worker)
 			.then(res => {
 			    if(res.code = "0000"){

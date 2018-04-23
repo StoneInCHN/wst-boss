@@ -32,7 +32,9 @@
 <script>
 import { Panel, CellGroup, Field, Button, Cell, Actionsheet, DatetimePicker, Toast  } from 'vant'
 import Header from "../../wechat/Header"
+import {mapGetters} from 'vuex'
 export default{
+	computed: { ...mapGetters([ "userId"]) },
 	name: "StoreManage",
 	components: { Header, Panel, CellGroup, Field, Button, Cell, Actionsheet, DatetimePicker, Toast},
 	data () {
@@ -47,7 +49,7 @@ export default{
 	},
 	methods: {
         save () {
-        	this.store.userId = this.$store.state.userId;
+        	this.store.userId = this.userId;
         	this.$api.mine.updateInfo(this.store)
 			.then(res => {
 				//if(res.code = "0000"){
@@ -74,7 +76,7 @@ export default{
         },
         getStoreInfo(){
         	var req = {};
-		    req.userId = this.$store.state.userId;
+		    req.userId = this.userId;
 			this.$api.mine.getInfo(req)
 			.then(res => {
 				//if(res.code = "0000"){

@@ -21,7 +21,9 @@
 import {Field, CellGroup, Button, Toast} from 'vant';
 import Header from "../../wechat/Header"
 import Footer from "../../wechat/Footer"
+import {mapGetters} from 'vuex'
 export default{
+	computed: { ...mapGetters([ "userId"]) },
 	name: "QrManage",
 	components: { Header, Footer, Field, CellGroup, Button, Toast },
 	data () {
@@ -34,7 +36,7 @@ export default{
 	    genQrPdf () {
 	    	if(this.count){
 	    		var req = {};
-			    req.userId = this.$store.state.userId;
+			    req.userId = this.userId;
 			    req.pageSize = this.count;
 				this.$api.mine.genQrPdf(req)
 				.then(res => {

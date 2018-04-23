@@ -30,7 +30,9 @@ import { Tabbar, TabbarItem, Tab, Tabs, Toast } from 'vant'
 import Header from "../../wechat/Header"
 import Footer from "../../wechat/Footer"
 import GoodsCrumb from "./GoodsCrumb"
+import {mapGetters} from 'vuex'
 export default{
+	computed: { ...mapGetters([ "userId"]) },
 	name: "Mine",
 	components: { Header, Footer, GoodsCrumb, Tab, Tabs, Tabbar, TabbarItem, Toast},
 	data () {
@@ -78,7 +80,7 @@ export default{
 	    },
 	    goodsEdit(editIds,status){
 	    	var req = {};
-		    req.userId = this.$store.state.userId;
+		    req.userId = this.userId;
 		    req.oprStatus = status;
 		    req.entityIds = editIds;
 			this.$api.mine.editGStatus(req)
@@ -94,7 +96,7 @@ export default{
 	    },
 	    getGList(){	
 	    	var req = {};
-		    req.userId = this.$store.state.userId;
+		    req.userId = this.userId;
 			this.$api.mine.getGList(req)
 			.then(res => {
 			    //if(res.code = "0000"){
@@ -125,7 +127,6 @@ export default{
     	this.getGList();
     	
     }
-
 }
 </script>
 
