@@ -50,6 +50,7 @@ export default{
 			},
 			lastNo:null,
 			config: {},
+			urlPre: 'http://test.yeager.vip/',
 		}
 	},
 	methods: {
@@ -116,10 +117,13 @@ export default{
 	          needResult: 1,
 	          desc: 'scanQRCode desc',
 	          success: (res) => {
+	          	console.info("scanQRCode",res);
 	            let url = res.resultStr
+
 	            if (url && url.indexOf(this.urlPre) !== -1) {
 	            	//从url中获取qrCodeId
 	            	//this.userCard.qrCodeId = ?
+
 	            } else {
 	              alert("请扫描正确的二维码");
 	            }
@@ -145,8 +149,7 @@ export default{
         },
         getConfig () {
 		      let params = {
-		        userName: this.$store.state.userId,
-		        curUrl: location.href
+		        userName: location.href
 		      }
 		      this.$common.jsApiConfig(params).then(res => {
 		        if (res && res.code === '0000' && res.msg) {
