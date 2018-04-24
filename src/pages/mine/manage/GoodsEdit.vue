@@ -46,10 +46,10 @@ export default{
 	},
 	methods: {
         save () {
-        	if(this.goods.id !=null){
+        	if(this.goods.id ==null){
         		this.addWG();
         	}else{
-				this.eidtWG();
+				this.editWG();
         	}			
         },
         formatPrice(num){
@@ -164,10 +164,10 @@ export default{
 		    req.distPrice = this.goods.distPrice;
 			this.$api.mine.addWG(req)
 			.then(res => {
-			    if(res.code = "0000"){
+			    //if(res.code = "0000"){
 			    	Toast.success("新增成功");
 			    	this.$router.push('/manage/goodsManage');
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);
@@ -176,19 +176,15 @@ export default{
 	    editWG(){
 	    	var req = {};
 		    req.userId = this.userId;
-		    req.brandId = this.goods.brandId;
-		    req.brandName = this.goods.brandName;
-		    req.gName = this.goods.gName;
-		    req.specId = this.goods.specId;
+		    req.entityId = this.goods.id;
 		    req.originPrice = this.goods.originPrice;
 		    req.distPrice = this.goods.distPrice;
-		    req.id= this.goods.id;
 			this.$api.mine.editWG(req)
 			.then(res => {
-			    if(res.code = "0000"){
+			    //if(res.code = "0000"){
 			    	Toast.success("更新成功");
 			    	this.$router.push('/manage/goodsManage');
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);

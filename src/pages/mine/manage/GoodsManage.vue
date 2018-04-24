@@ -46,6 +46,7 @@ export default{
 	},
 	methods: {
 	    add () {
+	    	this.$store.state.goods = {};
 	 		this.$router.push('/manage/goodsEdit');
 	    },
 	    manage(){

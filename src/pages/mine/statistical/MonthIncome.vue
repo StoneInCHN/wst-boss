@@ -224,9 +224,6 @@ export default{
 			});
         },
     },
-    computed:{
-    	
-    },
     mounted(){
     	var now = new Date();
     	this.ym = now.getFullYear()+"-"+(now.getMonth()+1);

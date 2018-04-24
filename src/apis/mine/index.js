@@ -45,7 +45,7 @@ const  mine = {
     return lift(post('/sGoods/addWG', params)); //商家新增商品
   },
   editWG (params) {
-    return lift(post('/sGoods/editWG', params)); //商家编辑商品
+    return lift(post('/sGoods/editGPrice', params)); //商家编辑商品
   },
   genQrPdf (params) {
     console.info("请求【批量生成二维码】接口, 请求参数：", params);

@@ -43,11 +43,11 @@ export default{
 			this.worker.userId = this.userId;
 			this.$api.mine.updateEmp(this.worker)
 			.then(res => {
-			    if(res.code = "0000"){
+			    //if(res.code = "0000"){
 			      	Toast.success('操作成功');
 			      	this.$store.state.worker = {};
 			      	this.$router.push('/manage/workerManage');
-			    }	        
+			    //}	        
 			})
 			.catch(error => {
 			    console.log(error);

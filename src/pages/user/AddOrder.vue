@@ -40,7 +40,6 @@ import Header from "../wechat/Header"
 import GoodsRow from "./GoodsRow"
 import {mapGetters} from 'vuex'
 export default{
-	computed: { ...mapGetters([ "userId"]) },
 	name: "StoreManage",
 	components: { Header, Panel, CellGroup, Field, Button, Cell, Row, Col, Icon, GoodsRow,Dialog },
 	data () {
@@ -53,19 +52,25 @@ export default{
 	},
 	methods: {
         save () {
-        	var gIds = [];
+        	var gIds = {};
     		for (var i = 0; i < this.goodsList.length; i++) {
-    			gIds.push(this.goodsList[i].gId);
+    			var key = this.goodsList[i].gId;
+    			gIds[key] = this.goodsList[i].gCount;
     		}
 
         	var req = {};
-		    req.userId = this.userId;
-		    req.gIds = gIds;
-		    req.qrCodeId = this.seriUser.qrCodeId;
-		    req.entityId = this.seriUser.id;
-		    //请求参数待定，接口文档有误???
+        	req.userId = this.userId;
+        	req.entityId = this.seriUser.id;
+        	req.addr = this.seriUser.addrInfo;
+        	req.doorNum = null;
+        	req.realName = this.seriUser.realName;	
+		    req.contactPhone = this.seriUser.contactPhone;	
+ 		    req.gIds = gIds;
 	    	this.$api.user.addSO(req)
 			.then(res => {
+				if(res == null){	
+					res = {};	
+				}
 			    //if(res.code = "0000"){
 			    	var tip = "订单号："+res.sn+";  支付方式："+this.getPayType(res.payType);
 			    	if(res.cobAmount){
@@ -90,12 +95,18 @@ export default{
 			var req = {};
 			req.userId = this.userId;
 			req.entityId = this.seriUser.id;
+			console.info("lastSO",req);
 			this.$api.user.lastSO(req)
 			.then(res => {
 			    //if(res.code = "0000"){
 			    	this.goodsList = [];
-			    	this.goodsList.push(res);
-			    	this.$store.state.goodsList = this.goodsList;
+			    	if(res){
+			    		res.gCount = 1;
+			    		res.gAmount = res.gDistPrice
+			    		this.goodsList.push(res);
+			    		this.$store.state.goodsList = this.goodsList;
+			    	}
+
 			    //}	        
 			})
 			.catch(error => {
@@ -125,12 +136,14 @@ export default{
     },
     computed:{
     	totalAmount: function(){
+    		console.info("this.goodsList",this.goodsList);
     		var totalAmount = 0;
     		for (var i = 0; i < this.goodsList.length; i++) {
     			totalAmount += this.goodsList[i].gCount * this.goodsList[i].gAmount;
     		}
     		return totalAmount;
-    	}
+    	},
+    	...mapGetters([ "userId"])
     },   
     mounted(){
     	this.seriUser = this.$store.state.seriUser; 
@@ -141,6 +154,7 @@ export default{
     	}else{
 			this.lastSO();
     	}
+    	console.info(this.userId);
     	
     }
 }
