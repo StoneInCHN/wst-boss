@@ -4,25 +4,25 @@ import {fetch, post, patch, put, lift} from '../config'
 
 const  user = {
 
-  summary (params) {  	
+  summary (params) {    
     return lift(post('/sUser/summary', params)); //用户管理主页
   },
-  pageSeriUsers (params) {  	
+  pageSeriUsers (params) {    
     return lift(post('/sUser/pageSeriUsers', params)); //用户管理-总编号用户（列表，编号查询）  
   },  
-  deleteSeriUser (params) {  	
+  deleteSeriUser (params) {   
     return lift(post('/sUser/delSeriUser', params)); //用户管理-总编号用户-删除编号用户 
   },
   getLastSerialNo (params) {   
     return lift(post('/sUser/getLastSerialNo', params)); //用户管理-总编号用户-获取上次用户编号
   },
-  createSeriUser (params) {  	
+  createSeriUser (params) {   
     return lift(post('/sUser/createSeriUser', params)); //用户管理-总编号用户-新建编号用户
   },
   editSeriUser (params) {   
     return lift(post('/sUser/editSeriUser', params)); //用户管理-总编号用户-修改编号用户
   },  
-  pageShopUsers (params) {  	
+  pageShopUsers (params) {    
     return lift(post('/sUser/pageShopUsers', params)); //用户管理-总订单用户（列表）
   },
   getGsDdList (params) {    

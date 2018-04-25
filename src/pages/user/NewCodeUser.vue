@@ -31,7 +31,9 @@
 <script>
 import { Panel, CellGroup, Field, Button, Cell, Icon, Dialog, Toast } from 'vant'
 import Header from "../wechat/Header"
+import {mapGetters} from 'vuex'
 export default{
+	computed: { ...mapGetters([ "userId"]) },
 	name: "NewCode",
 	components: { Header, Panel, CellGroup, Field, Button, Cell, Icon, Dialog, Toast },
 	data () {
@@ -48,6 +50,7 @@ export default{
 			},
 			lastNo:null,
 			config: {},
+			urlPre: 'http://test.yeager.vip/',
 		}
 	},
 	methods: {
@@ -60,7 +63,7 @@ export default{
 		},
         createSeriUser () {
         	var seriUser = {};
-		    seriUser.userId = this.$store.state.userId;
+		    seriUser.userId = this.userId;
 		    seriUser.userNum = this.userCard.userNum;
 		    seriUser.realName = this.userCard.realName;
 		    seriUser.addrInfo = this.userCard.addrInfo;
@@ -114,10 +117,13 @@ export default{
 	          needResult: 1,
 	          desc: 'scanQRCode desc',
 	          success: (res) => {
+	          	console.info("scanQRCode",res);
 	            let url = res.resultStr
+
 	            if (url && url.indexOf(this.urlPre) !== -1) {
 	            	//从url中获取qrCodeId
 	            	//this.userCard.qrCodeId = ?
+
 	            } else {
 	              alert("请扫描正确的二维码");
 	            }
@@ -130,7 +136,7 @@ export default{
         },
         getLastSerialNo(){
         	var req = {};
-		    req.userId = this.$store.state.userId;
+		    req.userId = this.userId;
 			this.$api.user.getLastSerialNo(req)
 			.then(res => {
 			    //if(res.code = "0000"){
@@ -143,8 +149,7 @@ export default{
         },
         getConfig () {
 		      let params = {
-		        userName: this.$store.state.userId,
-		        curUrl: location.href
+		        userName: location.href
 		      }
 		      this.$common.jsApiConfig(params).then(res => {
 		        if (res && res.code === '0000' && res.msg) {

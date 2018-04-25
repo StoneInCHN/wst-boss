@@ -55,7 +55,7 @@ export default{
 	 			req.brandId = this.goods.brandId;
 			    req.brandName = this.goods.brandName;
 			    req.gName = this.goods.gName;
-			    req.specId = this.goods.specId;
+			    req.specName = this.goods.gSpec;
 			    req.originPrice = this.goods.originPrice;
 			    req.distPrice = this.goods.distPrice;
 			    req.id= this.goods.id;

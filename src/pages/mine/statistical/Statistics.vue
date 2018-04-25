@@ -35,7 +35,9 @@
 import { Row, Col, Button } from 'vant'
 import Header from "../../wechat/Header"
 import Footer from "../../wechat/Footer"
+import {mapGetters} from 'vuex'
 export default{
+	computed: { ...mapGetters([ "userId"]) },
 	name: "Statistics",
 	components: { Header, Footer, Row, Col, Button},
 	data () {
@@ -49,7 +51,8 @@ export default{
         },
         finReport(){
 		    var req = {};
-		    	req.userId = this.$store.state.userId;
+		    	req.userId = this.userId;
+		    	console.info(req);
 		    	this.$api.mine.finReport(req)
 		    	.then(res =>{
 		    		//if(res.code = '0000'){

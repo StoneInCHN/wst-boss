@@ -27,7 +27,9 @@
 
 <script>
 import { Dialog } from 'vant'
+import {mapGetters} from 'vuex'
 export default{
+	computed: { ...mapGetters([ "userId"]) },
 	name: "UserCard",
 	components: { Dialog},
 	props: {
@@ -52,7 +54,7 @@ export default{
 			  message: '确认要解除编号和二维码的关联吗？'
 			}).then(() => {
 			    var seriUser = {};
-			    seriUser.userId = this.$store.state.userId;
+			    seriUser.userId = this.userId;
 			    seriUser.entityId = this.userCard.id;
 			    seriUser.userNum = this.userCard.userNum;
 			    seriUser.realName = this.userCard.realName;

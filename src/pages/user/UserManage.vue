@@ -57,7 +57,9 @@ import Header from "../wechat/Header"
 import Footer from "../wechat/Footer"
 import UserCard from "./UserCard"
 import MemberInfo from "./MemberInfo"
+import {mapGetters} from 'vuex'
 export default{
+	computed: { ...mapGetters([ "userId"]) },
 	name: "UserManage",
 	components: { Header, Footer, Search, Row, Col, Button, UserCard, MemberInfo },
 	data () {
@@ -84,7 +86,7 @@ export default{
 	    },
 	    searchUser(){
 			    	var req = {};
-				    req.userId = this.$store.state.userId;
+				    req.userId = this.userId;
 				    req.pageNumber = 1;
 				    req.pageSize = 10;
 				    if(this.type==0){
@@ -124,7 +126,7 @@ export default{
 	    },
 	    getSummar(){
 	    	var req = {};
-		    req.userId = this.$store.state.userId;
+		    req.userId = this.userId;
 			this.$api.user.summary(req)
 			.then(res => {
 				this.summar = res;        

@@ -18,7 +18,9 @@
 import { Search, Toast } from 'vant'
 import Header from "../../wechat/Header"
 import WorkerRow from "./WorkerRow"
+import {mapGetters} from 'vuex'
 export default{
+	computed: { ...mapGetters([ "userId"]) },
 	name: "WorkerSearch",
 	components: { Header, Search, WorkerRow, Toast },
 	data () {
@@ -38,7 +40,7 @@ export default{
 		},
 		getWxByNickName(){
 			var req = {};
-			req.userId = this.$store.state.userId;
+			req.userId = this.userId;
 			req.userName = this.keyWords;
 			this.$api.mine.getWxByNickName(req)
 			.then(res => {

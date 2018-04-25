@@ -54,7 +54,9 @@ import { Row, Col, Tab, Tabs, Cell, CellGroup, Actionsheet, DatetimePicker, Icon
 import Header from "../../wechat/Header"
 import Footer from "../../wechat/Footer"
 import * as utils from "../../../utils"
+import {mapGetters} from 'vuex'
 export default{
+	computed: { ...mapGetters([ "userId"]) },
 	name: "AddAccount",
 	components: { Header, Footer, Row, Col, Tab, Tabs, Cell, CellGroup, Actionsheet, DatetimePicker, Icon, Picker },
 	data () {
@@ -112,7 +114,7 @@ export default{
 		allDetail(){
 			    this.finReport();
 				var req = {};
-		    	req.userId = this.$store.state.userId;
+		    	req.userId = this.userId;
 		    	req.ym = this.ym;
 		    	req.pageSize = 10;
 		    	req.pageNumber = 1;
@@ -130,7 +132,7 @@ export default{
 		},
 		finReport(){
 		    	var req = {};
-		    	req.userId = this.$store.state.userId;
+		    	req.userId = this.userId;
 		    	this.$api.mine.finReport(req)
 		    	.then(res =>{
 		    		//if(res.code = '0000'){
@@ -203,7 +205,7 @@ export default{
     	},
     	listShopEmp(){
         	var req = {};
-		    req.userId = this.$store.state.userId;
+		    req.userId = this.userId;
 			this.$api.mine.listShopEmp(req)
 			.then(res => {
 			    //if(res.code = "0000"){
@@ -221,9 +223,6 @@ export default{
 			        console.log(error);
 			});
         },
-    },
-    computed:{
-    	
     },
     mounted(){
     	var now = new Date();

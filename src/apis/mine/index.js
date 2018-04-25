@@ -27,7 +27,7 @@ const  mine = {
     return lift(post('/shop/finReport', params)); //商家收支统计
   },
   pageFinDetail (params) {
-    return lift(post('/wst-boss/shop/pageFinDetail', params)); //商家收支明细
+    return lift(post('/shop/pageFinDetail', params)); //商家收支明细
   },
   getGList (params) {
     return lift(post('/sGoods/getGList', params)); //商品管理列表
@@ -39,13 +39,13 @@ const  mine = {
     return lift(post('/sGoods/getWBrand', params)); //获取水品牌
   },
   getSpec (params) {
-    return lift(post('/wst-boss/sGoods/getWBrandSpec', params)); //获取品牌规格
+    return lift(post('/sGoods/getWBrandSpec', params)); //获取品牌规格
   },
   addWG (params) {
     return lift(post('/sGoods/addWG', params)); //商家新增商品
   },
   editWG (params) {
-    return lift(post('/sGoods/editWG', params)); //商家编辑商品
+    return lift(post('/sGoods/editGPrice', params)); //商家编辑商品
   },
   genQrPdf (params) {
     console.info("请求【批量生成二维码】接口, 请求参数：", params);

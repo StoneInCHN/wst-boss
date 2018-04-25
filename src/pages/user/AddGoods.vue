@@ -23,7 +23,9 @@
 <script>
 import { Panel, CellGroup, Field, Button, Cell, Actionsheet,Stepper  } from 'vant'
 import Header from "../wechat/Header"
+import {mapGetters} from 'vuex'
 export default{
+	computed: { ...mapGetters([ "userId"]) },
 	name: "StoreManage",
 	components: { Header, Panel, CellGroup, Field, Button, Cell, Actionsheet,Stepper },
 	data () {
@@ -52,7 +54,7 @@ export default{
 	    },
 	    getOnGsList(){
 	    	var req = {};
-		    req.userId = this.$store.state.userId;
+		    req.userId = this.userId;
 		    req.entityId = this.$store.state.seriUser.id;
 	    	this.$api.user.getOnGsList(req)
 			.then(res => {

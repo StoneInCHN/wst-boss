@@ -22,7 +22,9 @@
 <script>
 import { Panel, CellGroup, Field, Button, Cell, Actionsheet } from 'vant'
 import Header from "../wechat/Header"
+import {mapGetters} from 'vuex'
 export default{
+	computed: { ...mapGetters([ "userId"]) },
 	name: "StoreManage",
 	components: { Header, Panel, CellGroup, Field, Button, Cell, Actionsheet},
 	data () {
@@ -49,7 +51,7 @@ export default{
 	    },
 	    getGsDdList(){
 	    	var req = {};
-		    req.userId = this.$store.state.userId;
+		    req.userId = this.userId;
 		    req.entityIds = this.$store.state.couponIds;
 	    	this.$api.user.getGsDdList(req)
 			.then(res => {

@@ -34,7 +34,9 @@
 <script>
 import { Row, Col, Icon, Checkbox, Actionsheet, Toast, Dialog  } from 'vant'
 import Header from "../../wechat/Header"
+import {mapGetters} from 'vuex'
 export default{
+	computed: { ...mapGetters([ "userId"]) },
 	name: "StoreManage",
 	components: { Header, Row, Col, Icon, Checkbox, Actionsheet, Toast, Dialog  },
 	data () {
@@ -93,7 +95,7 @@ export default{
         },
         listShopEmp(){
         	var req = {};
-		    req.userId = this.$store.state.userId;
+		    req.userId = this.userId;
 
 			this.$api.mine.listShopEmp(req)
 			.then(res => {
@@ -107,7 +109,7 @@ export default{
         },
         deleteEmp(){
         	var req = {};
-		    req.userId = this.$store.state.userId;
+		    req.userId = this.userId;
 		    req.entityIds = this.selecteWorkerIds;
 
 			this.$api.mine.deleteEmp(req)

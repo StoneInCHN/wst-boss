@@ -27,7 +27,9 @@
 import { Panel, CellGroup, Field, Button, Cell, Icon, Actionsheet,Toast } from 'vant'
 import Header from "../../wechat/Header"
 import Footer from "../../wechat/Footer"
+import {mapGetters} from 'vuex'
 export default{
+	computed: { ...mapGetters([ "userId"]) },
 	name: "AddAccount",
 	components: { Header, Footer, Panel, CellGroup, Field, Button, Cell, Icon, Actionsheet, Toast},
 	data () {
@@ -45,10 +47,8 @@ export default{
 	methods: {
         save () {
         	if(this.goods.id ==null){
-        		console.info("addWG");
         		this.addWG();
         	}else{
-        		console.info("editWG");
 				this.editWG();
         	}			
         },
@@ -93,7 +93,7 @@ export default{
 	    },
 	    getAllBrand(){
 	    	var req = {};
-		    req.userId = this.$store.state.userId;
+		    req.userId = this.userId;
 			this.$api.mine.getWBrand(req)
 			.then(res => {
 			    //if(res.code = "0000"){
@@ -113,7 +113,7 @@ export default{
 	    },
 	    getAllGoodsName(brandId){
 	    	var req = {};
-		    req.userId = this.$store.state.userId;
+		    req.userId = this.userId;
 		    req.entityId = brandId;
 			this.$api.mine.getWBrand(req)
 			.then(res => {
@@ -134,7 +134,7 @@ export default{
 	    },
 	    getSpec(goodsNameId){
 	    	var req = {};
-		    req.userId = this.$store.state.userId;
+		    req.userId = this.userId;
 		    req.entityId = goodsNameId;
 			this.$api.mine.getSpec(req)
 			.then(res => {
@@ -155,7 +155,7 @@ export default{
 	    },  
 	    addWG(){
 	    	var req = {};
-		    req.userId = this.$store.state.userId;
+		    req.userId = this.userId;
 		    req.brandId = this.goods.brandId;
 		    req.brandName = this.goods.brandName;
 		    req.gName = this.goods.gName;
@@ -175,15 +175,11 @@ export default{
 	    },
 	    editWG(){
 	    	var req = {};
-		    req.userId = this.$store.state.userId;
-		    req.brandId = this.goods.brandId;
-		    req.brandName = this.goods.brandName;
-		    req.gName = this.goods.gName;
-		    req.specId = this.goods.specId;
+		    req.userId = this.userId;
+		    req.entityId = this.goods.id;
 		    req.originPrice = this.goods.originPrice;
 		    req.distPrice = this.goods.distPrice;
-		    req.id= this.goods.id;
-			this.$api.mine.addWG(req)
+			this.$api.mine.editWG(req)
 			.then(res => {
 			    //if(res.code = "0000"){
 			    	Toast.success("更新成功");

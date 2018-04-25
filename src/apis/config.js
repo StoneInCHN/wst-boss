@@ -8,6 +8,8 @@ import qs from "qs";
 axios.defaults.timeout = 5000;
 
 axios.defaults.baseURL = "/wst-boss/";
+//axios.defaults.baseURL = "http://test.yeager.vip/wst-boss/";
+//axios.defaults.baseURL = "http://47.106.96.230:10002/wst-boss/";
 
 //
 axios.defaults.headers.post["Content-Type"] = "application/json;charset=UTF-8";
@@ -53,10 +55,12 @@ axios.interceptors.response.use(
  */
 
 export const fetch = (url, params = {}) => {
+  console.info(params);
   return new Promise((resolve, reject) => {
     axios
       .get(url, params)
       .then(data => {
+        console.info("get",url,params,data);
         return resolve(data);
       })
       .catch(err => {
@@ -73,9 +77,11 @@ export const fetch = (url, params = {}) => {
  */
 
 export const post = (url, params = {}) => {
+  console.info(params);
   return new Promise((resolve, reject) => {
     axios.post(url, params).then(
       data => {
+        console.info("get",url,params,data);
         return resolve(data);
       },
       err => {
