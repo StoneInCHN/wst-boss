@@ -43,7 +43,7 @@ export default{
 			this.memberInfo.code = this.currentCode;
 		},
 	    formatDate(dateTime) {
-      		return utils.formatDateTime(dateTime, "yyyy-MM-dd hh:mm");
+      		return utils.formatDateTime(new Date(dateTime), "yyyy-MM-dd hh:mm");
     	},
     }
 }
