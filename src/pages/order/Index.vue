@@ -151,7 +151,6 @@ export default {
         userId: this.userId
       };
       this.$api.order.pageShopOrders(params).then(r => {
-        //console.log({ r });
         if (type === "PENDING") {
           this.setPendingList(r);
         } else if (type === "PROCESSING") {
@@ -231,7 +230,7 @@ export default {
             const params = {
               entityIds: ids,
               oprStatus: "UNDELIVER",
-              userId: 1
+              userId: this.userId
             };
             this.oprSO(params);
           })

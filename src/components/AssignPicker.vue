@@ -32,6 +32,10 @@ export default {
     },
     close: {
       type: Function
+    },
+    type: {
+      type: String,
+      default: "PENDING"
     }
   },
   mounted() {
@@ -41,9 +45,9 @@ export default {
       })
       .then(r => {
         this.listSrc = r;
-      })
-    const _this = this
-    console.log({_this})
+      });
+    const _this = this;
+    console.log({ _this });
   },
   data() {
     return {
@@ -51,7 +55,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["checkedOrders","userId"]),
+    ...mapGetters(["checkedOrders", "userId", "pendingList", "processingList"]),
     show() {
       return this.isShow;
     },
@@ -66,28 +70,40 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["setCheckedOrders"]),
+    ...mapActions(["setCheckedOrders", "setPendingList", "setProcessingList"]),
     confirm(value, index) {
-      console.log({ value, index });
       const ids = this.isBatch ? this.checkedOrders : [this.id];
       const desc = this.isBatch ? `批量指派` : "单个订单指派";
-      console.log({ desc, ids });
       const emp = this.listSrc[index];
-      console.log({ emp });
       if (ids && ids.length > 0) {
         const params = {
           entityIds: ids,
           oprStatus: "PROCESSING",
           userId: this.userId,
           empId: emp.id,
-          empIncome: "8"
+          empIncome: 0
         };
-        this.$api.order
-          .oprSO(params)
-          .then(r => {
-            Toast.success("指派成功");
-              this.close()
-          })
+        this.$api.order.oprSO(params).then(r => {
+          Toast.success("指派成功");
+          if (this.type === "PENDING") {
+            const lists = this.pendingList.filter(item => {
+              return !ids.includes(item.id);
+            });
+            this.setPendingList(lists);
+          } else {
+            let lists = [];
+            this.processingList.forEach(item => {
+              if (ids.includes(item.id)) {
+                const { realName, id } = emp;
+                item.empName = realName;
+                item.empId = id;
+              }
+              lists.push(item);
+            });
+            this.setProcessingList(lists);
+          }
+          this.close();
+        });
       }
     }
   }

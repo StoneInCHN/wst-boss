@@ -28,7 +28,7 @@
        <div class="order-item-footer" v-if="isPending">
            <ul :disabled="eventDisabled">
                <li class="refuse"><a @click="refuse">拒绝</a></li>
-               <li><a @click="toggleFinish">送达</a></li>
+               <li><a @click="pending2Finish">送达</a></li>
                <li><a @click="toggleAssign">指派</a></li>
                <li><a @click="call">电话</a></li>
            </ul>
@@ -57,8 +57,9 @@
      暂无订单信息
    </p>
    <AssignPicker v-if="openAssign" :close="toggleAssign" :isBatch="false"  :id="item.id"/>
-   <AssignPicker v-if="openReassignment" :close="toggleReassignment" :id="item.id"/>
+   <AssignPicker v-if="openReassignment" :close="toggleReassignment" :isBatch="false" :id="item.id" type="PROCESSING"/>
    <PayMethodPicker v-if="openFinish" :isBatch="false" :close="toggleFinish" :id="item.id"/>
+   <Actionsheet v-model="showCall" :actions="callActions" cancel-text="取消" />
   </div>
 </template>
 <script>
@@ -67,7 +68,7 @@ import AssignPicker from "@/components/AssignPicker";
 import PayMethodPicker from "@/components/PayMethodPicker";
 import { mapActions, mapGetters } from "vuex";
 import { CobPayTypeEnum } from "@/shared/consts";
-import { formatDateTime } from "@/utils"
+import { formatDateTime } from "@/utils";
 export default {
   name: "orderItem",
   components: {
@@ -109,11 +110,12 @@ export default {
         UNDELIVER: "无法送达",
         REJECT: "已拒绝",
         CANCEL: "已取消"
-      }
+      },
+      nextShowPayMethod: false
     };
   },
   computed: {
-    ...mapGetters(["checkedOrders"]),
+    ...mapGetters(["checkedOrders", "pendingList", "processingList", "userId"]),
     isPending() {
       return this.state === "PENDING";
     },
@@ -125,12 +127,13 @@ export default {
     },
     payType() {
       const type = this.item.payType;
-      console.log({type})
-      console.log(CobPayTypeEnum[type])
       return CobPayTypeEnum[type];
     },
     eventDisabled() {
       return this.editable;
+    },
+    oStatusType(){
+      return this.item.oStatus
     },
     otherStatusText() {
       const { oStatus } = this.item;
@@ -159,7 +162,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["setCheckedOrders"]),
+    ...mapActions(["setCheckedOrders", "setPendingList", "setProcessingList"]),
     call() {
       console.log("call");
       this.callActions = [];
@@ -171,15 +174,28 @@ export default {
     },
     callSomeone(item) {
       console.log("打电话", item.name);
+      location.href = `tel:${item.name}`
     },
     toggleAssign() {
       this.openAssign = !this.openAssign;
+      setTimeout(() => {
+        if (this.nextShowPayMethod) {
+          this.openFinish = !this.openFinish;
+        }
+      }, 100);
+    },
+    //不指派 直接完成
+    pending2Finish() {
+      this.toggleAssign();
+      setTimeout(() => {
+        this.nextShowPayMethod = !this.nextShowPayMethod;
+      }, 500);
     },
     toggleReassignment() {
       this.openReassignment = !this.openReassignment;
     },
     toggleFinish() {
-      console.log("关闭 finish ")
+      console.log("关闭 finish ");
       this.openFinish = !this.openFinish;
     },
     refuse() {
@@ -194,7 +210,7 @@ export default {
           const params = {
             entityIds: [id],
             oprStatus: "REJECT",
-            userId: 1
+            userId: this.userId
           };
           this.oprSO(params);
         })
@@ -208,34 +224,43 @@ export default {
         message: `确定要酱[ ${
           this.item.addrInfo.contactPhone
         } ]的订单状态修改为[ 无法送达 ]吗?`
-      })
-        .then(() => {
-          // on confirm
-          const { id } = this.item;
-          const params = {
-            entityIds: [id],
-            oprStatus: "UNDELIVER",
-            userId: 1
-          };
-          this.oprSO(params);
-        })
+      }).then(() => {
+        // on confirm
+        const { id } = this.item;
+        const params = {
+          entityIds: [id],
+          oprStatus: "UNDELIVER",
+          userId: this.userId
+        };
+        this.oprSO(params);
+      });
     },
     oprSO(params) {
       if (params) {
-        this.$api.order
-          .oprSO(params)
-          .then(r => {
-            Toast.success("操作成功");
-          })
+        this.$api.order.oprSO(params).then(r => {
+          Toast.success("操作成功");
+          const ids = params.entityIds || []
+          if (this.oStatusType === "PENDING") {
+            const lists = this.pendingList.filter(item => {
+              return !ids.includes(item.id);
+            });
+            this.setPendingList(lists);
+          } else {
+            const lists = this.processingList.filter(item => {
+              return !ids.includes(item.id);
+            });
+            this.setProcessingList(lists);
+          }
+        });
       }
     }
   },
   filters: {
-        formatDate(time) {
-            var date = new Date(time);
-            return formatDateTime(date, "yyyy-MM-dd hh:mm");
-        }
+    formatDate(time) {
+      var date = new Date(time);
+      return formatDateTime(date, "yyyy-MM-dd hh:mm");
     }
+  }
 };
 </script>
 <style lang="less">
