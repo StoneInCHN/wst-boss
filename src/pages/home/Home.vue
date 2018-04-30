@@ -20,15 +20,23 @@ export default {
     };
   },
   created() {
-    this.$api.common.auth({ userId: this.userId }).then(r => {
-      this.setToken(r.token);
-    });
+    const params = { userId: this.userId };
+    this.$api.common
+      .auth(params)
+      .then(r => {
+        this.setToken(r.token);
+        return this.$api.common.getCobType();
+      })
+      .then(r => {
+        console.log({r})
+        this.setCobType(r.cobPayType)
+      });
   },
   computed: {
     ...mapGetters(["userId"])
   },
   methods: {
-    ...mapActions(["setToken"])
+    ...mapActions(["setToken", "setCobType"])
   }
 };
 </script>

@@ -116,3 +116,15 @@ export function formatDateTime(date, fmt) {
 function padLeftZero(str) {
   return ("00" + str).substr(str.length);
 }
+
+
+export const getItem = (key) =>{
+  const value = sessionStorage.getItem(key)
+  if(!value) return null
+  return JSON.parse(value)
+}
+
+export const getBooleanItem = key => {
+  const value = sessionStorage.getItem(key) || false;
+  return value && value !== "false";
+};

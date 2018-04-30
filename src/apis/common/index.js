@@ -14,7 +14,7 @@ const common = {
     return fetch('/getUserInfo')
   },
   getCobType(){
-    return fetch('/common/cobType')
+    return lift(post('/common/cobType'))
   },
   getKey(){
     return fetch('/common/getKey')

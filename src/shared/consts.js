@@ -21,3 +21,13 @@ export const CobPayTypeEnum = {
   CREDIT: "赊账",
   COB: "货到付款"
 };
+
+export const  CobPayTypeText ={
+  ["OFFLINE_TICKET"]: "水票",
+  ["CASH"]: "现金",
+  ["WECHAT"]: "微信",
+  ["ALIPAY"]: "支付宝",
+  ["COB"]:"货到付款",
+  ["CREDIT"]: "赊账"
+} 
+

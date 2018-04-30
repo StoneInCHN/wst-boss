@@ -5,7 +5,7 @@
           <li v-if="currentState === 'PENDING'"><a @click="batchRefuse">拒绝</a></li>
           <li v-if="currentState === 'PENDING'"><a @click="batchAssign">指派</a></li>
           <li v-if="currentState === 'PROCESSING'"><a @click="batchReassignment">改派</a></li>
-          <li v-if="currentState !== 'OTHER'"><a @click="batchService">送达</a></li>
+          <li v-if="currentState === '_OTHER'"><a @click="batchService">送达</a></li>
           <li v-if="currentState === 'PROCESSING'"><a @click="batchUnDelivery">无法送达</a></li>
       </ul>
       
@@ -52,7 +52,7 @@
       </Tabs>
       <Footer/>
       <AssignPicker v-if="openAssign" :isBatch="true" :close="closeAssgin" />
-      <AssignPicker v-if="openReassignment" :isBatch="true" :close="closeReassignment"/>
+      <AssignPicker v-if="openReassignment" :isBatch="true" :close="closeReassignment" type="PROCESSING"/>
       <FinishPicker v-if="openFinish" :isBatch="true" :close="closeFinish"/>
   </div>
 </template>
@@ -82,8 +82,7 @@ export default {
   },
   data() {
     return {
-      active: 2,
-      editable: false,
+      active: -1,
       currentState: "PENDING",
       tabTitles: [
         ["PENDING"],
@@ -106,7 +105,8 @@ export default {
       "userId",
       "pendingList",
       "processingList",
-      "otherList"
+      "otherList",
+      "editable"
     ]),
     settingText() {
       return this.editable ? "取消" : "管理";
@@ -117,14 +117,14 @@ export default {
       "setCheckedOrders",
       "setPendingList",
       "setProcessingList",
-      "setOtherList"
+      "setOtherList",
+      "setEditable"
     ]),
     setting() {
       this.setCheckedOrders([]);
-      this.editable = !this.editable;
+      this.setEditable(!this.editable);
     },
     onRefresh() {
-      alert("123");
       setTimeout(() => {
         this.count++;
         Toast.succes("刷新成功:" + this.count);
@@ -132,7 +132,7 @@ export default {
       }, 500);
     },
     onTabsClick(i) {
-      this.editable = false;
+      this.setEditable(false);
       const status = this.tabTitles[i];
       if (i === 0) {
         this.currentState = "PENDING";
@@ -184,7 +184,7 @@ export default {
       }
     },
     batchAssign() {
-      this.batchOption(this.openAssign, "请先选择要指派的订单");
+      this.batchOption("openAssign" , "请先选择要指派的订单");
     },
     closeAssgin() {
       this.openAssign = false;
@@ -206,13 +206,13 @@ export default {
       }
     },
     batchReassignment() {
-      this.batchOption(this.openReassignment, "请先选择要改派的订单");
+      this.batchOption("openReassignment" , "请先选择要改派的订单");
     },
     closeReassignment() {
       this.openReassignment = false;
     },
     batchFinish() {
-      this.batchOption(this.openFinish, "请先选择订单");
+      this.batchOption("openFinish", "请先选择订单");
     },
     closeFinish() {
       this.openFinish = false;
@@ -242,9 +242,10 @@ export default {
       }
     },
     batchOption(openFlag, msg) {
+      debugger
       const ids = this.checkedOrders;
       if (ids && ids.length > 0) {
-        openFlag = true;
+        this[openFlag] = true;
       } else {
         Toast(msg);
       }

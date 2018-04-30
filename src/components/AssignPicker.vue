@@ -55,7 +55,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["checkedOrders", "userId", "pendingList", "processingList"]),
+    ...mapGetters(["checkedOrders", "userId", "pendingList", "processingList", "editable"]),
     show() {
       return this.isShow;
     },
@@ -70,11 +70,12 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["setCheckedOrders", "setPendingList", "setProcessingList"]),
+    ...mapActions(["setCheckedOrders", "setPendingList", "setProcessingList", "setEditable"]),
     confirm(value, index) {
       const ids = this.isBatch ? this.checkedOrders : [this.id];
       const desc = this.isBatch ? `批量指派` : "单个订单指派";
       const emp = this.listSrc[index];
+      debugger
       if (ids && ids.length > 0) {
         const params = {
           entityIds: ids,
@@ -92,6 +93,7 @@ export default {
             this.setPendingList(lists);
           } else {
             let lists = [];
+            debugger
             this.processingList.forEach(item => {
               if (ids.includes(item.id)) {
                 const { realName, id } = emp;
@@ -101,6 +103,8 @@ export default {
               lists.push(item);
             });
             this.setProcessingList(lists);
+            this.setEditable(false)
+            this.setCheckedOrders([])
           }
           this.close();
         });
