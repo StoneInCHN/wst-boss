@@ -48,8 +48,8 @@ const  mine = {
     return lift(post('/sGoods/editGPrice', params)); //商家编辑商品
   },
   genQrPdf (params) {
-    console.info("请求【批量生成二维码】接口, 请求参数：", params);
-    var url = "/shopQrcode/genQrPdf?userId="+params.userId+"&pageSize="+params.pageSize;
+    console.info("请求【批量生成二维码】接口, 请求参数1：", params);
+    var url = "/wst-boss/shopQrcode/genQrPdf?userId="+params.userId+"&pageSize="+params.pageSize;
     window.open(url);
     //return fetch(url); //批量生成二维码
     var res = {};

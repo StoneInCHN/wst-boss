@@ -5,7 +5,7 @@ const common = {
     return lift(post("/common/auth", params));
   },
   jsApiConfig (params) {
-    return post('/wx/jsapiConfig', params)
+    return post('/common/wx/jsapiConfig', params)
   },
   login (params) {
     return post('/login', params)

@@ -17,8 +17,8 @@
 				  <Field label="姓名" v-model="userCard.realName" placeholder="请填写用户姓名" required/>
 				  <Field label="小区/大厦/学校" v-model="userCard.addrInfo" placeholder="请填写用户地址" required/>
 				  <Field label="楼号-门牌号" v-model="userCard.doorNum" placeholder="请填写楼号-门牌号" required/>
-				  <Field label="关联二维码" v-model="userCard.qrCode" placeholder="未关联">
-				  	<Icon name="add" slot="icon" v-if="userCard.qrCode==null" class="addQr" @click="addQr"/>
+				  <Field label="关联二维码" v-model="userCard.qrCodeId" placeholder="未关联">
+				  	<Icon name="add" slot="icon" v-if="userCard.qrCodeId==null" class="addQr" @click="addQr"/>
 				  	<Icon name="clear" slot="icon" v-else class="clearQr" @click="confirmClear"/>
 				  </Field>
 				  <Field label="备注" v-model="userCard.remark" placeholder="请填写备注" type="textarea"/>
@@ -50,7 +50,7 @@ export default{
 			},
 			lastNo:null,
 			config: {},
-			urlPre: 'http://test.yeager.vip/',
+			urlPre: 'http://test.yeager.vip/wst-boss',
 		}
 	},
 	methods: {
@@ -117,13 +117,15 @@ export default{
 	          needResult: 1,
 	          desc: 'scanQRCode desc',
 	          success: (res) => {
-	          	console.info("scanQRCode",res);
+	          	//alert(res);
 	            let url = res.resultStr
 
-	            if (url && url.indexOf(this.urlPre) !== -1) {
-	            	//从url中获取qrCodeId
-	            	//this.userCard.qrCodeId = ?
-
+	            // if (url && url.indexOf(this.urlPre) !== -1) {
+	            if (url) {//为啥url返回的是http://www.wst.com/custom/99  域名不对啊。。。
+	            	//从url中获取qrCodeId	  
+	            	let id =  url.split('/').pop();
+	            	alert(id);         	
+	            	this.userCard.qrCodeId = id;
 	            } else {
 	              alert("请扫描正确的二维码");
 	            }
@@ -147,11 +149,11 @@ export default{
 			        console.log(error);
 			});
         },
-        getConfig () {
+        getConfig () { 
 		      let params = {
-		        userName: location.href
+		        userName: this.urlPre + "/h5/index.html"
 		      }
-		      this.$common.jsApiConfig(params).then(res => {
+		      this.$api.common.jsApiConfig(params).then(res => {
 		        if (res && res.code === '0000' && res.msg) {
 		          this.config.jsapi_ticket = res.msg.jsapi_ticket
 		          this.config.signature = res.msg.signature
@@ -161,6 +163,7 @@ export default{
 		          this.config.appId = res.msg.appId
 		        }
 		        if (this.config) {
+		        	//console.info("dalu",this.$wechat);
 		          this.$wechat.config({
 		            debug: false,
 		            appId: this.config.appId,
@@ -169,14 +172,14 @@ export default{
 		            signature: this.config.signature,
 		            jsApiList: [
 		              'scanQRCode',
-		              'hideAllNonBaseMenuItem',
+		              // 'hideAllNonBaseMenuItem',
 		              'closeWindow'
 		            ]
 		          })
-		          this.$wechat.ready(() => {
-		            this.$wechat.hideAllNonBaseMenuItem()
-		            console.log('wx loading success')
-		          })
+		          // this.$wechat.ready(() => {
+		          //   this.$wechat.hideAllNonBaseMenuItem()
+		          //   console.log('wx loading success')
+		          // })
 		          this.$wechat.error((res) => {
 		            console.log('wx loading error')
 		          })
@@ -188,6 +191,7 @@ export default{
     },
     mounted(){
     	this.getLastSerialNo();
+    	this.getConfig();
     }
 }
 </script>
