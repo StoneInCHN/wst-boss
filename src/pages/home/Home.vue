@@ -9,10 +9,11 @@
 <script>
 import Header from "../wechat/Header";
 import Footer from "../wechat/Footer";
+import { Toast } from 'vant'
 import { mapActions, mapGetters } from "vuex";
 export default {
   name: "Home",
-  components: { Header, Footer },
+  components: { Header, Footer, Toast },
   data() {
     return {
       active: 0,
@@ -20,11 +21,31 @@ export default {
     };
   },
   created() {
-    const params = { userId: this.userId };
-    this.$api.common
-      .auth(params)
+    let url = location.href+"";
+    //alert(url);
+    let authCode = null;
+    if (url && url.indexOf('?') !== -1) {
+        let params =  url.split('?')[1].split('&');
+        for (var i = 0; i < params.length; i++) {
+          if(params[i] && params[i].indexOf('=') !== -1){
+              let key = params[i].split('=')[0];
+              let value = params[i].split('=')[1];
+              if(key && value && key =='code'){
+                 authCode = value;
+                 break;
+              }
+          }
+        }        
+    } 
+    //alert(authCode);
+
+    const params = {};
+    params.authCode = authCode;
+    params.role = 0;
+    this.$api.common.wxAuthToken(params)
       .then(r => {
         this.setToken(r.token);
+        this.setUserId(r.userId);
         return this.$api.common.getCobType();
       })
       .then(r => {
@@ -36,7 +57,7 @@ export default {
     ...mapGetters(["userId"])
   },
   methods: {
-    ...mapActions(["setToken", "setCobType"])
+    ...mapActions(["setToken", "setUserId","setCobType"])
   }
 };
 </script>

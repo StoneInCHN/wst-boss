@@ -18,7 +18,7 @@ axios.defaults.headers.post["Content-Type"] = "application/json;charset=UTF-8";
 axios.interceptors.request.use(
   config => {
     const { token } = store.state.common;
-    console.log({ store });
+    //console.log({ store });
     Toast.loading({
       mask: true,
       message: "加载中...",
@@ -55,7 +55,6 @@ axios.interceptors.response.use(
  */
 
 export const fetch = (url, params = {}) => {
-  console.info(params);
   return new Promise((resolve, reject) => {
     axios
       .get(url, params)
@@ -77,11 +76,10 @@ export const fetch = (url, params = {}) => {
  */
 
 export const post = (url, params = {}) => {
-  console.info(params);
   return new Promise((resolve, reject) => {
     axios.post(url, params).then(
       data => {
-        console.info("get",url,params,data);
+        console.info("post",url,params,data);
         return resolve(data);
       },
       err => {

@@ -7,9 +7,12 @@ const common = {
   jsApiConfig (params) {
     return post('/common/wx/jsapiConfig', params)
   },
-  login (params) {
-    return post('/login', params)
+  wxAuth (params) {
+    return fetch('/common/wx/auth/0', params)
   },
+  wxAuthToken(params) {
+    return lift(post("/common/wx/authToken", params));
+  },  
   getUserInfo () {
     return fetch('/getUserInfo')
   },
