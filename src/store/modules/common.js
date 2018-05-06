@@ -8,7 +8,7 @@ import { getItem , getBooleanItem} from '../../utils'
 const state = {
   token: sessionStorage.getItem("token") || "",
   key: sessionStorage.getItem("key") || "",
-  userId: sessionStorage.getItem("userId") || 1,
+  userId: sessionStorage.getItem("userId"),
   cobType: getItem("cobType") || [] ,
   editable: getBooleanItem("editable") || false
 };

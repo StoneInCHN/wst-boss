@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<Header/>
-		<h3>{{msg}}</h3>
+		
 		<Footer/>
 	</div>
 </template>
@@ -16,43 +16,45 @@ export default {
   components: { Header, Footer, Toast },
   data() {
     return {
-      active: 0,
-      msg: "微信公众号首页(商家)"
+      active: 0
     };
   },
-  created() {
-    let url = location.href+"";
-    //alert(url);
-    let authCode = null;
-    if (url && url.indexOf('?') !== -1) {
-        let params =  url.split('?')[1].split('&');
-        for (var i = 0; i < params.length; i++) {
-          if(params[i] && params[i].indexOf('=') !== -1){
-              let key = params[i].split('=')[0];
-              let value = params[i].split('=')[1];
-              if(key && value && key =='code'){
-                 authCode = value;
-                 break;
-              }
-          }
-        }        
-    } 
-    //alert(authCode);
+  // created() {
+  //   if(this.userId){
+  //     return;
+  //   }
+  //   let url = location.href+"";
+  //   //alert(url);
+  //   let authCode = null;
+  //   if (url && url.indexOf('?') !== -1) {
+  //       let params =  url.split('?')[1].split('&');
+  //       for (var i = 0; i < params.length; i++) {
+  //         if(params[i] && params[i].indexOf('=') !== -1){
+  //             let key = params[i].split('=')[0];
+  //             let value = params[i].split('=')[1];
+  //             if(key && value && key =='code'){
+  //                authCode = value;
+  //                break;
+  //             }
+  //         }
+  //       }        
+  //   } 
+  //   //alert(authCode);
 
-    const params = {};
-    params.authCode = authCode;
-    params.role = 0;
-    this.$api.common.wxAuthToken(params)
-      .then(r => {
-        this.setToken(r.token);
-        this.setUserId(r.userId);
-        return this.$api.common.getCobType();
-      })
-      .then(r => {
-        console.log({r})
-        this.setCobType(r.cobPayType)
-      });
-  },
+  //   const params = {};
+  //   params.authCode = authCode;
+  //   params.pageId = 0;
+  //   this.$api.common.wxAuthToken(params)
+  //     .then(r => {
+  //       this.setToken(r.token);
+  //       this.setUserId(r.userId);
+  //       return this.$api.common.getCobType();
+  //     })
+  //     .then(r => {
+  //       console.log({r})
+  //       this.setCobType(r.cobPayType)
+  //     });
+  // },
   computed: {
     ...mapGetters(["userId"])
   },

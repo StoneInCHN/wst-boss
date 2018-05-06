@@ -1,8 +1,8 @@
 <template>
 	<div>
-		<NavBar title="云水站" left-text="返回" left-arrow @click-left="back">
+<!-- 		<NavBar title="云水站" left-text="" left-arrow @click-left="back">
 		  <Icon name="home" slot="right" />
-		</NavBar>
+		</NavBar> -->
 	</div>
 </template>
 

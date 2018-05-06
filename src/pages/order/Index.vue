@@ -118,7 +118,10 @@ export default {
       "setPendingList",
       "setProcessingList",
       "setOtherList",
-      "setEditable"
+      "setEditable",
+      "setToken", 
+      "setUserId",
+      "setCobType"
     ]),
     setting() {
       this.setCheckedOrders([]);
@@ -257,7 +260,50 @@ export default {
         });
       }
     }
-  }
+  },
+  created() {
+      // this.setToken("eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI0IiwiaWF0IjoxNTI1NjAxNzc3LCJzdWIiOiIiLCJleHAiOjE1MjY0NjU3Nzd9.HHeFbaA8x8P-uFWo9lx7sOMkMvdrIilJc0y2ZnrCpxo");
+      // this.setUserId(4);
+      // return;
+
+    //alert("userid--:"+this.userId);
+    
+    if(this.userId){
+      return;
+    }
+     
+    let url = location.href+"";
+    //alert(url);
+    let authCode = null;
+    if (url && url.indexOf('?') !== -1) {
+        let params =  url.split('?')[1].split('&');
+        for (var i = 0; i < params.length; i++) {
+          if(params[i] && params[i].indexOf('=') !== -1){
+              let key = params[i].split('=')[0];
+              let value = params[i].split('=')[1];
+              if(key && value && key =='code'){
+                 authCode = value;
+                 break;
+              }
+          }
+        }        
+    } 
+    //alert(authCode);
+
+    const params = {};
+    params.authCode = authCode;
+    params.pageId = 0;
+    this.$api.common.wxAuthToken(params)
+      .then(r => {
+        this.setToken(r.token);
+        this.setUserId(r.userId);
+        return this.$api.common.getCobType();
+      })
+      .then(r => {
+        console.log({r})
+        this.setCobType(r.cobPayType)
+      });
+  },
 };
 </script>
 <style lang="less">

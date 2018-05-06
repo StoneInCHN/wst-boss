@@ -17,9 +17,11 @@
 				  <Field label="姓名" v-model="userCard.realName" placeholder="请填写用户姓名" required/>
 				  <Field label="小区/大厦/学校" v-model="userCard.addrInfo" placeholder="请填写用户地址" required/>
 				  <Field label="楼号-门牌号" v-model="userCard.doorNum" placeholder="请填写楼号-门牌号" required/>
-				  <Field label="关联二维码" v-model="userCard.qrCodeId" placeholder="未关联">
-				  	<Icon name="add" slot="icon" v-if="userCard.qrCodeId==null" class="addQr" @click="addQr"/>
-				  	<Icon name="clear" slot="icon" v-else class="clearQr" @click="confirmClear"/>
+				  <Field label="关联二维码" v-model="userCard.qrCodeId" v-if="userCard.qrCodeId==null" placeholder="未关联" @click-icon="addQr">
+				  	<Icon name="add" slot="icon"  class="addQr" @click="addQr"/>
+				  </Field>
+				  <Field label="关联二维码" v-model="userCard.qrCodeId" v-else class="clearQr" placeholder="未关联" @click-icon="confirmClear">
+				  	<Icon name="clear" slot="icon" @click="confirmClear"/>
 				  </Field>
 				  <Field label="备注" v-model="userCard.remark" placeholder="请填写备注" type="textarea"/>
 				</CellGroup>
@@ -115,11 +117,12 @@ export default{
         addQr(){
 	        this.$wechat.scanQRCode({
 	          needResult: 1,
+	          scanType: [ 'qrCode' ],
 	          desc: 'scanQRCode desc',
 	          success: (res) => {
-	          	//alert(res);
+	          	alert(res);
 	            let url = res.resultStr
-
+	            alert(url);
 	            // if (url && url.indexOf(this.urlPre) !== -1) {
 	            if (url) {//为啥url返回的是http://www.wst.com/custom/99  域名不对啊。。。
 	            	//从url中获取qrCodeId	  
@@ -131,10 +134,11 @@ export default{
 	            }
 	          },
 	          cancel: (res) => {
+	          	console.inf(res);
 	            this.$wechat.closeWindow();
 	          }
 	        })
-        	//this.$router.push('/user/scanQr');
+        	
         },
         getLastSerialNo(){
         	var req = {};
@@ -151,10 +155,15 @@ export default{
         },
         getConfig () { 
 		      let params = {
-		        userName: this.urlPre + "/h5/index.html"
+		        //userName: this.urlPre + "/h5Seller/index.html"
+		        userName: location.href.split('#')[0]
 		      }
+		      //alert(location.href.split('#')[0] )
+		      //console.info(params);
 		      this.$api.common.jsApiConfig(params).then(res => {
+
 		        if (res && res.code === '0000' && res.msg) {
+		        	//alert("hlsdjflk");
 		          this.config.jsapi_ticket = res.msg.jsapi_ticket
 		          this.config.signature = res.msg.signature
 		          this.config.nonceStr = res.msg.nonceStr
@@ -162,10 +171,10 @@ export default{
 		          this.config.url = res.msg.url
 		          this.config.appId = res.msg.appId
 		        }
-		        if (this.config) {
-		        	//console.info("dalu",this.$wechat);
+
+		        if (this.config) {		        	
 		          this.$wechat.config({
-		            debug: false,
+		            debug: true,
 		            appId: this.config.appId,
 		            timestamp: this.config.timestamp,
 		            nonceStr: this.config.nonceStr,
@@ -175,11 +184,7 @@ export default{
 		              // 'hideAllNonBaseMenuItem',
 		              'closeWindow'
 		            ]
-		          })
-		          // this.$wechat.ready(() => {
-		          //   this.$wechat.hideAllNonBaseMenuItem()
-		          //   console.log('wx loading success')
-		          // })
+		          });
 		          this.$wechat.error((res) => {
 		            console.log('wx loading error')
 		          })
@@ -206,6 +211,7 @@ export default{
 	}	
 	.addQr{
 		color:#0a0;
+		font-size:18px;
 	}
 	.clearQr{
 		color:red;
