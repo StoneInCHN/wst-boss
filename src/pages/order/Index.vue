@@ -262,9 +262,9 @@ export default {
     }
   },
   created() {
-      this.setToken("eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI0IiwiaWF0IjoxNTI1NjAxNzc3LCJzdWIiOiIiLCJleHAiOjE1MjY0NjU3Nzd9.HHeFbaA8x8P-uFWo9lx7sOMkMvdrIilJc0y2ZnrCpxo");
-      this.setUserId(4);
-      return;
+      // this.setToken("eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI0IiwiaWF0IjoxNTI1NjAxNzc3LCJzdWIiOiIiLCJleHAiOjE1MjY0NjU3Nzd9.HHeFbaA8x8P-uFWo9lx7sOMkMvdrIilJc0y2ZnrCpxo");
+      // this.setUserId(4);
+      // return;
 
     //alert("userid--:"+this.userId);
     
