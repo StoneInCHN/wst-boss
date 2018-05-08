@@ -47,14 +47,9 @@ const  mine = {
   editWG (params) {
     return lift(post('/sGoods/editGPrice', params)); //商家编辑商品
   },
-  genQrPdf (params) {
-    console.info("请求【批量生成二维码】接口, 请求参数1：", params);
-    var url = "/wst-boss/shopQrcode/genQrPdf?userId="+params.userId+"&pageSize="+params.pageSize;
-    window.open(url);
-    //return fetch(url); //批量生成二维码
-    var res = {};
-    res.code = "0000";
-    return res;
+  //http://test.yeager.vip/wst-boss/shopQrcode/getQrPdfUrl?userId=1&pageSize=2
+  getQrPdfUrl (params) {
+    return fetch('/shopQrcode/getQrPdfUrl?userId='+params.userId+'&pageSize='+params.pageSize); //批量生成二维码
   },
   
 }

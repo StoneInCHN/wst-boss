@@ -5,11 +5,17 @@
 		<CellGroup>
 		  <Field
 		    v-model="count"
-		    type="number"
 		    label="输入数量"
 		    placeholder="请输入生成二维码数量"
 		    @click-icon='genQrPdf'>
 		    <Button slot="icon" size="small" type="primary">批量生成</Button>
+		  </Field>
+		  <Field v-if="qrUrl" disabled
+		    v-model="qrUrl"
+		    label="二维码链接"
+		    @click-icon='copyQrPdf'>
+		    <Button slot="icon" size="small" type="primary" 
+		    	class="copyBtn" :data-clipboard-text = "qrUrl">复制链接</Button>
 		  </Field>
 		</CellGroup>
 		<Footer/>
@@ -18,50 +24,44 @@
 
 <script>
  
-import {Field, CellGroup, Button, Toast} from 'vant';
+import {Field, CellGroup, Button, Toast,Dialog} from 'vant';
+import Clipboard from 'clipboard';
+let clipboard = new Clipboard('.copyBtn');
 import Header from "../../wechat/Header"
 import Footer from "../../wechat/Footer"
 import {mapGetters} from 'vuex'
 export default{
 	computed: { ...mapGetters([ "userId"]) },
 	name: "QrManage",
-	components: { Header, Footer, Field, CellGroup, Button, Toast },
+	components: { Header, Footer, Field, CellGroup, Button, Toast,Dialog },
 	data () {
 		return {
 			count: null,
-
+			baseUrl:'http://test.yeager.vip/wst-boss',
+			qrUrl:null
 		}
 	},
 	methods: {
+		copyQrPdf() {
+	      	Dialog.alert({
+				title: '复制成功',
+				message: '请粘贴到浏览器中打开下载:'+this.qrUrl
+			}).then(() => {
+						 
+			});
+	    },
+
 	    genQrPdf () {
 	    	if(this.count){
 	    		var req = {};
 			    req.userId = this.userId;
 			    req.pageSize = this.count;
-				this.$api.mine.genQrPdf(req)
+				this.$api.mine.getQrPdfUrl(req)
 				.then(res => {
 					console.info(res);
-				    const toast = Toast.loading({
-						  duration: 0,       // 持续展示 toast
-						  forbidClick: true, // 禁用背景点击
-						  message: '正在生成...'
-					});
-
-					let second = 3;
-					const timer = setInterval(() => {
-						  second--;
-						  if(second){
-						  	if(second > 1){
-								toast.message = `正在下载...`;
-						  	}else{
-								toast.message = `下载成功!`;
-						  	}
-						    
-						  } else {
-						    clearInterval(timer);
-						    Toast.clear();
-						  }
-					}, 1000);	        
+					if(res.code = "0000"){
+						this.qrUrl = this.baseUrl+res.desc;
+			    	}	        
 				})
 				.catch(error => {
 				        console.log(error);
