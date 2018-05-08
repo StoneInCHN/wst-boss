@@ -55,7 +55,8 @@ const  mine = {
     var res = {};
     res.code = "0000";
     return res;
-  }
+  },
+  
 }
 
 export default mine;

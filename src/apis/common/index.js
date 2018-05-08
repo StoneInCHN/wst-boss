@@ -1,4 +1,4 @@
-import { fetch, post, patch, put, lift } from "../config";
+import { fetch, post, patch, put, lift, postByForm } from "../config";
 
 const common = {
   auth(params) {
@@ -19,8 +19,14 @@ const common = {
   getKey(){
     return fetch('/common/getKey')
   },
-
-
+  //图片上传
+  uploadImg(params){
+    return postByForm('/common/uploadImg', params)
+  },
+  //商家注册
+  regSeller(params){
+    return lift(post("/shop/regSeller",params))
+  }
 };
 
 export default common;

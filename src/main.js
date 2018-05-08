@@ -6,6 +6,9 @@ import FastClick from 'fastclick'
 import api from './apis/index'
 import "./assets/css/reset.css"
 import wechat from 'weixin-js-sdk'
+import VeeValidate from 'vee-validate';
+
+Vue.use(VeeValidate);
 
 Vue.prototype.$wechat = wechat
 Vue.prototype.$api = api

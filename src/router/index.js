@@ -41,8 +41,9 @@ const TotalCodeUsers = () => import("@/pages/user/TotalCodeUsers");
 //订单
 const Order = () => import("@/pages/order/Index");
 
-//其他
-const Calcul = () => import("@/pages/calculator/Index");
+//注册
+const Register = () => import("@/pages/register/Boss");
+const RegisterSuccess = () => import("@/pages/register/RegisterSuccess");
 
 Vue.use(Router);
 
@@ -133,76 +134,81 @@ export default new Router({
       path: "/manage/workerAdd",
       name: "WorkerAdd",
       component: WorkerAdd
-    },  
+    },
     {
       path: "/manage/workerSearch",
       name: "WorkerSearch",
       component: WorkerSearch
-    },  
+    },
     {
       path: "/userManage",
       name: "UserManage",
       component: UserManage
-    },    
+    },
     {
       path: "/user/addCoupon",
       name: "AddCoupon",
       component: AddCoupon
-    },  
+    },
     {
       path: "/user/addCouponGoods",
       name: "AddCouponGoods",
       component: AddCouponGoods
-    }, 
+    },
     {
       path: "/user/addGoods",
       name: "AddGoods",
       component: AddGoods
-    }, 
+    },
     {
       path: "/user/addOrder",
       name: "AddOrder",
       component: AddOrder
-    }, 
+    },
     {
       path: "/user/newCodeUser",
       name: "NewCodeUser",
       component: NewCodeUser
-    },   
+    },
     {
       path: "/user/editCodeUser",
       name: "EditCodeUser",
       component: EditCodeUser
-    },  
+    },
     {
       path: "/user/scanQr",
       name: "ScanQr",
       component: ScanQr
-    },   
+    },
     {
       path: "/user/scanQr1",
       name: "ScanQr1",
       component: ScanQr1
-    },     
+    },
     {
       path: "/user/totalOrderUsers",
       name: "totalOrderUsers",
       component: TotalOrderUsers
-    },  
+    },
     {
       path: "/user/totalCodeUsers",
       name: "totalCodeUsers",
       component: TotalCodeUsers
-    },               
+    },
     {
       path: "/order",
       name: "Order",
       component: Order
     },
     {
-      path: "/cal",
-      name: "Calcul",
-      component: Calcul
+      path: "/register",
+      name: "Register",
+      component: Register
+    },
+    {
+      path: "/registerSuccess",
+      name: "RegisterSuccess",
+      component: RegisterSuccess
     }
   ]
 });

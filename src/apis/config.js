@@ -60,7 +60,7 @@ export const fetch = (url, params = {}) => {
     axios
       .get(url, params)
       .then(data => {
-        console.info("get",url,params,data);
+        console.info("get", url, params, data);
         return resolve(data);
       })
       .catch(err => {
@@ -81,13 +81,32 @@ export const post = (url, params = {}) => {
   return new Promise((resolve, reject) => {
     axios.post(url, params).then(
       data => {
-        console.info("get",url,params,data);
+        console.info("get", url, params, data);
         return resolve(data);
       },
       err => {
         return reject(err);
       }
     );
+  });
+};
+
+export const postByForm = (url, params = {}) => {
+  console.info(params);
+  return new Promise((resolve, reject) => {
+    axios
+      .post(url, params, {
+        headers: { "Content-Type": "multipart/form-data" }
+      })
+      .then(
+        data => {
+          console.info("get", url, params, data);
+          return resolve(data);
+        },
+        err => {
+          return reject(err);
+        }
+      );
   });
 };
 
