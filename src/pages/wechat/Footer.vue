@@ -1,8 +1,8 @@
 <template>
 		<Tabbar v-model="active">
-		  <TabbarItem icon="records" to="/order">订单</TabbarItem>
-		  <TabbarItem icon="contact" to="/userManage" dot>用户</TabbarItem>
-		  <TabbarItem icon="wap-home" info="5" to="/mine">我的</TabbarItem>
+		  <TabbarItem icon="records" to="/">订单</TabbarItem>
+		  <TabbarItem icon="contact" to="/userManage">用户</TabbarItem>
+		  <TabbarItem icon="wap-home" to="/mine">我的</TabbarItem>
 		</Tabbar>
 </template>
 
@@ -13,7 +13,7 @@ export default {
   components: { Tabbar, TabbarItem },
   data() {
     return {
-      active: 0
+      active: -1
     };
   }
 };

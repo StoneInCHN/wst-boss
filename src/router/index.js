@@ -50,7 +50,7 @@ Vue.use(Router);
 export default new Router({
   routes: [
     {
-      path: "/",
+      path: "/home",
       name: "Home",
       component: Home
     },
@@ -196,7 +196,7 @@ export default new Router({
       component: TotalCodeUsers
     },
     {
-      path: "/order",
+      path: "/",
       name: "Order",
       component: Order
     },

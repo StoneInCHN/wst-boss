@@ -127,6 +127,7 @@ export default{
 	    getSummar(){
 	    	var req = {};
 		    req.userId = this.userId;
+		    //alert("userId:"+this.userId);
 			this.$api.user.summary(req)
 			.then(res => {
 				this.summar = res;        
