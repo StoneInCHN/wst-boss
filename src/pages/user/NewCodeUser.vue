@@ -153,17 +153,14 @@ export default{
 			        console.log(error);
 			});
         },
-        getConfig () { 
+        getConfig () {
+        	//alert(encodeURIComponent(location.href.split('#')[0]));
 		      let params = {
-		        //userName: this.urlPre + "/h5Seller/index.html"
-		        userName: location.href.split('#')[0]
+		        userName: encodeURIComponent(location.href.split('#')[0])
 		      }
-		      //alert(location.href.split('#')[0] )
-		      //console.info(params);
 		      this.$api.common.jsApiConfig(params).then(res => {
 
 		        if (res && res.code === '0000' && res.msg) {
-		        	//alert("hlsdjflk");
 		          this.config.jsapi_ticket = res.msg.jsapi_ticket
 		          this.config.signature = res.msg.signature
 		          this.config.nonceStr = res.msg.nonceStr
@@ -171,7 +168,7 @@ export default{
 		          this.config.url = res.msg.url
 		          this.config.appId = res.msg.appId
 		        }
-
+				
 		        if (this.config) {		        	
 		          this.$wechat.config({
 		            debug: true,
