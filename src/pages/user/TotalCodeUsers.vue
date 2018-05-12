@@ -9,7 +9,7 @@
 					</Col>
 					<Col span="19">
 						<Search v-model="keyWords" placeholder="输入用户编号搜索" 
-								show-action background="#fff" @search="onSearch">
+								show-action background="#fff" @search="onSearch"  @focus='numKeyboard'>
 			  				<div slot="action" @click="onSearch" class="searchBtn">
 			  					<Button type="primary" size="small">搜索</Button>
 			  				</div>
@@ -23,28 +23,57 @@
 		</div>								
 		<p class="fixed">			
 			<a @click="add" class="right">新建</a>
-		</p>		
+		</p>
+		<NumberKeyboard
+		  :show="show"
+		  extra-key="."
+		  close-button-text="完成"
+		  @blur="show = false"
+		  @input="onInput"
+		  @delete="onDelete"
+		/>		
 	</div>
 </template>
 
 <script>
-import { Search, Row, Col, Button, Toast } from 'vant'
+import { Search, Row, Col, Button, Toast , NumberKeyboard} from 'vant'
 import Header from "../wechat/Header"
 import MemberInfo1 from "./MemberInfo1"
 import {mapGetters} from 'vuex'
 export default{
-	computed: { ...mapGetters([ "userId"]) },
 	name: "UserManage",
-	components: { Header, Search, Row, Col, Button, MemberInfo1, Toast },
+	components: { Header, Search, Row, Col, Button, MemberInfo1, Toast , NumberKeyboard},
 	data () {
 		return {
 			memberInfoList:[],
-			keyWords:"",
+			//keyWords:"",
+			keyWordObj:[],
 			type:0,
+			show:false
 
 		}
 	},
+	computed:{
+		    ...mapGetters([ "userId"]),
+            keyWords: {
+			    get: function () {
+			      return this.keyWordObj.join('');
+			    },
+			    set: function () {
+			    }
+			}
+    },
 	methods: {
+		onInput(value){
+			this.keyWordObj.push(value);
+		},
+		onDelete(){
+			this.keyWordObj.pop();
+		},
+		numKeyboard(){
+			document.activeElement.blur();
+			this.show = true;
+		},
 	    onSearch () {
 	    	this.pageSeriUsers();   	
 	    },

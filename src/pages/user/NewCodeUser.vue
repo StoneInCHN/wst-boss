@@ -52,7 +52,7 @@ export default{
 			},
 			lastNo:null,
 			config: {},
-			urlPre: 'http://test.yeager.vip/wst-boss',
+			urlPre: 'http://test.yeager.vip',
 		}
 	},
 	methods: {
@@ -123,12 +123,16 @@ export default{
 	          	alert(res);
 	            let url = res.resultStr
 	            alert(url);
-	            // if (url && url.indexOf(this.urlPre) !== -1) {
-	            if (url) {//为啥url返回的是http://www.wst.com/custom/99  域名不对啊。。。
+	            let paramsObj = {};
+			    const paramsArrays = location.search.substring(1).split("&");
+			    paramsArrays.forEach(item => {
+			      paramsObj[item.split("=")[0]] = item.split("=")[1];
+			    });
+	            if (url && url.indexOf(this.urlPre) !== -1) {
 	            	//从url中获取qrCodeId	  
-	            	let id =  url.split('/').pop();
-	            	alert(id);         	
-	            	this.userCard.qrCodeId = id;
+	            	if (paramsObj.id) {
+	            		this.userCard.qrCodeId = paramsObj.id;
+	            	}
 	            } else {
 	              alert("请扫描正确的二维码");
 	            }
@@ -154,9 +158,8 @@ export default{
 			});
         },
         getConfig () {
-        	//alert(encodeURIComponent(location.href.split('#')[0]));
 		      let params = {
-		        userName: encodeURIComponent(location.href.split('#')[0])
+		        userName: location.href.split('#')[0]
 		      }
 		      this.$api.common.jsApiConfig(params).then(res => {
 
@@ -171,7 +174,7 @@ export default{
 				
 		        if (this.config) {		        	
 		          this.$wechat.config({
-		            debug: true,
+		            debug: false,
 		            appId: this.config.appId,
 		            timestamp: this.config.timestamp,
 		            nonceStr: this.config.nonceStr,

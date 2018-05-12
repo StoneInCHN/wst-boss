@@ -9,9 +9,9 @@
 			</div>
 			<div>
 				<CellGroup>
-				  <Field label="品牌" v-model="goods.brandName" placeholder="请选择"  @click="showAllBrand"/>
-				  <Field label="子产品" v-model="goods.gName" placeholder="请选择"  @click="showAllGoodsName"/>
-				  <Field label="规格" v-model="goods.specName" placeholder="请选择"  @click="showAllSize"/>
+				  <Field label="品牌" v-model="goods.brandName" placeholder="请选择"  @click="showAllBrand" @focus='hideKeyBoard'/>
+				  <Field label="子产品" v-model="goods.gName" placeholder="请选择"  @click="showAllGoodsName" @focus='hideKeyBoard'/>
+				  <Field label="规格" v-model="goods.specName" placeholder="请选择"  @click="showAllSize" @focus='hideKeyBoard'/>
 				  <Field label="原价"  v-model="goods.originPrice" placeholder="请输入原价"/>
 				  <Field label="折扣价" v-model="goods.distPrice" placeholder="请输入折扣价，可不用填写"/>
 				</CellGroup>
@@ -45,6 +45,9 @@ export default{
 		}
 	},
 	methods: {
+		hideKeyBoard(){
+			document.activeElement.blur();
+		},
         save () {
         	if(this.goods.id ==null){
         		this.addWG();
