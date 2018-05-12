@@ -7,8 +7,8 @@ import qs from "qs";
 // 超时时间
 axios.defaults.timeout = 5000;
 
-axios.defaults.baseURL = "/wst-boss/";
-//axios.defaults.baseURL = "http://test.yeager.vip/wst-boss/";
+//axios.defaults.baseURL = "/wst-boss/";
+axios.defaults.baseURL = "http://test.yeager.vip/wst-boss/";
 //axios.defaults.baseURL = "http://47.106.96.230:10002/wst-boss/";
 
 //
@@ -88,13 +88,13 @@ export const post = (url, params = {}) => {
   });
 };
 
-export const postByForm = (url, params = {}) => {
-  console.info(params);
+export const postByForm = (url, params) => {
+  let config = {
+    headers: {'Content-Type': 'multipart/form-data'}
+  }
   return new Promise((resolve, reject) => {
     axios
-      .post(url, params, {
-        headers: { "Content-Type": "multipart/form-data" }
-      })
+      .post(url, params, config)
       .then(
         data => {
           console.info("get", url, params, data);

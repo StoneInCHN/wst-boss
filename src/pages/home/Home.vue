@@ -9,7 +9,7 @@
 <script>
 import Header from "../wechat/Header";
 import Footer from "../wechat/Footer";
-import { Toast } from 'vant'
+import { Toast } from "vant";
 import { mapActions, mapGetters } from "vuex";
 export default {
   name: "Home",
@@ -37,8 +37,8 @@ export default {
   //                break;
   //             }
   //         }
-  //       }        
-  //   } 
+  //       }
+  //   }
   //   //alert(authCode);
 
   //   const params = {};
@@ -55,11 +55,35 @@ export default {
   //       this.setCobType(r.cobPayType)
   //     });
   // },
+  created() { 
+    let paramsObj = {};
+    const paramsArrays = location.search.substring(1).split("&");
+    paramsArrays.forEach(item => {
+      paramsObj[item.split("=")[0]] = item.split("=")[1];
+    });
+    if (paramsObj.code) {
+      this.$api.common
+        .wxAuthToken({
+          authCode: paramsObj.code,
+          pageId: paramsObj.state
+        })
+        .then(r => {
+          this.setToken(r.token);
+          this.setUserId(r.userId);
+          return this.$api.common.getCobType();
+        })
+        .then(r => {
+          console.log({ r });
+          this.setCobType(r.cobPayType);
+          this.$router.push("/order")
+        });
+    }
+  },
   computed: {
     ...mapGetters(["userId"])
   },
   methods: {
-    ...mapActions(["setToken", "setUserId","setCobType"])
+    ...mapActions(["setToken", "setUserId", "setCobType"])
   }
 };
 </script>

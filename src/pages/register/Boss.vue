@@ -153,12 +153,12 @@ export default {
     },
     uploaderWxPayImg(file) {
       console.log({ file });
-      let formData = new FormData();
-      formData.append("imageType", "PAY_QRCODE");
-      formData.append("file", file.name, file);
-      formData.append(file.file.name, file);
-      console.log({ formData });
-      this.$api.common.uploadImg(formData).then(r => {
+      let param = new FormData();
+      param.append("file", file, file.filename);
+      param.append("imageType", "PAY_QRCODE");
+      console.log({ param });
+      console.log(param.get('file'))
+      this.$api.common.uploadImg(param).then(r => {
         console.log({ r });
       });
       this.wxPayCodeViewUrl = file.content;
