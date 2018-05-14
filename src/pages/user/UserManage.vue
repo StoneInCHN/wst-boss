@@ -47,56 +47,40 @@
 				<UserCard v-for="userCard in userCards" :key="userCard.id" :userCard="userCard" :currentCode="userCard.serialNo"  @refreshSeriUsers="searchUser"/>
 			</div>		
 		</div>
-		<NumberKeyboard
-		  :show="show"
-		  extra-key="."
-		  close-button-text="完成"
-		  @blur="show = false"
-		  @input="onInput"
-		  @delete="onDelete"
-		/>
+		<NumInput :show="show" :input="keyWords" extraKey=""  @hide="hideNumInput" @input="inputKey"/>
 		<Footer/>
 	</div>
 </template>
 
 <script>
-import { Search, Row, Col, Button, NumberKeyboard  } from 'vant'
+import { Search, Row, Col, Button  } from 'vant'
 import Header from "../wechat/Header"
 import Footer from "../wechat/Footer"
 import UserCard from "./UserCard"
 import MemberInfo from "./MemberInfo"
+import NumInput from "../../components/NumInput"
 import {mapGetters} from 'vuex'
 export default{
 	computed: { ...mapGetters([ "userId"]) },
 	name: "UserManage",
-	components: { Header, Footer, Search, Row, Col, Button, UserCard, MemberInfo, NumberKeyboard  },
+	components: { Header, Footer, Search, Row, Col, Button, UserCard, MemberInfo,NumInput  },
 	data () {
 		return {
 			summar:{},
 			userCards:[],
-			//keyWords:"",
-			keyWordObj:[],
 			type:0,
 			searchTips:"请输入二维码编号",
-			show:false
+			show:false,
+			keyWords:"",
 
 		}
 	},
-	computed:{
-            keyWords: {
-			    get: function () {
-			      return this.keyWordObj.join('');
-			    },
-			    set: function () {
-			    }
-			}
-    },
 	methods: {
-		onInput(value){
-			this.keyWordObj.push(value);
+		inputKey(value){
+			this.keyWords = value;
 		},
-		onDelete(){
-			this.keyWordObj.pop();
+		hideNumInput(){
+			this.show = false;
 		},
 		numKeyboard(){
 			document.activeElement.blur();

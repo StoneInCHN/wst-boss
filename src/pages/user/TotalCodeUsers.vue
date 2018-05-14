@@ -24,51 +24,39 @@
 		<p class="fixed">			
 			<a @click="add" class="right">新建</a>
 		</p>
-		<NumberKeyboard
-		  :show="show"
-		  extra-key="."
-		  close-button-text="完成"
-		  @blur="show = false"
-		  @input="onInput"
-		  @delete="onDelete"
-		/>		
+		<NumInput :show="show" :input="keyWords" extraKey="" @hide="hideNumInput" @input="inputKey"/>
 	</div>
 </template>
 
 <script>
-import { Search, Row, Col, Button, Toast , NumberKeyboard} from 'vant'
+import { Search, Row, Col, Button, Toast} from 'vant'
 import Header from "../wechat/Header"
 import MemberInfo1 from "./MemberInfo1"
 import {mapGetters} from 'vuex'
+import NumInput from "../../components/NumInput"
 export default{
 	name: "UserManage",
-	components: { Header, Search, Row, Col, Button, MemberInfo1, Toast , NumberKeyboard},
+	components: { Header, Search, Row, Col, Button, MemberInfo1, Toast , NumInput},
 	data () {
 		return {
 			memberInfoList:[],
 			//keyWords:"",
 			keyWordObj:[],
 			type:0,
-			show:false
+			show:false,
+			keyWords:"",
 
 		}
 	},
 	computed:{
 		    ...mapGetters([ "userId"]),
-            keyWords: {
-			    get: function () {
-			      return this.keyWordObj.join('');
-			    },
-			    set: function () {
-			    }
-			}
     },
 	methods: {
-		onInput(value){
-			this.keyWordObj.push(value);
+		inputKey(value){
+			this.keyWords = value;
 		},
-		onDelete(){
-			this.keyWordObj.pop();
+		hideNumInput(){
+			this.show = false;
 		},
 		numKeyboard(){
 			document.activeElement.blur();
