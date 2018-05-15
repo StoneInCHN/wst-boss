@@ -9,7 +9,7 @@
 					</Col>
 					<Col span="19">
 						<Search v-model="keyWords" placeholder="输入用户编号搜索" 
-								show-action background="#fff" @search="onSearch">
+								show-action background="#fff" @search="onSearch"  @focus='numKeyboard'>
 			  				<div slot="action" @click="onSearch" class="searchBtn">
 			  					<Button type="primary" size="small">搜索</Button>
 			  				</div>
@@ -23,28 +23,45 @@
 		</div>								
 		<p class="fixed">			
 			<a @click="add" class="right">新建</a>
-		</p>		
+		</p>
+		<NumInput :show="show" :input="keyWords" extraKey="" @hide="hideNumInput" @input="inputKey"/>
 	</div>
 </template>
 
 <script>
-import { Search, Row, Col, Button, Toast } from 'vant'
+import { Search, Row, Col, Button, Toast} from 'vant'
 import Header from "../wechat/Header"
 import MemberInfo1 from "./MemberInfo1"
 import {mapGetters} from 'vuex'
+import NumInput from "../../components/NumInput"
 export default{
-	computed: { ...mapGetters([ "userId"]) },
 	name: "UserManage",
-	components: { Header, Search, Row, Col, Button, MemberInfo1, Toast },
+	components: { Header, Search, Row, Col, Button, MemberInfo1, Toast , NumInput},
 	data () {
 		return {
 			memberInfoList:[],
-			keyWords:"",
+			//keyWords:"",
+			keyWordObj:[],
 			type:0,
+			show:false,
+			keyWords:"",
 
 		}
 	},
+	computed:{
+		    ...mapGetters([ "userId"]),
+    },
 	methods: {
+		inputKey(value){
+			this.keyWords = value;
+		},
+		hideNumInput(){
+			this.show = false;
+		},
+		numKeyboard(){
+			document.activeElement.blur();
+			this.show = true;
+		},
 	    onSearch () {
 	    	this.pageSeriUsers();   	
 	    },

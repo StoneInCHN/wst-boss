@@ -12,7 +12,7 @@
 				</Col>
 				<Col span="19">
 					<Search v-model="keyWords" :placeholder="searchTips" 
-							show-action background="#fff" @search="onSearch">
+							show-action background="#fff" @search="onSearch" @focus='numKeyboard'>
 		  				<div slot="action" @click="onSearch" class="searchBtn">
 		  					<Button type="primary" size="small">搜索</Button>
 		  				</div>
@@ -47,32 +47,45 @@
 				<UserCard v-for="userCard in userCards" :key="userCard.id" :userCard="userCard" :currentCode="userCard.serialNo"  @refreshSeriUsers="searchUser"/>
 			</div>		
 		</div>
+		<NumInput :show="show" :input="keyWords" extraKey=""  @hide="hideNumInput" @input="inputKey"/>
 		<Footer/>
 	</div>
 </template>
 
 <script>
-import { Search, Row, Col, Button } from 'vant'
+import { Search, Row, Col, Button  } from 'vant'
 import Header from "../wechat/Header"
 import Footer from "../wechat/Footer"
 import UserCard from "./UserCard"
 import MemberInfo from "./MemberInfo"
+import NumInput from "../../components/NumInput"
 import {mapGetters} from 'vuex'
 export default{
 	computed: { ...mapGetters([ "userId"]) },
 	name: "UserManage",
-	components: { Header, Footer, Search, Row, Col, Button, UserCard, MemberInfo },
+	components: { Header, Footer, Search, Row, Col, Button, UserCard, MemberInfo,NumInput  },
 	data () {
 		return {
 			summar:{},
 			userCards:[],
-			keyWords:"",
 			type:0,
-			searchTips:"请输入二维码编号"
+			searchTips:"请输入二维码编号",
+			show:false,
+			keyWords:"",
 
 		}
 	},
 	methods: {
+		inputKey(value){
+			this.keyWords = value;
+		},
+		hideNumInput(){
+			this.show = false;
+		},
+		numKeyboard(){
+			document.activeElement.blur();
+			this.show = true;
+		},
 	    onSearch () {
 	    	if(this.keyWords){
 	    		if(this.keyWords == 'null'){//只供显示用test

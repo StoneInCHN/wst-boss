@@ -2,18 +2,18 @@
 	<div>
 		<Header backUrl="/userManage"/>
 		<Panel>
-			<div slot="header">
+			<div slot="header" class="header">
 				<Cell title="新建" class="cell">
 			    	<Button type="primary" size="small" @click="validateInput">完成</Button>
 			  	</Cell>
 			</div>
 			<div>
 				<CellGroup>
-				  <Field label="编号" v-model="userCard.userNum" placeholder="请输入用户编号">
+				  <Field label="编号" v-model="userCard.userNum" placeholder="请输入用户编号" @focus='numKeyboard("userNum")'>
 				  	<span slot="icon" class="last-no">上次编号：{{lastNo}}</span>
 				  </Field>
-				  <Field label="手机号" v-model="phoneList" placeholder="可输入多个手机号，用逗号分隔" required/>
-				  <Field label="座机" v-model="telList" placeholder="例（028）6573158，多个用逗号分隔"/>
+				  <Field label="手机号" v-model="phoneList" placeholder="可输入多个手机号，用逗号分隔" required  @focus='numKeyboard("phoneList")'/>
+				  <Field label="座机" v-model="telList" placeholder="例（028）6573158，多个用逗号分隔"  @focus='numKeyboard("telList")'/>
 				  <Field label="姓名" v-model="userCard.realName" placeholder="请填写用户姓名" required/>
 				  <Field label="小区/大厦/学校" v-model="userCard.addrInfo" placeholder="请填写用户地址" required/>
 				  <Field label="楼号-门牌号" v-model="userCard.doorNum" placeholder="请填写楼号-门牌号" required/>
@@ -27,6 +27,7 @@
 				</CellGroup>
 			</div>	
 		</Panel>
+		<NumInput :show="show" :input="keyWords" extraKey=","  @hide="hideNumInput" @input="inputKey"/>
 	</div>
 </template>
 
@@ -34,10 +35,11 @@
 import { Panel, CellGroup, Field, Button, Cell, Icon, Dialog, Toast } from 'vant'
 import Header from "../wechat/Header"
 import {mapGetters} from 'vuex'
+import NumInput from "../../components/NumInput"
 export default{
 	computed: { ...mapGetters([ "userId"]) },
 	name: "NewCode",
-	components: { Header, Panel, CellGroup, Field, Button, Cell, Icon, Dialog, Toast },
+	components: { Header, Panel, CellGroup, Field, Button, Cell, Icon, Dialog, Toast,NumInput },
 	data () {
 		return {
 			phoneList:null,
@@ -52,10 +54,39 @@ export default{
 			},
 			lastNo:null,
 			config: {},
-			urlPre: 'http://test.yeager.vip/wst-boss',
+			urlPre: 'http://test.yeager.vip',
+			show:false,
+			keyWords:"",
+			type:"",
 		}
 	},
 	methods: {
+		inputKey(value){
+			//console.info("inputKey:"+this.type);
+			if(this.type== "userNum"){
+				this.userCard.userNum=value;
+			}else if(this.type== "phoneList"){
+				this.phoneList=value;
+			}else if(this.type== "telList"){
+				this.telList=value;
+			}
+		},
+		hideNumInput(){
+			this.show = false;
+		},
+		numKeyboard(type){
+			//console.info("numKeyboard:"+this.type);
+			this.type = type;
+			if(type== "userNum"){
+				this.keyWords = this.userCard.userNum;
+			}else if(type== "phoneList"){
+				this.keyWords = this.phoneList;
+			}else if(type== "telList"){
+				this.keyWords = this.telList;
+			}
+			document.activeElement.blur();
+			this.show = true;
+		},
 		validateInput(){
 				if(this.phoneList && this.userCard.realName && this.userCard.addrInfo && this.userCard.doorNum){
 					this.createSeriUser();
@@ -123,12 +154,16 @@ export default{
 	          	alert(res);
 	            let url = res.resultStr
 	            alert(url);
-	            // if (url && url.indexOf(this.urlPre) !== -1) {
-	            if (url) {//为啥url返回的是http://www.wst.com/custom/99  域名不对啊。。。
+	            let paramsObj = {};
+			    const paramsArrays = location.search.substring(1).split("&");
+			    paramsArrays.forEach(item => {
+			      paramsObj[item.split("=")[0]] = item.split("=")[1];
+			    });
+	            if (url && url.indexOf(this.urlPre) !== -1) {
 	            	//从url中获取qrCodeId	  
-	            	let id =  url.split('/').pop();
-	            	alert(id);         	
-	            	this.userCard.qrCodeId = id;
+	            	if (paramsObj.id) {
+	            		this.userCard.qrCodeId = paramsObj.id;
+	            	}
 	            } else {
 	              alert("请扫描正确的二维码");
 	            }
@@ -154,9 +189,8 @@ export default{
 			});
         },
         getConfig () {
-        	//alert(encodeURIComponent(location.href.split('#')[0]));
 		      let params = {
-		        userName: encodeURIComponent(location.href.split('#')[0])
+		        userName: location.href.split('#')[0]
 		      }
 		      this.$api.common.jsApiConfig(params).then(res => {
 
@@ -171,7 +205,7 @@ export default{
 				
 		        if (this.config) {		        	
 		          this.$wechat.config({
-		            debug: true,
+		            debug: false,
 		            appId: this.config.appId,
 		            timestamp: this.config.timestamp,
 		            nonceStr: this.config.nonceStr,
@@ -199,6 +233,10 @@ export default{
 </script>
 
 <style scoped>
+	.header{
+		margin:15px 15px 0 15px;
+		padding:10px 0;
+	}
 	.last-no{
 		font-size:14px;
 		color:#0a0;
