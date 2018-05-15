@@ -11,14 +11,14 @@
 				<CellGroup>
 				  <Field label="店铺名称" v-model="store.shopName" placeholder="请输入店铺名称"/>
 				  <Field label="店家座机号" v-model="store.telphoneNum" placeholder="请输入区号 请输入电话号码"/>
-				  <Field label="店家手机号" v-model="store.mobilePhoneNum" placeholder="请输入11位手机号码" type="tel" error-message="手机号格式错误"/>
+				  <Field label="店家手机号" v-model="store.mobilePhoneNum" placeholder="请输入11位手机号码" type="tel" :error-message="telError"/>
 				  <Field label="营业时间"  v-model="store.bussBeginTime" placeholder="请选择开始时间" type="datetime" @click="selectTime(0)"/>
 				  <Field label=" "  v-model="store.bussEndTime" placeholder="请选择开始时间"  type="datetime" @click="selectTime(1)"/>
 				  <Field label="店铺公告" v-model="store.notice" placeholder="100字以内，例如本店保证下单后，2小时之内送到" type="textarea"/>
 				</CellGroup>
 			</div>	
 		</Panel>
-		<Actionsheet v-model="show" title="选择时间" subname="营业时间">
+		<Actionsheet v-model="show" :title="tips" subname="营业时间">
 			<DatetimePicker @confirm="saveTime" @cancel="selectTime"
 			  v-model="minDate"
 			  type="time"
@@ -44,7 +44,9 @@ export default{
 			minHour: 0,
 		    maxHour: 23,
 		    minDate: null,
-		    show:false
+		    show:false,
+		    tips:"",
+		    telError:null
 		}
 	},
 	methods: {
@@ -63,6 +65,12 @@ export default{
 			
         },
         selectTime(type){
+        	document.activeElement.blur();
+        	if(type == 0){
+				this.tips = "请选择营业开始时间";
+        	}else{
+        		this.tips = "请选择营业结束时间";
+        	}
         	this.currentType = type;
         	this.show = !this.show;        	
         },

@@ -6,8 +6,11 @@
 			<div class="item item-left" @click="goodsManage">
 				<span>商品管理</span>
 			</div>
-			<div class="item item-middle" @click="ticketManage">
+<!-- 			<div class="item item-middle" @click="ticketManage">
 				<span>水票管理</span>
+			</div> -->
+			<div class="item item-middle" @click="userManage">
+				<span>用户管理</span>
 			</div>
 			<div class="item item-right" @click="workerManage">
 				<span>员工管理</span>
@@ -17,11 +20,11 @@
 			<div class="item item-left" @click="storeManage">
 				<span>店铺管理</span>
 			</div>
-			<div class="item item-middle">
-				<span>用户管理</span>
-			</div>
 			<div class="item item-right" @click="qrManage">
 				<span>二维码管理</span>
+			</div>
+			<div class="item_empty item-right">
+				<span></span>
 			</div>
 		</div>
 		<Footer/>
@@ -42,6 +45,9 @@ export default{
 		}
 	},
 	methods: {
+		userManage(){
+			this.$router.push("/userManage")
+		},
 	    goodsManage () {
 	 		this.$router.push('/manage/goodsManage');
 	    },
@@ -69,6 +75,21 @@ export default{
 		align-content: center;
 		justify-content: space-around;
 		color: #6B8C43;
+	}
+	.item_empty{
+		text-align: center;
+		flex: 1;
+		height: 60px;
+		line-height: 35px;
+		
+		position: relative;
+		padding:10px;
+		font-size:14px;
+		vertical-align: middle;
+		position: relative;
+    	box-sizing: border-box;
+    	background-color: #fff;
+    	
 	}
 	.item{
 		text-align: center;
