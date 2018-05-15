@@ -75,7 +75,6 @@ export default {
       const ids = this.isBatch ? this.checkedOrders : [this.id];
       const desc = this.isBatch ? `批量指派` : "单个订单指派";
       const emp = this.listSrc[index];
-      debugger
       if (ids && ids.length > 0) {
         const params = {
           entityIds: ids,

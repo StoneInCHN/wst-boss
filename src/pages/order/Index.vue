@@ -201,7 +201,7 @@ export default {
           entityIds: ids,
           cobType: "OFFLINE_TICKET",
           oprStatus: "FINISH",
-          userId: 1,
+          userId: this.userId,
           empId: 2,
           empIncome: "8"
         };

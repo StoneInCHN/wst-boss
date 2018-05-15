@@ -1,8 +1,7 @@
 <template>
   <Popup v-model="show" position="bottom" :closeOnClickOverlay="false">
          <Picker 
-          show-toolbar 
-          loading 
+          show-toolbar  
           :title="title"
           :confirm-button-text="confirmText"
           :columns="columns"
@@ -55,11 +54,11 @@ export default {
   },
   methods: {
     click() {
-      console.log("close")
       this.show = false;
       this.close()
     },
     pConfirm(value, index){
+      console.log({value, index})
       this.confirm(value, index)
     },
     cancel() {
