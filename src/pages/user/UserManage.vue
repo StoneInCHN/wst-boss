@@ -12,7 +12,7 @@
 				</Col>
 				<Col span="19">
 					<Search v-model="keyWords" :placeholder="searchTips" 
-							show-action background="#fff" @search="onSearch" @focus='numKeyboard'>
+							show-action background="#fff" @search="onSearch">
 		  				<div slot="action" @click="onSearch" class="searchBtn">
 		  					<Button type="primary" size="small">搜索</Button>
 		  				</div>
