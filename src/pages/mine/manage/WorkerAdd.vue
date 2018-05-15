@@ -11,7 +11,7 @@
 				<CellGroup>
 					<Field label="微信" v-model="worker.wxAcct" placeholder="请输入微信" disabled/>
 				    <Field label="姓名" v-model="worker.userName" placeholder="请输入姓名"/>
-				    <Field label="手机号" v-model="worker.cellPhoneNum" placeholder="请输入11位手机号码" type="tel" error-message="手机号格式错误"/>
+				    <Field label="手机号" v-model="worker.cellPhoneNum" placeholder="请输入11位手机号码" type="tel" :error-message="tips"/>
 				</CellGroup>					
 			</div>	
 			<NoticeBar mode="closeable" :scrollable="false">
@@ -35,7 +35,8 @@ export default{
 			backUrl:'/manage/workerSearch',
 			closeable:true,
 			currentType:0,
-			worker:{}
+			worker:{},
+			tips:null
 		}
 	},
 	methods: {

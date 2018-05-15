@@ -20,7 +20,7 @@
 			<div class="item item-left" @click="storeManage">
 				<span>店铺管理</span>
 			</div>
-			<div class="item item-right" @click="qrManage">
+			<div class="item item-middle" @click="qrManage">
 				<span>二维码管理</span>
 			</div>
 			<div class="item_empty item-right">
@@ -46,7 +46,7 @@ export default{
 	},
 	methods: {
 		userManage(){
-			this.$router.push("/userManage")
+			this.$router.push("/userManage");
 		},
 	    goodsManage () {
 	 		this.$router.push('/manage/goodsManage');
