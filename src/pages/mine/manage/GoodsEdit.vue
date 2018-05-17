@@ -2,7 +2,7 @@
 	<div>
 		<Header backUrl="/manage/goodsManage"/>
 		<Panel>
-			<div slot="header">
+			<div slot="header" class="header">
 				<Cell title="编辑" class="cell">
 			    	<Button type="primary" size="small" @click="save">完成</Button>
 			  	</Cell>
@@ -12,14 +12,15 @@
 				  <Field label="品牌" v-model="goods.brandName" placeholder="请选择"  @click="showAllBrand" @focus='hideKeyBoard'/>
 				  <Field label="子产品" v-model="goods.gName" placeholder="请选择"  @click="showAllGoodsName" @focus='hideKeyBoard'/>
 				  <Field label="规格" v-model="goods.specName" placeholder="请选择"  @click="showAllSize" @focus='hideKeyBoard'/>
-				  <Field label="原价"  v-model="goods.originPrice" placeholder="请输入原价"/>
-				  <Field label="折扣价" v-model="goods.distPrice" placeholder="请输入折扣价，可不用填写"/>
+				  <Field label="原价"  v-model="originPrice"  placeholder="请输入原价" @focus='numKeyboard("originPrice")'/>
+				  <Field label="折扣价" v-model="distPrice" placeholder="请输入折扣价，可不用填写"  @focus='numKeyboard("distPrice")' :error-message="tips"/>
 				</CellGroup>
 			</div>	
 		</Panel>
 		<Actionsheet  v-model="brand" :actions="allBrand" cancel-text="取消"/>
 		<Actionsheet  v-model="goodsName" :actions="allGoodsName" cancel-text="取消"/>
 		<Actionsheet  v-model="size" :actions="allSize" cancel-text="取消"/>
+		<NumInput :show="show" :input="keyWords" extraKey="."  @hide="hideNumInput" @input="inputKey"/>
 	</div>
 </template>
 
@@ -28,27 +29,60 @@ import { Panel, CellGroup, Field, Button, Cell, Icon, Actionsheet,Toast } from '
 import Header from "../../wechat/Header"
 import Footer from "../../wechat/Footer"
 import {mapGetters} from 'vuex'
+import NumInput from "../../../components/NumInput"
 export default{
 	computed: { ...mapGetters([ "userId"]) },
 	name: "AddAccount",
-	components: { Header, Footer, Panel, CellGroup, Field, Button, Cell, Icon, Actionsheet, Toast},
+	components: { Header, Footer, Panel, CellGroup, Field, Button, Cell, Icon, Actionsheet, Toast,NumInput},
 	data () {
 		return {
+			originPrice:null,
+			distPrice:"",
 			goods: {},
-			price:"",
+			//price:"",
 			brand:false,
 			goodsName:false,
 			size:false,
 			allBrand:[],
 		    allGoodsName:[],
-		    allSize:[]
+		    allSize:[],
+		    show:false,
+			keyWords:"",
+			type:"",
+			tips:null
 		}
 	},
 	methods: {
+		inputKey(value){
+			//console.info("this.type:"+this.type);
+			if(this.type== "originPrice"){
+				this.originPrice=value;
+			}else if(this.type== "distPrice"){
+				this.distPrice=value+"";
+			}
+		},
+		hideNumInput(){
+			this.show = false;
+		},
+		numKeyboard(type){
+			this.hideKeyBoard();
+			//console.info("numKeyboard:"+type);
+			this.type = type;
+			if(type== "originPrice"){
+				this.keyWords = this.originPrice;
+			}else if(type== "distPrice"){
+				this.keyWords = this.distPrice;
+			}			
+			this.show = true;
+		},
 		hideKeyBoard(){
 			document.activeElement.blur();
 		},
         save () {
+        	if(this.distPrice>=this.originPrice){
+        		this.tips="提示：折扣价应该小于原价!";
+        		return;
+        	}
         	if(this.goods.id ==null){
         		this.addWG();
         	}else{
@@ -81,11 +115,14 @@ export default{
 	    setBrand(item) {
 	      	this.goods.brandName = item.name;
 	      	this.goods.brandId = item.id;
+	      	this.goods.gName = null;
+	      	this.goods.specName = null;
 	      	this.getAllGoodsName(item.id)
 	      	this.brand = false;
 	    },
 	    setGoodsName(item) {
 	      	this.goods.gName = item.name;
+	      	this.goods.specName = null;
 	      	this.getSpec(item.id);
 	      	this.goodsName = false;
 	    },   
@@ -163,8 +200,8 @@ export default{
 		    req.brandName = this.goods.brandName;
 		    req.gName = this.goods.gName;
 		    req.specId = this.goods.specId;
-		    req.originPrice = this.goods.originPrice;
-		    req.distPrice = this.goods.distPrice;
+		    req.originPrice = this.originPrice;
+		    req.distPrice = this.distPrice;
 			this.$api.mine.addWG(req)
 			.then(res => {
 			    //if(res.code = "0000"){
@@ -180,8 +217,8 @@ export default{
 	    	var req = {};
 		    req.userId = this.userId;
 		    req.entityId = this.goods.id;
-		    req.originPrice = this.goods.originPrice;
-		    req.distPrice = this.goods.distPrice;
+		    req.originPrice = this.originPrice;
+		    req.distPrice = this.distPrice;
 			this.$api.mine.editWG(req)
 			.then(res => {
 			    //if(res.code = "0000"){
@@ -195,15 +232,20 @@ export default{
 	    }
     },
     mounted(){
-    	this.getAllBrand(); 
-    	this.price = this.formatPrice(this.goods.originPrice);
+    	//this.price = this.formatPrice(this.goods.originPrice);
     	this.goods = this.$store.state.goods;
-          
+    	this.getAllBrand(); 
+        this.originPrice = this.goods.originPrice;
+        this.distPrice = this.goods.distPrice;
     }
 }
 </script>
 
 <style scoped>
+	.header{
+		margin:15px 15px 0 15px;
+		padding:10px 0;
+	}
 	.cell{
 		padding: 0;
 	}

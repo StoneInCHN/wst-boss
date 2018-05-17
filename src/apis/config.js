@@ -79,6 +79,7 @@ export const post = (url, params = {}) => {
   return new Promise((resolve, reject) => {
     axios.post(url, params).then(
       data => {
+        console.info("post", url, params, data);
         return resolve(data);
       },
       err => {

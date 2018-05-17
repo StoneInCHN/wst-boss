@@ -7,7 +7,7 @@
 				<span v-else>管理</span>
 			</a>
 		</p>
-		<Tabs :active="active">
+		<Tabs :active="active" style="padding-bottom:50px">
 			<Tab v-for="(brand, index) in gList" :title="brand.brandName" :key="index">
 				<GoodsCrumb v-for="(goods, index) in brand.gInfo" :goods="goods" :editable="editable" :editIds="editIds" :key="index"/>
 			</Tab>	
@@ -41,7 +41,9 @@ export default{
 			active: 0,
 			menu: 1,
 			gList:[],
-			editIds:[]
+			editIds:[],
+			all:{},
+			allgInfo:[],
 		}
 	},
 	methods: {
@@ -52,32 +54,50 @@ export default{
 	    manage(){
 	    	this.editable = !this.editable;
 	    },
+	    canDel(){
+	    	let canDel = true;
+	    	for (var i = 0; i < this.editIds.length; i++) {
+			    for (var j = 0; j < this.allgInfo.length; j++) {
+			    	if(this.editIds[i]==this.allgInfo[j].id && this.allgInfo[j].gStatus == 'ON'){
+			    		Toast.fail('编辑项包含上架商品，不能删除');
+						canDel=false;
+						break;
+			    	}	    		
+				}   		
+			}
+			return canDel;
+	    },
+	    checkedLength(){
+	    	if(this.editIds.length == 0){
+				Toast.fail('请选择编辑项');
+				return false;
+	    	}
+	    	return true;
+	    },
 	    goodsDel(){
-	    	//删除商品	    	
-	    	if(this.editIds.length > 0){
-	    		this.goodsEdit(this.editIds, 'DELETE');
-	    		this.editable = !this.editable;
-	    	}else{
-	    		Toast.fail('请选择编辑项');
+	    	if(!this.checkedLength()){
+	    		return;
+	    	}
+	    	if(this.canDel()){
+		    	this.goodsEdit(this.editIds, 'DELETE');
+		    	this.editable = !this.editable;
 	    	}
 	    },
 	    goodsUp(){
+	    	if(!this.checkedLength()){
+	    		return;
+	    	}
 	    	//商品上架	    	
-	    	if(this.editIds.length > 0){
 	    		this.goodsEdit(this.editIds, 'ON');
 	    		this.editable = !this.editable;
-	    	}else{
-	    		Toast.fail('请选择编辑项');
-	    	}
 	    },
 	    goodsDown(){
+	    	if(!this.checkedLength()){
+	    		return;
+	    	}
 	    	//商品下架	    	
-			if(this.editIds.length > 0){
 	    		this.goodsEdit(this.editIds, 'OFF');
 	    		this.editable = !this.editable;
-	    	}else{
-	    		Toast.fail('请选择编辑项');
-	    	}
 	    },
 	    goodsEdit(editIds,status){
 	    	var req = {};
@@ -101,18 +121,19 @@ export default{
 			this.$api.mine.getGList(req)
 			.then(res => {
 			    //if(res.code = "0000"){
-			    	var all = {};
-			    	all.brandName = '全部';
-			    	all.brandId = 0;
-			    	var gInfo=[];
+			    	this.all = {};//全部商品
+			    	this.allgInfo = [];
+			    	this.all.brandName = '全部';
+			    	this.all.brandId = 0;
 			    	for (var i = 0; i < res.gList.length; i++) {
 			    		for (var j = 0; j < res.gList[i].gInfo.length; j++) {
-			    			gInfo.push(res.gList[i].gInfo[j]);
+			    			res.gList[i].gInfo[j].brandName = res.gList[i].brandName;
+			    			this.allgInfo.push(res.gList[i].gInfo[j]);
 			    		}			    		
 			    	}
-			    	all.gInfo = gInfo;
+			    	this.all.gInfo = this.allgInfo;
 			    	this.gList = [];
-			    	this.gList.push(all);
+			    	this.gList.push(this.all);
 			    	for (var i = 0; i < res.gList.length; i++) {
 			    		this.gList.push(res.gList[i]);    		
 			    	}

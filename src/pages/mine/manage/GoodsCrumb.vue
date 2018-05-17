@@ -18,11 +18,13 @@
 		  				<div class="goods_edit"><Icon name="edit" @click="edit"/></div>
 		  			</div> 
 		  			<div class="goods_row">
-		  					<div class="goods_price">押金 {{formatPrice(goods.gDeposit)}}</div> 
+		  					<div class="goods_price">
+		  					<!-- 押金 {{formatPrice(goods.gDeposit)}} -->
+		  				    </div> 
 		  			</div> 
 		  			<div class="goods_row">
 		  					<div class="goods_price">{{formatPrice(goods.distPrice)}}
-		  						<span>{{formatPrice(goods.originPrice)}}</span>
+		  						<span v-if="goods.distPrice!=goods.originPrice">{{formatPrice(goods.originPrice)}}</span>
 		  					</div> 
 		  			</div>
 		  		</div>

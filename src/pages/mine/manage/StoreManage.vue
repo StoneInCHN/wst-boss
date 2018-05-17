@@ -2,7 +2,7 @@
 	<div>
 		<Header backUrl="/manage"/>
 		<Panel>
-			<div slot="header">
+			<div slot="header" class="header">
 				<Cell title="店铺管理" class="cell">
 			    	<Button type="primary" size="small" @click="save">完成</Button>
 			  	</Cell>
@@ -104,6 +104,9 @@ export default{
 </script>
 
 <style scoped>
+	.header{
+		margin:15px 15px 0 15px;
+	}
 	.cell{
 		padding: 0;
 	}	

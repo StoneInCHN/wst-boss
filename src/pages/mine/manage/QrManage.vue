@@ -7,7 +7,7 @@
 		    v-model="count"
 		    label="输入数量"
 		    placeholder="请输入生成二维码数量"
-		    @click-icon='genQrPdf'>
+		    @click-icon='genQrPdf'  @focus='numKeyboard'>
 		    <Button slot="icon" size="small" type="primary">批量生成</Button>
 		  </Field>
 		  <Field v-if="qrUrl" disabled
@@ -19,6 +19,7 @@
 		  </Field>
 		</CellGroup>
 		<Footer/>
+		<NumInput :show="show" :input="keyWords" extraKey=""  @hide="hideNumInput" @input="inputKey"/>
 	</div>
 </template>
 
@@ -29,19 +30,39 @@ import Clipboard from 'clipboard';
 let clipboard = new Clipboard('.copyBtn');
 import Header from "../../wechat/Header"
 import Footer from "../../wechat/Footer"
+import NumInput from "../../../components/NumInput"
 import {mapGetters} from 'vuex'
 export default{
 	computed: { ...mapGetters([ "userId"]) },
 	name: "QrManage",
-	components: { Header, Footer, Field, CellGroup, Button, Toast,Dialog },
+	components: { Header, Footer, Field, CellGroup, Button, Toast,Dialog,NumInput },
 	data () {
 		return {
 			count: null,
 			baseUrl:'http://test.yeager.vip/wst-boss',
-			qrUrl:null
+			qrUrl:null,
+			show:false,
+			keyWords:"",
+			type:"",
 		}
 	},
 	methods: {
+		inputKey(value){
+			//console.info("this.type:"+this.type);
+			this.count=value;
+		},
+		hideNumInput(){
+			this.show = false;
+		},
+		numKeyboard(type){
+			this.hideKeyBoard();
+			//console.info("numKeyboard:"+type);
+			this.keyWords = this.count;			
+			this.show = true;
+		},
+		hideKeyBoard(){
+			document.activeElement.blur();
+		},
 		copyQrPdf() {
 	      	Dialog.alert({
 				title: '复制成功',
@@ -53,6 +74,10 @@ export default{
 
 	    genQrPdf () {
 	    	if(this.count){
+	    		if(this.count > 1000){
+	    			Toast.fail("超过最大生成数量1000个");
+	    			return;
+	    		}
 	    		var req = {};
 			    req.userId = this.userId;
 			    req.pageSize = this.count;
