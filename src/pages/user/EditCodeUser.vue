@@ -2,7 +2,7 @@
 	<div>
 		<Header backUrl="/user/totalCodeUsers"/>
 		<Panel>
-			<div slot="header">
+			<div slot="header" class="header">
 				<Cell title="编辑" class="cell">
 			    	<Button type="primary" size="small" @click="validateInput">完成</Button>
 			  	</Cell>
@@ -10,19 +10,22 @@
 			<div>
 				<CellGroup>
 				  <Field label="编号" v-model="userCard.userNum" placeholder="请输入用户编号"/>
-				  <Field label="手机号" v-model="phoneList" placeholder="可输入多个手机号，用逗号分隔" required/>
-				  <Field label="座机" v-model="telList" placeholder="例 028-6573158，多个用逗号分隔"/>
+				  <Field label="手机号" v-model="phoneList" placeholder="可输入多个手机号，用逗号分隔" required   @focus='numKeyboard("phoneList")'/>
+				  <Field label="座机" v-model="telList" placeholder="例 028-6573158，多个用逗号分隔"  @focus='numKeyboard("telList")'/>
 				  <Field label="姓名" v-model="userCard.realName" placeholder="请填写用户姓名" required/>
-				  <Field label="小区/大厦/学校" v-model="userCard.addrInfo" placeholder="请填写用户地址" required/>
+				  <Field label="地址" v-model="userCard.addrInfo" placeholder="请填写用户地址" required/>
 				  <Field label="楼号-门牌号" v-model="userCard.doorNum" placeholder="请填写楼号-门牌号" required/>
-				  <Field label="关联二维码" v-model="userCard.qrCode" placeholder="未关联">
-				  	<Icon name="add" slot="icon" v-if="userCard.qrCode==null" class="addQr" @click="addQr"/>
-				  	<Icon name="clear" slot="icon" v-else class="clearQr" @click="confirmClear"/>
+				  <Field label="关联二维码" v-model="userCard.qrCodeId" v-if="userCard.qrCodeId==null" placeholder="未关联" @click-icon="addQr" disabled>
+				  	<Icon name="add" slot="icon"  class="addQr" @click="addQr"/>
+				  </Field>
+				  <Field label="关联二维码" v-model="userCard.qrCodeId" v-else @click-icon="confirmClear" disabled>
+				  	<Icon name="clear" slot="icon" @click="confirmClear" class="clearQr"/>
 				  </Field>
 				  <Field label="备注" v-model="userCard.remark" placeholder="请填写备注" type="textarea"/>
 				</CellGroup>
 			</div>	
 		</Panel>
+		<NumInput :show="show" :input="keyWords" extraKey=","  @hide="hideNumInput" @input="inputKey"/>
 	</div>
 </template>
 
@@ -30,18 +33,46 @@
 import { Panel, CellGroup, Field, Button, Cell, Icon, Dialog, Toast } from 'vant'
 import Header from "../wechat/Header"
 import {mapGetters} from 'vuex'
+import NumInput from "../../components/NumInput"
 export default{
 	computed: { ...mapGetters([ "userId"]) },
 	name: "NewCode",
-	components: { Header, Panel, CellGroup, Field, Button, Cell, Icon, Dialog, Toast },
+	components: { Header, Panel, CellGroup, Field, Button, Cell, Icon, Dialog, Toast,NumInput },
 	data () {
 		return {
 			phoneList:null,
 			telList:null,
-			userCard: {}
+			userCard: {},
+			config: {},
+			urlPre: 'http://test.yeager.vip',
+			show:false,
+			keyWords:"",
+			type:"",
 		}
 	},
 	methods: {
+		inputKey(value){
+			//console.info("inputKey:"+this.type);
+			if(this.type== "phoneList"){
+				this.phoneList=value;
+			}else if(this.type== "telList"){
+				this.telList=value;
+			}
+		},
+		hideNumInput(){
+			this.show = false;
+		},
+		numKeyboard(type){
+			//console.info("numKeyboard:"+this.type);
+			this.type = type;
+			if(type== "phoneList"){
+				this.keyWords = this.phoneList;
+			}else if(type== "telList"){
+				this.keyWords = this.telList;
+			}
+			document.activeElement.blur();
+			this.show = true;
+		},
 		validateInput(){
 				if(this.phoneList && this.userCard.realName && this.userCard.addrInfo && this.userCard.doorNum){
 					this.eidtSeriUser();
@@ -96,14 +127,83 @@ export default{
 			  title: '提示',
 			  message: '确认要解除编号和二维码的关联吗？'
 			}).then(() => {
-			  this.userCard.qrCode = null;
+			    var req = {};
+		        req.userId = this.userId;
+		        req.entityId = this.userCard.id;
+				this.$api.user.unbindQrCode(req)
+				.then(res => {
+				    this.userCard.qrCodeId = null;	        
+				})
+				.catch(error => {
+				        console.log(error);
+				});
 			}).catch(() => {
 			  // on cancel
 			});
         },
         addQr(){
-        	this.$router.push('/user/scanQr');
-        }
+        	this.$wechat.scanQRCode({
+	          needResult: 1,
+	          scanType: [ 'qrCode' ],
+	          desc: 'scanQRCode desc',
+	          success: (res) => {
+	            let url = res.resultStr;
+	            let paramsObj = {};
+			    const paramsArrays = url.split("?")[1].split("&");	
+			    paramsArrays.forEach(item => {
+			      paramsObj[item.split("=")[0]] = item.split("=")[1];
+			    });
+	            if (url && url.indexOf(this.urlPre) !== -1) {
+	            	//从url中获取qrCodeId	  
+	            	if (paramsObj.id) {
+	            		this.userCard.qrCodeId = paramsObj.id;
+	            	}
+	            } else {
+	              Toast.fail("请扫描正确的二维码");
+	            }
+	          },
+	          cancel: (res) => {
+	          	console.inf(res);
+	            this.$wechat.closeWindow();
+	          }
+	        })
+        },
+        getConfig () {
+		      let params = {
+		        userName: location.href.split('#')[0]
+		      }
+		      this.$api.common.jsApiConfig(params).then(res => {
+
+		        if (res && res.code === '0000' && res.msg) {
+		          this.config.jsapi_ticket = res.msg.jsapi_ticket
+		          this.config.signature = res.msg.signature
+		          this.config.nonceStr = res.msg.nonceStr
+		          this.config.timestamp = res.msg.timestamp
+		          this.config.url = res.msg.url
+		          this.config.appId = res.msg.appId
+		        }
+				
+		        if (this.config) {		        	
+		          this.$wechat.config({
+		            debug: false,
+		            appId: this.config.appId,
+		            timestamp: this.config.timestamp,
+		            nonceStr: this.config.nonceStr,
+		            signature: this.config.signature,
+		            jsApiList: [
+		              'scanQRCode',
+		              // 'hideAllNonBaseMenuItem',
+		              'closeWindow'
+		            ]
+		          });
+		          this.$wechat.error((res) => {
+		            console.log('wx loading error')
+		          })
+		        }
+		      }).catch(error => {
+		        console.log(error)
+		      })
+    	},
     },
     mounted(){
     	this.userCard = this.$store.state.seriUser;
@@ -122,18 +222,25 @@ export default{
     	if(this.userCard.fixPhone3){
 			this.telList = this.telList + ","  + this.userCard.fixPhone3;
     	}
+    	this.getConfig();
     }
 }
 </script>
 
 <style scoped>
+	.header{
+		margin:15px 15px 0 15px;
+		padding:10px 0;
+	}
 	.cell{
 		padding: 0;
 	}	
 	.addQr{
 		color:#0a0;
+		font-size:18px;
 	}
 	.clearQr{
 		color:red;
+		font-size:18px;
 	}
 </style>

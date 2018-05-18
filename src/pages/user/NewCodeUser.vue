@@ -9,19 +9,19 @@
 			</div>
 			<div>
 				<CellGroup>
-				  <Field label="编号" v-model="userCard.userNum" placeholder="请输入用户编号" @focus='numKeyboard("userNum")'>
+				  <Field label="编号" v-model="userCard.userNum" placeholder="请输入用户编号">
 				  	<span slot="icon" class="last-no">上次编号：{{lastNo}}</span>
 				  </Field>
 				  <Field label="手机号" v-model="phoneList" placeholder="可输入多个手机号，用逗号分隔" required  @focus='numKeyboard("phoneList")'/>
 				  <Field label="座机" v-model="telList" placeholder="例（028）6573158，多个用逗号分隔"  @focus='numKeyboard("telList")'/>
 				  <Field label="姓名" v-model="userCard.realName" placeholder="请填写用户姓名" required/>
-				  <Field label="小区/大厦/学校" v-model="userCard.addrInfo" placeholder="请填写用户地址" required/>
+				  <Field label="地址" v-model="userCard.addrInfo" placeholder="请填写用户地址" required/>
 				  <Field label="楼号-门牌号" v-model="userCard.doorNum" placeholder="请填写楼号-门牌号" required/>
-				  <Field label="关联二维码" v-model="userCard.qrCodeId" v-if="userCard.qrCodeId==null" placeholder="未关联" @click-icon="addQr">
+				  <Field label="关联二维码" v-model="userCard.qrCodeId" v-if="userCard.qrCodeId==null" placeholder="未关联" @click-icon="addQr" disabled>
 				  	<Icon name="add" slot="icon"  class="addQr" @click="addQr"/>
 				  </Field>
-				  <Field label="关联二维码" v-model="userCard.qrCodeId" v-else class="clearQr" placeholder="未关联" @click-icon="confirmClear">
-				  	<Icon name="clear" slot="icon" @click="confirmClear"/>
+				  <Field label="关联二维码" v-model="userCard.qrCodeId" v-else @click-icon="confirmClear" disabled>
+				  	<Icon name="clear" slot="icon" @click="confirmClear" class="clearQr"/>
 				  </Field>
 				  <Field label="备注" v-model="userCard.remark" placeholder="请填写备注" type="textarea"/>
 				</CellGroup>
@@ -63,9 +63,7 @@ export default{
 	methods: {
 		inputKey(value){
 			//console.info("inputKey:"+this.type);
-			if(this.type== "userNum"){
-				this.userCard.userNum=value;
-			}else if(this.type== "phoneList"){
+			if(this.type== "phoneList"){
 				this.phoneList=value;
 			}else if(this.type== "telList"){
 				this.telList=value;
@@ -77,9 +75,7 @@ export default{
 		numKeyboard(type){
 			//console.info("numKeyboard:"+this.type);
 			this.type = type;
-			if(type== "userNum"){
-				this.keyWords = this.userCard.userNum;
-			}else if(type== "phoneList"){
+			if(type== "phoneList"){
 				this.keyWords = this.phoneList;
 			}else if(type== "telList"){
 				this.keyWords = this.telList;
@@ -140,7 +136,7 @@ export default{
 			  title: '提示',
 			  message: '确认要解除编号和二维码的关联吗？'
 			}).then(() => {
-			  this.userCard.qrCode = null;
+			  this.userCard.qrCodeId = null;
 			}).catch(() => {
 			  // on cancel
 			});
@@ -151,11 +147,9 @@ export default{
 	          scanType: [ 'qrCode' ],
 	          desc: 'scanQRCode desc',
 	          success: (res) => {
-	          	alert(res);
-	            let url = res.resultStr
-	            alert(url);
+	            let url = res.resultStr;
 	            let paramsObj = {};
-			    const paramsArrays = location.search.substring(1).split("&");
+			    const paramsArrays = url.split("?")[1].split("&");	
 			    paramsArrays.forEach(item => {
 			      paramsObj[item.split("=")[0]] = item.split("=")[1];
 			    });
@@ -165,7 +159,7 @@ export default{
 	            		this.userCard.qrCodeId = paramsObj.id;
 	            	}
 	            } else {
-	              alert("请扫描正确的二维码");
+	              Toast.fail("请扫描正确的二维码");
 	            }
 	          },
 	          cancel: (res) => {
@@ -250,5 +244,6 @@ export default{
 	}
 	.clearQr{
 		color:red;
+		font-size:18px;
 	}
 </style>

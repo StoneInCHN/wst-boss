@@ -3,7 +3,7 @@
 		<Header backUrl="/manage/workerManage"/>
 			<Search
 				v-model="keyWords"
-				placeholder="员工微信号"
+				placeholder="员工微信名"
 				show-action
 				@search="onSearch">
 				<div slot="action" @click="onSearch" class="serach-btn">
@@ -34,7 +34,7 @@ export default{
 			if(this.keyWords){
 				this.getWxByNickName();
 			}else{
-				Toast.fail('请输入微信号');
+				Toast.fail('请输入微信名');
 			}
 			
 		},
@@ -45,7 +45,7 @@ export default{
 			this.$api.mine.getWxByNickName(req)
 			.then(res => {
 			    //if(res.code = "0000"){
-			      	//console.info(res);
+			      	this.worderList = [];
 			      	var wokers = res;
 			      	for (var i = 0; i < wokers.length; i++) {
 			      		var worker = {};

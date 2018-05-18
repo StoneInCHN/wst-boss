@@ -43,6 +43,9 @@ const  user = {
   addSO (params) {    
     return lift(post('/sorder/seriUser/addSO', params)); //用户管理-商家提交订单
   },   
+  unbindQrCode (params) {    
+    return lift(post('/shopQrcode/seriUser/unbindQrCode', params)); //编号用户解除关联二维码
+  },
 
 }
 
