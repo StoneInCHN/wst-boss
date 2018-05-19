@@ -7,18 +7,18 @@
 			    	<Button type="primary" size="small" @click="save">完成</Button>
 			  	</Cell>
 			</div>
-			<Row>
-				<Col span="6">
-					<img :src="'/wst-boss/'+goods.gPic" width="50" height="50"/>
+			<Row class="gRow">
+				<Col span="4">
+					<img :src="'/wst-boss/'+goods.gPic" width="35" height="35"/>
 			     </Col>
-				<Col span="10">
+				<Col span="12">
 				  <Field label="" v-model="goods.gName" placeholder="请选择购买商品"  @click="showAllGoods" @focus="hideKeyboard"/>
 				  		<!-- <Stepper slot="icon" v-model="goods.gCount" :min="1" :max="100"  :default-value="1"/>	 -->			 	
 				  </Field>
 				  
 				 </Col>
 			     <Col span="8">
-					<Stepper v-model="goods.gCount" :min="1" :max="100"  :default-value="1" style="font-size:10px"/>
+					<Stepper v-model="goods.gCount" :min="1" :max="100"  :default-value="1" class="step"/>
 			     </Col>
 				
 			</Row>	
@@ -93,6 +93,12 @@ export default{
 </script>
 
 <style scoped>
+	.step{
+		padding-top: 10px;
+	}
+	.gRow{
+		margin:0 15px;
+	}
 	.header{
 		margin:15px 15px 0 15px;
 		padding:10px 0;

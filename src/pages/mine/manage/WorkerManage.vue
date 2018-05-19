@@ -11,7 +11,7 @@
 				<tr v-for="(worker,index) in workers" :key="index">
 					<td>						
 						<span v-if="editable" @click="selecteWorker(worker.id)">
-							<Checkbox/>
+							<Checkbox  v-model="worker.checked"/>
 						</span>
 						<span v-else>
 							<Checkbox disabled/>
@@ -43,12 +43,11 @@ export default{
 		return {
 			workers:[],
 			editable:false,
-			checked:true,
 			showAction:false,
 			actions:[
 		        { name: '删除', callback: this.deleteSelected }
 		    ],
-		    selecteWorkerIds:[]
+		    selecteWorkerIds:[],
 		}
 	},
 	methods: {
@@ -100,9 +99,13 @@ export default{
 
 			this.$api.mine.listShopEmp(req)
 			.then(res => {
-			    //if(res.code = "0000"){
 			      	this.workers = res;
-			    //}	        
+			      	if(this.workers){
+						for(var i = 0; i < this.workers.length; i++){
+								this.workers[i].checked = false;
+				      	}
+			      	}   
+			      	//console.info(this.workers);     
 			})
 			.catch(error => {
 			        console.log(error);
@@ -128,6 +131,7 @@ export default{
     },
     mounted() {
 		this.listShopEmp();
+
     }
 }
 </script>

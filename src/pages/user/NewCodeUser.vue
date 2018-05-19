@@ -9,7 +9,7 @@
 			</div>
 			<div>
 				<CellGroup>
-				  <Field label="编号" v-model="userCard.userNum" placeholder="请输入用户编号">
+				  <Field label="编号" v-model="userCard.userNum" placeholder="请输入用户编号" required>
 				  	<span slot="icon" class="last-no">
 				  	上次编号：<span v-if="lastNo">{{lastNo}}</span><span v-else>暂无</span>
 				    </span>
@@ -86,7 +86,7 @@ export default{
 			this.show = true;
 		},
 		validateInput(){
-				if(this.phoneList && this.userCard.realName && this.userCard.addrInfo && this.userCard.doorNum){
+				if(this.userCard.userNum && this.phoneList && this.userCard.realName && this.userCard.addrInfo && this.userCard.doorNum){
 					this.createSeriUser();
 				}else{
 					Toast.fail("请输入必填信息");
