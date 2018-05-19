@@ -54,7 +54,8 @@ export default{
 			      	for (var i = 0; i < wokers.length; i++) {
 			      		var worker = {};
 						worker.headImgUrl = wokers[i].headImgUrl;
-						worker.wxOpenId = wokers[i].id;
+						worker.id = wokers[i].id;
+						worker.wxOpenId = wokers[i].openId;
 						worker.wxAcct = wokers[i].nickname;
 						this.worderList.push(worker);
 			      	}
