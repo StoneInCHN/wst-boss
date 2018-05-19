@@ -254,9 +254,10 @@ export default {
           }
 
           Dialog.alert({
-            message: '订单已被拒绝，请尽快联系用户提醒他：'
+            message: '订单已被拒绝，请尽快联系用户提醒他：'+this.item.addrInfo.contactPhone,
+            confirmButtonText:'拨打电话'
           }).then(() => {
-            location.href = `tel:10086`
+            location.href = `tel:${this.item.addrInfo.contactPhone}`
           });
 
         });

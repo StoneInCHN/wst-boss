@@ -36,6 +36,6 @@ export default{
 	    font-weight: 400;
 	    font-size: 14px;
 	    color: rgba(69,90,100,.6);
-	    padding: 40px 15px 10px;
+	    padding: 20px 15px 10px;
 	}
 </style>
