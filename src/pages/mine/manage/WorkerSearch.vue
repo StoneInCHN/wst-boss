@@ -1,6 +1,9 @@
 <template>
 	<div>
 		<Header backUrl="/manage/workerManage"/>
+			<NoticeBar mode="closeable" :scrollable="false">
+  				温馨提示：添加员工前，员工必须先微信关注“云水站”。
+			</NoticeBar >
 			<Search
 				v-model="keyWords"
 				placeholder="员工微信名"
@@ -11,18 +14,19 @@
 				</div>
 			</Search>
 			<WorkerRow v-for="(worker,index) in worderList" :worker="worker"  :key="index"/>
+			
 	</div>
 </template>
 
 <script>
-import { Search, Toast } from 'vant'
+import { Search, Toast,NoticeBar } from 'vant'
 import Header from "../../wechat/Header"
 import WorkerRow from "./WorkerRow"
 import {mapGetters} from 'vuex'
 export default{
 	computed: { ...mapGetters([ "userId"]) },
 	name: "WorkerSearch",
-	components: { Header, Search, WorkerRow, Toast },
+	components: { Header, Search, WorkerRow, Toast,NoticeBar },
 	data () {
 		return {
 			keyWords:null,

@@ -40,7 +40,6 @@ export default{
 	data () {
 		return {
 			memberInfoList:[],
-			//keyWords:"",
 			keyWordObj:[],
 			type:0,
 			show:false,
@@ -78,9 +77,8 @@ export default{
 		    }
 			this.$api.user.pageSeriUsers(req)
 			.then(res => {
-			    // if(res.code = "0000"){
-			          this.memberInfoList = res;
-			    // }	        
+			        this.memberInfoList = res;
+				    Toast.success("操作成功");        
 			})
 			.catch(error => {
 			        console.log(error);

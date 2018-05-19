@@ -4,7 +4,9 @@
 				<Row>
 					<Col span="4" class="row"><img :src="'/wst-boss/'+goods.gPic" width="45" height="45"/></Col>
 					<Col span="12" class="green row"><span>{{goods.gName}}<span>【{{formatPrice(goods.gAmount)}}】</span></span></Col>
-					<Col span="6" class="row"><input type="number" v-model="goods.gCount" class="num_input"/>桶</Col>
+					<Col span="6" class="row">
+					<!-- <input type="number" v-model="goods.gCount" class="num_input"/> -->
+				    {{goods.gCount}} 桶</Col>
 					<Col span="2" class="red row big"><Icon name="close" @click="deleteGoods"/></Col>					
 				</Row>				
 			</div>	

@@ -10,7 +10,9 @@
 			<div>
 				<CellGroup>
 				  <Field label="编号" v-model="userCard.userNum" placeholder="请输入用户编号">
-				  	<span slot="icon" class="last-no">上次编号：{{lastNo}}</span>
+				  	<span slot="icon" class="last-no">
+				  	上次编号：<span v-if="lastNo">{{lastNo}}</span><span v-else>暂无</span>
+				    </span>
 				  </Field>
 				  <Field label="手机号" v-model="phoneList" placeholder="可输入多个手机号，用逗号分隔" required  @focus='numKeyboard("phoneList")'/>
 				  <Field label="座机" v-model="telList" placeholder="例（028）6573158，多个用逗号分隔"  @focus='numKeyboard("telList")'/>
@@ -174,9 +176,7 @@ export default{
 		    req.userId = this.userId;
 			this.$api.user.getLastSerialNo(req)
 			.then(res => {
-			    //if(res.code = "0000"){
 			    	this.lastNo = res.lastNo;
-			    //}	        
 			})
 			.catch(error => {
 			        console.log(error);

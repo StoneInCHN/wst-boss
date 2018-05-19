@@ -2,7 +2,7 @@
 	<div>
 		<Header backUrl="/userManage"/>
 		<Panel>
-			<div slot="header">
+			<div slot="header" class="header">
 				<Cell title="添加优惠" class="cell">
 			    	<Button type="primary" size="small" @click="validate">完成</Button>
 			  	</Cell>
@@ -169,6 +169,10 @@ export default{
 </script>
 
 <style scoped>
+	.header{
+		margin:15px 15px 0 15px;
+		padding:10px 0;
+	}
 	.cell{
 		padding: 0;
 

@@ -2,7 +2,7 @@
 	<div>
 		<Header backUrl="/userManage"/>
 		<Panel>
-			<div slot="header">
+			<div slot="header" class="header">
 				<Cell title="添加订单" class="cell">
 			    	<Button type="primary" size="small" @click="save">完成</Button>
 			  	</Cell>
@@ -15,19 +15,19 @@
 				  <Field label="手机号" v-model="seriUser.contactPhone" disabled/>
 				</CellGroup>
 				<Panel>
-					<div slot="header">
+					<div slot="header" class="header">
 						<Cell title="商品信息" class="cell">
 					    	<div class="addCoupon" @click="newGoods"><Icon name="add-o"/></div>
 					  	</Cell>
 					</div>	
 					<GoodsRow v-for="(goods,index) in goodsList" :goods="goods" :list="goodsList" :key="index"/>
 					<div slot="footer" class="footer">
-						共<span>{{goodsList.length}}</span>件商品，合计：<span>{{formatPrice(totalAmount)}}</span>
+						共<span>{{totalSize}}</span>件商品，合计：<span>{{formatPrice(totalAmount)}}</span>
 					</div>
 				</Panel>	
 								
 				<CellGroup>  
-				  <Field label="支付方式" value="货到付款"/>
+				  <Field label="支付方式" value="货到付款" disabled/>
 				</CellGroup>
 			</div>	
 		</Panel>
@@ -136,12 +136,19 @@ export default{
     },
     computed:{
     	totalAmount: function(){
-    		console.info("this.goodsList",this.goodsList);
+    		//console.info("this.goodsList",this.goodsList);
     		var totalAmount = 0;
     		for (var i = 0; i < this.goodsList.length; i++) {
     			totalAmount += this.goodsList[i].gCount * this.goodsList[i].gAmount;
     		}
     		return totalAmount;
+    	},
+    	totalSize: function(){
+    		var totalSize = 0;
+    		for (var i = 0; i < this.goodsList.length; i++) {
+    			totalSize += this.goodsList[i].gCount;
+    		}
+    		return totalSize;
     	},
     	...mapGetters([ "userId"])
     },   
@@ -161,6 +168,10 @@ export default{
 </script>
 
 <style scoped>
+	.header{
+		margin:15px 15px 0 15px;
+		padding:10px 0;
+	}
 	.footer{
 		text-align: right;
 		font-size: 14px;		

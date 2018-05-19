@@ -19,8 +19,8 @@ export default {
       active: 0
     };
   },
-  created() { 
-    //this.initTest()
+  created() {
+    //this.initTest(); 
     this.initData()
   },
   computed: {

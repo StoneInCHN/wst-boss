@@ -38,14 +38,17 @@ export default{
     },
     data () {
 		return {			
-			
+			config: {},
+			urlPre: 'http://test.yeager.vip',
 		}
 	},
 	methods: {
 		addCoupon(){
+			this.$store.state.seriUser=this.userCard;
 			this.$router.push('/user/addCoupon');
 		},
 		addOrder(){
+			this.$store.state.seriUser=this.userCard;
 			this.$router.push('/user/addOrder');
 		},
 		confirmClear(){
@@ -53,6 +56,52 @@ export default{
 			  title: '提示',
 			  message: '确认要解除编号和二维码的关联吗？'
 			}).then(() => {
+				var req = {};
+		        req.userId = this.userId;
+		        req.entityId = this.userCard.id;
+				this.$api.user.unbindQrCode(req)
+				.then(res => {
+				    this.userCard.qrCodeId = null;	
+				    this.$emit('refreshSeriUsers');
+				    Toast.success("操作成功");        
+				})
+				.catch(error => {
+				        console.log(error);
+				});
+			 
+			}).catch(() => {
+			  // on cancel
+			});
+        },
+		addQr(){
+        	this.$wechat.scanQRCode({
+	          needResult: 1,
+	          scanType: [ 'qrCode' ],
+	          desc: 'scanQRCode desc',
+	          success: (res) => {
+	            let url = res.resultStr;
+	            let paramsObj = {};
+			    const paramsArrays = url.split("?")[1].split("&");	
+			    paramsArrays.forEach(item => {
+			      paramsObj[item.split("=")[0]] = item.split("=")[1];
+			    });
+	            if (url && url.indexOf(this.urlPre) !== -1) {
+	            	//从url中获取qrCodeId	  
+	            	if (paramsObj.id) {
+	            		this.userCard.qrCodeId = paramsObj.id;
+	            		this.edit();
+	            	}
+	            } else {
+	              Toast.fail("请扫描正确的二维码");
+	            }
+	          },
+	          cancel: (res) => {
+	          	console.inf(res);
+	            this.$wechat.closeWindow();
+	          }
+	        })
+		},
+		edit(){
 			    var seriUser = {};
 			    seriUser.userId = this.userId;
 			    seriUser.entityId = this.userCard.id;
@@ -60,7 +109,7 @@ export default{
 			    seriUser.realName = this.userCard.realName;
 			    seriUser.addrInfo = this.userCard.addrInfo;
 			    seriUser.doorNum = this.userCard.doorNum;
-			    seriUser.qrCodeId = -1;
+			    seriUser.qrCodeId = this.userCard.qrCodeId;
 			    seriUser.remark = this.userCard.remark;
 
 			    seriUser.contactPhone = this.userCard.contactPhone;
@@ -70,25 +119,54 @@ export default{
 			    seriUser.fixPhone = this.userCard.fixPhone;
 			    seriUser.fixPhone2 = this.userCard.fixPhone2;
 			    seriUser.fixPhone3 = this.userCard.fixPhone3;
+
 				this.$api.user.editSeriUser(seriUser)
 				.then(res => {
-				    if(res.code = "0000"){
 				    	//刷新 编号用户列表 数据
-				    	this.$emit('refreshSeriUsers');
-				    	Toast.success("操作成功");
-				    }	        
+				    	this.$emit('refreshSeriUsers'); 
 				})
 				.catch(error => {
 				        console.log(error);
-				});				
-			 
-			}).catch(() => {
-			  // on cancel
-			});
-        },
-        addQr(){
-        	this.$router.push('/user/scanQr1');
-        }
+				});	
+		},
+        getConfig () {
+		      let params = {
+		        userName: location.href.split('#')[0]
+		      }
+		      this.$api.common.jsApiConfig(params).then(res => {
+
+		        if (res && res.code === '0000' && res.msg) {
+		          this.config.jsapi_ticket = res.msg.jsapi_ticket
+		          this.config.signature = res.msg.signature
+		          this.config.nonceStr = res.msg.nonceStr
+		          this.config.timestamp = res.msg.timestamp
+		          this.config.url = res.msg.url
+		          this.config.appId = res.msg.appId
+		        }
+				
+		        if (this.config) {		        	
+		          this.$wechat.config({
+		            debug: false,
+		            appId: this.config.appId,
+		            timestamp: this.config.timestamp,
+		            nonceStr: this.config.nonceStr,
+		            signature: this.config.signature,
+		            jsApiList: [
+		              'scanQRCode',
+		              'closeWindow'
+		            ]
+		          });
+		          this.$wechat.error((res) => {
+		            console.log('wx loading error')
+		          })
+		        }
+		      }).catch(error => {
+		        console.log(error)
+		      })
+    	},
+    },
+    mounted(){
+    	this.getConfig();
     }
 }
 </script>

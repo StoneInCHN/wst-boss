@@ -2,32 +2,39 @@
 	<div>
 		<Header backUrl="/userManage"/>
 		<Panel>
-			<div slot="header">
+			<div slot="header" class="header">
 				<Cell title="添加商品" class="cell">
 			    	<Button type="primary" size="small" @click="save">完成</Button>
 			  	</Cell>
 			</div>
-			<div>
-				<CellGroup>
-				  <Field label="购买商品" v-model="goods.gName" placeholder="请选择购买商品"  @click="showAllGoods">
-				  		<Stepper slot="icon" v-model="goods.gCount" :min="1" :max="100"  :default-value="1"/>				 	
-				  </Field>			  
-				</CellGroup>
-				<img :src="'/wst-boss/'+goods.gPic" width="100" height="100"/>
-			</div>	
+			<Row>
+				<Col span="6">
+					<img :src="'/wst-boss/'+goods.gPic" width="50" height="50"/>
+			     </Col>
+				<Col span="10">
+				  <Field label="" v-model="goods.gName" placeholder="请选择购买商品"  @click="showAllGoods" @focus="hideKeyboard"/>
+				  		<!-- <Stepper slot="icon" v-model="goods.gCount" :min="1" :max="100"  :default-value="1"/>	 -->			 	
+				  </Field>
+				  
+				 </Col>
+			     <Col span="8">
+					<Stepper v-model="goods.gCount" :min="1" :max="100"  :default-value="1" style="font-size:10px"/>
+			     </Col>
+				
+			</Row>	
 		</Panel>
 		<Actionsheet  v-model="showGoods" :actions="allGoods" cancel-text="取消"/>
 	</div>
 </template>
 
 <script>
-import { Panel, CellGroup, Field, Button, Cell, Actionsheet,Stepper  } from 'vant'
+import { Panel, CellGroup, Field, Button, Cell, Actionsheet,Stepper,Row,Col  } from 'vant'
 import Header from "../wechat/Header"
 import {mapGetters} from 'vuex'
 export default{
 	computed: { ...mapGetters([ "userId"]) },
 	name: "StoreManage",
-	components: { Header, Panel, CellGroup, Field, Button, Cell, Actionsheet,Stepper },
+	components: { Header, Panel, CellGroup, Field, Button, Cell, Actionsheet,Stepper,Row,Col },
 	data () {
 		return {
 			goods: {"gCount":1},
@@ -38,6 +45,9 @@ export default{
 		}
 	},
 	methods: {
+		hideKeyboard(){
+			document.activeElement.blur();
+		},
         save () {
         	this.$store.state.orderGoods = this.goods;
 			this.$router.push('/user/addOrder');
@@ -83,6 +93,10 @@ export default{
 </script>
 
 <style scoped>
+	.header{
+		margin:15px 15px 0 15px;
+		padding:10px 0;
+	}
 	.cell{
 		padding: 0;
 	}	

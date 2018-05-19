@@ -57,6 +57,7 @@ export default{
 			emp.cellPhoneNum = worker.cellPhoneNum;
 			emp.userName = worker.realName;
 			emp.wxAcct = worker.wechatAcct;
+			emp.entityId = worker.id;
 			this.$store.state.worker = emp;
 			this.$router.push('/manage/workerAdd');
         },
