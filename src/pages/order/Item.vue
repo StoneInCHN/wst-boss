@@ -4,7 +4,8 @@
        <section class="order-item-section">
            <p>{{item.createDate | formatDate }}</p>
            <Tag v-if="!isOther" type="primary">{{payType}}</Tag>
-           <Tag v-if="isOther" type="primary">{{item.seriUserNum}}</Tag>
+          <!-- <Tag v-if="isOther" type="primary">{{item.seriUserNum}}</Tag> -->
+           <Tag v-else type="primary">{{item.seriUserNum}}</Tag>
        </section>
        <section class="order-item-section">
          <h6>{{item.addrInfo.fullAddr}}</h6>
@@ -177,12 +178,24 @@ export default {
       location.href = `tel:${item.name}`
     },
     toggleAssign() {
-      this.openAssign = !this.openAssign;
-      setTimeout(() => {
-        if (this.nextShowPayMethod) {
-          this.openFinish = !this.openFinish;
+      this.$api.mine
+      .listShopEmp({
+        userId: this.userId
+      })
+      .then(r => {
+        if(r&&r.length>0){
+            this.openAssign = !this.openAssign;
+            setTimeout(() => {
+              if (this.nextShowPayMethod) {
+                this.openFinish = !this.openFinish;
+              }
+            }, 100);
+        }else{
+          Toast.fail("请添加配送员");
         }
-      }, 100);
+      });
+
+
     },
     //不指派 直接完成
     pending2Finish() {
@@ -221,9 +234,9 @@ export default {
     unDelivery() {
       Dialog.confirm({
         title: "无法送达",
-        message: `确定要酱[ ${
+        message: `确定要将[${
           this.item.addrInfo.contactPhone
-        } ]的订单状态修改为[ 无法送达 ]吗?`
+        }]的订单状态修改为[无法送达]吗?`
       }).then(() => {
         // on confirm
         const { id } = this.item;
@@ -253,8 +266,14 @@ export default {
             this.setProcessingList(lists);
           }
 
+          let actions = "";
+          if(params.oprStatus == 'REJECT'){
+            actions = "已被拒绝";
+          }else if(params.oprStatus == 'UNDELIVER') {
+            actions = "无法送达";
+          }
           Dialog.alert({
-            message: '订单已被拒绝，请尽快联系用户提醒他：'+this.item.addrInfo.contactPhone,
+            message: '订单'+actions+'，请尽快联系用户提醒他：'+this.item.addrInfo.contactPhone,
             confirmButtonText:'拨打电话'
           }).then(() => {
             location.href = `tel:${this.item.addrInfo.contactPhone}`
