@@ -238,7 +238,8 @@ export default {
     oprSO(params) {
       if (params) {
         this.$api.order.oprSO(params).then(r => {
-          Toast.success("操作成功");
+          //Toast.success("操作成功");
+
           const ids = params.entityIds || []
           if (this.oStatusType === "PENDING") {
             const lists = this.pendingList.filter(item => {
@@ -251,6 +252,13 @@ export default {
             });
             this.setProcessingList(lists);
           }
+
+          Dialog.alert({
+            message: '订单已被拒绝，请尽快联系用户提醒他：'
+          }).then(() => {
+            location.href = `tel:10086`
+          });
+
         });
       }
     }

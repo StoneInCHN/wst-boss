@@ -29,6 +29,9 @@ export default {
   methods: {
     ...mapActions(["setToken", "setUserId", "setCobType"]),
     initData(){
+      if(this.userId){        
+        return;
+      }
       let paramsObj = {};
       const paramsArrays = location.search.substring(1).split("&");
       paramsArrays.forEach(item => {

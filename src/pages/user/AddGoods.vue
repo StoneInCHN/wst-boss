@@ -8,16 +8,14 @@
 			  	</Cell>
 			</div>
 			<Row class="gRow">
-				<Col span="4">
+				<Col span="3">
 					<img :src="'/wst-boss/'+goods.gPic" width="35" height="35"/>
 			     </Col>
 				<Col span="12">
 				  <Field label="" v-model="goods.gName" placeholder="请选择购买商品"  @click="showAllGoods" @focus="hideKeyboard"/>
-				  		<!-- <Stepper slot="icon" v-model="goods.gCount" :min="1" :max="100"  :default-value="1"/>	 -->			 	
-				  </Field>
 				  
 				 </Col>
-			     <Col span="8">
+			     <Col span="9">
 					<Stepper v-model="goods.gCount" :min="1" :max="100"  :default-value="1" class="step"/>
 			     </Col>
 				
