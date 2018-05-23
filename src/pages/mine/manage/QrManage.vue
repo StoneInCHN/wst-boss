@@ -74,8 +74,8 @@ export default{
 
 	    genQrPdf () {
 	    	if(this.count){
-	    		if(this.count > 1000){
-	    			Toast.fail("超过最大生成数量1000个");
+	    		if(this.count > 100){
+	    			Toast.fail("超过最大生成数量100个");
 	    			return;
 	    		}
 	    		var req = {};

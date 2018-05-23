@@ -49,7 +49,9 @@ const  mine = {
   },
   //http://test.yeager.vip/wst-boss/shopQrcode/getQrPdfUrl?userId=1&pageSize=2
   getQrPdfUrl (params) {
-    return fetch('/shopQrcode/getQrPdfUrl?userId='+params.userId+'&pageSize='+params.pageSize); //批量生成二维码
+    //return fetch('/shopQrcode/getQrPdfUrl?userId='+params.userId+'&pageSize='+params.pageSize); //批量生成二维码
+    return post('/shopQrcode/getQrPdfUrl',params); //批量生成二维码
+
   },
   
 }
