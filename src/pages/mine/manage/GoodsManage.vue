@@ -7,7 +7,7 @@
 				<span v-else>管理</span>
 			</a>
 		</p>
-		<Tabs :active="active" style="padding-bottom:50px">
+		<Tabs :active="active" style="padding-bottom:50px" v-if="gList.length > 0">
 			<Tab v-for="(brand, index) in gList" :title="brand.brandName" :key="index">
 				<GoodsCrumb v-for="(goods, index) in brand.gInfo" :goods="goods" :editable="editable" :editIds="editIds" :key="index"/>
 			</Tab>	
@@ -120,6 +120,10 @@ export default{
 		    req.userId = this.userId;
 			this.$api.mine.getGList(req)
 			.then(res => {
+				if(res == null){
+					this.gList = [];
+					return;
+				}
 			    //if(res.code = "0000"){
 			    	this.all = {};//全部商品
 			    	this.allgInfo = [];

@@ -14,8 +14,8 @@
 				  	上次编号：<span v-if="lastNo">{{lastNo}}</span><span v-else>暂无</span>
 				    </span>
 				  </Field>
-				  <Field label="手机号" v-model="phoneList" placeholder="可输入多个手机号，用逗号分隔" required  @focus='numKeyboard("phoneList")'/>
-				  <Field label="座机" v-model="telList" placeholder="例（028）6573158，多个用逗号分隔"  @focus='numKeyboard("telList")'/>
+				  <Field label="手机号" v-model="phoneList" placeholder="可输入多个手机号，用逗号分隔" required  @focus='numKeyboard("phoneList")' :error-message="tipsPhone" @blur="checkPhone"/>
+				  <Field label="座机" v-model="telList" placeholder="例（028）6573158，多个用逗号分隔"  @focus='numKeyboard("telList")' :error-message="tipsTel"  @blur="checkPhone"/>
 				  <Field label="姓名" v-model="userCard.realName" placeholder="请填写用户姓名" required/>
 				  <Field label="地址" v-model="userCard.addrInfo" placeholder="请填写用户地址" required/>
 				  <Field label="楼号-门牌号" v-model="userCard.doorNum" placeholder="请填写楼号-门牌号" required/>
@@ -38,6 +38,8 @@ import { Panel, CellGroup, Field, Button, Cell, Icon, Dialog, Toast } from 'vant
 import Header from "../wechat/Header"
 import {mapGetters} from 'vuex'
 import NumInput from "../../components/NumInput"
+import { checkTel } from "@/utils";
+
 export default{
 	computed: { ...mapGetters([ "userId"]) },
 	name: "NewCode",
@@ -46,6 +48,8 @@ export default{
 		return {
 			phoneList:null,
 			telList:null,
+			tipsPhone:null,
+			tipsTel:null,
 			userCard: {
 				userNum:null,
 				realName:null,
@@ -63,6 +67,26 @@ export default{
 		}
 	},
 	methods: {
+		checkPhone(){
+			        this.tipsPhone = null;
+					this.tipsTel = null;
+					if(this.phoneList){
+						var contactPhoneList = this.phoneList.split(",");
+						for (var i = 0; i < contactPhoneList.length; i++) {
+							if(!checkTel(contactPhoneList[i])){
+								this.tipsPhone = "手机号格式错误";
+							}
+						}
+					}
+					if(this.telList){
+						var fixPhoneList = this.telList.split(",");
+						for (var i = 0; i < fixPhoneList.length; i++) {
+							if(!checkTel(fixPhoneList[i])){
+								this.tipsTel = "座机号号格式错误";
+							}
+						}	
+					}
+		},
 		inputKey(value){
 			//console.info("inputKey:"+this.type);
 			if(this.type== "phoneList"){
@@ -87,6 +111,24 @@ export default{
 		},
 		validateInput(){
 				if(this.userCard.userNum && this.phoneList && this.userCard.realName && this.userCard.addrInfo && this.userCard.doorNum){
+					this.tipsPhone = null;
+					this.tipsTel = null;
+					var contactPhoneList = this.phoneList.split(",");
+					for (var i = 0; i < contactPhoneList.length; i++) {
+						if(!checkTel(contactPhoneList[i])){
+							this.tipsPhone = "手机号格式错误";
+							return;
+						}
+					}
+					if(this.telList){
+						var fixPhoneList = this.telList.split(",");
+						for (var i = 0; i < fixPhoneList.length; i++) {
+							if(!checkTel(fixPhoneList[i])){
+								this.tipsTel = "座机号号格式错误";
+								return;
+							}
+						}	
+					}				
 					this.createSeriUser();
 				}else{
 					Toast.fail("请输入必填信息");

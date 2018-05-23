@@ -23,6 +23,7 @@
 						<span>{{memberInfo.fixPhone2}}</span>
 						<span v-if="memberInfo.fixPhone3">,</span>
 						<span>{{memberInfo.fixPhone3}}</span>
+						<span>{{memberInfo.createDate | formatDate }}</span>
 					</Col>
 					<Col span="4">
 						<span class="green right" v-if="memberInfo.qrCodeId">已关联</span>
@@ -32,19 +33,19 @@
 			</div>
 			<div class="operation">
 				<Row>
-					<Col span="4">
+<!-- 					<Col span="4">
 						<span @click="deleteItem">删除</span>
-					</Col>
-					<Col span="5">
+					</Col> -->
+					<Col span="6">
 						<span  @click="editItem">编辑</span>
 					</Col>
-					<Col span="5">
+					<Col span="6">
 						<span @click="addCoupon">添加优惠</span>
 					</Col>
-					<Col span="5">
+					<Col span="6">
 						<span @click="addOrder">添加订单</span>
 					</Col>
-					<Col span="5">
+					<Col span="6">
 						<span class="right" v-if="memberInfo.qrCodeId"  @click="confirmClear">解除关联</span>
 						<span class="right" v-else @click="addQr">扫码关联</span>
 					</Col>
@@ -57,6 +58,7 @@
 <script>
 import { Row, Col, Dialog, Toast } from 'vant'
 import {mapGetters} from 'vuex'
+import { formatDateTime } from "@/utils";
 export default{
 	computed: { ...mapGetters([ "userId"]) },
 	name: "UserCard",
@@ -226,6 +228,12 @@ export default{
 		      })
     	},
     },
+	filters: {
+	    formatDate(time) {
+	      var date = new Date(time);
+	      return formatDateTime(date, "yyyy-MM-dd hh:mm");
+	    }
+	},
     mounted(){
     	this.getConfig();
     }

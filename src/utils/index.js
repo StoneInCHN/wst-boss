@@ -128,3 +128,9 @@ export const getBooleanItem = key => {
   const value = sessionStorage.getItem(key) || false;
   return value && value !== "false";
 };
+
+export function checkTel(tel)
+{
+   var mobile = /^1[3|5|8]\d{9}$/ , phone = /^0\d{2,3}-?\d{7,8}$/;
+   return mobile.test(tel) || phone.test(tel);
+}
