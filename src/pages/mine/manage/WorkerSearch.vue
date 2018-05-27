@@ -38,7 +38,8 @@ export default{
 			if(this.keyWords){
 				this.getWxByNickName();
 			}else{
-				Toast.fail('请输入微信名');
+				this.worderList = [];
+				//Toast.fail('请输入微信名');
 			}
 			
 		},
@@ -48,7 +49,6 @@ export default{
 			req.userName = this.keyWords;
 			this.$api.mine.getWxByNickName(req)
 			.then(res => {
-			    //if(res.code = "0000"){
 			      	this.worderList = [];
 			      	var wokers = res;
 			      	for (var i = 0; i < wokers.length; i++) {
@@ -58,9 +58,7 @@ export default{
 						worker.wxOpenId = wokers[i].openId;
 						worker.wxAcct = wokers[i].nickname;
 						this.worderList.push(worker);
-			      	}
-			      	
-			    //}	        
+			      	}       
 			})
 			.catch(error => {
 			    console.log(error);

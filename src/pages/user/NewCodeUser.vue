@@ -165,10 +165,10 @@ export default{
 		    // console.info(seriUser);
 			this.$api.user.createSeriUser(seriUser)
 			.then(res => {
-			    //if(res.code = "0000"){
 			    	Toast.success("操作成功");
-			    	this.$router.push('/user/totalCodeUsers');
-			    //}	        
+			    	
+			    	this.$router.push('/user/totalCodeUsers');  
+			    	location.history.go(-1);  
 			})
 			.catch(error => {
 			        console.log(error);

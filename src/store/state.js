@@ -1,4 +1,5 @@
 const state = {
+	active:0,
 	worker:{},
 	goods:{},
 	seriUser:{},

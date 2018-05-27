@@ -1,17 +1,16 @@
 <template>
 	<div>
 		<Header backUrl="/userManage"/>
-		<Panel>
+		<Panel class="panel">
 			<div slot="header" class="header">
-				<Cell title="添加订单" class="cell">
-			    	<Button type="primary" size="small" @click="save">完成</Button>
-			  	</Cell>
+				<Cell title="添加订单" class="cell"></Cell>
 			</div>
 			<div>
 				<CellGroup>
 				  <Field label="编号" v-model="seriUser.serialNo" disabled/>
+				  <Field label="小区/大厦/学校" v-model="seriUser.addrInfo" disabled/>
+				  <Field label="楼号-门牌号" v-model="seriUser.doorNum" disabled/>
 				  <Field label="姓名" v-model="seriUser.realName" disabled/>
-				  <Field label="用户地址" v-model="seriUser.addrInfo" disabled/>
 				  <Field label="手机号" v-model="seriUser.contactPhone" disabled/>
 				</CellGroup>
 				<Panel>
@@ -31,6 +30,11 @@
 				</CellGroup>
 			</div>	
 		</Panel>
+		<div class="fixed">
+			<Button bottom-action style="background-color:#fff;color:#000;border:1px solid #eee" @click="cancel"> 取 消 </Button>
+			<br>
+			<Button bottom-action style="background-color:#0a0" @click="save">提交订单</Button>
+		</div>	
 	</div>
 </template>
 
@@ -62,7 +66,7 @@ export default{
         	req.userId = this.userId;
         	req.entityId = this.seriUser.id;
         	req.addr = this.seriUser.addrInfo;
-        	req.doorNum = null;
+        	req.doorNum = this.seriUser.doorNum;
         	req.realName = this.seriUser.realName;	
 		    req.contactPhone = this.seriUser.contactPhone;	
  		    req.gIds = gIds;
@@ -71,7 +75,7 @@ export default{
 				if(res == null){	
 					res = {};	
 				}
-			    //if(res.code = "0000"){
+			    this.$store.state.goodsList = [];
 			    	var tip = "订单号："+res.sn+";  支付方式："+this.getPayType(res.payType);
 			    	if(res.cobAmount){
 			    		tip += ";   仍需货到付款金额:" + this.formatPrice(res.cobAmount);
@@ -131,15 +135,18 @@ export default{
 	    	if(type == "TICKET_COB"){
 	    		return "水票部分抵扣混合";
 	    	}
+	    },
+	    cancel(){
+	    	this.$router.push("/user/totalCodeUsers");
 	    }
        
     },
     computed:{
     	totalAmount: function(){
-    		//console.info("this.goodsList",this.goodsList);
+    		console.info("this.goodsList",this.goodsList);
     		var totalAmount = 0;
     		for (var i = 0; i < this.goodsList.length; i++) {
-    			totalAmount += this.goodsList[i].gCount * this.goodsList[i].gDistPrice;
+    			totalAmount += this.goodsList[i].gCount * this.goodsList[i].gAmount;
     		}
     		return totalAmount;
     	},
@@ -168,6 +175,18 @@ export default{
 </script>
 
 <style scoped>
+	.panel{
+		padding-bottom: 150px;
+	}
+	.fixed {
+	  position: fixed;
+	  width:100%;
+	  bottom: 0;
+	  right: 0;
+	  background-color: #fafafa;
+	  padding: 10px 0;
+	  margin: 0;
+	}
 	.header{
 		margin:15px 15px 0 15px;
 		padding:10px 0;
@@ -182,7 +201,7 @@ export default{
 	}
 	.cell{
 		padding: 0;
-
+		font-weight: bold;
 	}	
 	.addCoupon{
 		font-size:18px;

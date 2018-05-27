@@ -1,8 +1,8 @@
 <template>
 		<Tabbar v-model="active">
-		  <TabbarItem icon="records" to="/order">订单</TabbarItem>
-		  <TabbarItem icon="contact" to="/userManage">用户</TabbarItem>
-		  <TabbarItem icon="wap-home" to="/mine">我的</TabbarItem>
+		  <TabbarItem icon="records" to="/order" @click="setActive(0)">订单</TabbarItem>
+		  <TabbarItem icon="contact" to="/userManage" @click="setActive(1)">用户</TabbarItem>
+		  <TabbarItem icon="wap-home" to="/mine"  @click="setActive(2)">我的</TabbarItem>
 		</Tabbar>
 </template>
 
@@ -13,8 +13,17 @@ export default {
   components: { Tabbar, TabbarItem },
   data() {
     return {
-      active: -1
+      active: 0
     };
+  },
+  methods:{
+      setActive(param){
+        console.info(param);
+         this.$store.state.active = param;
+      }
+  },
+  mounted(){
+    this.active = this.$store.state.active;
   }
 };
 </script>

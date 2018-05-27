@@ -71,7 +71,7 @@ export default{
 	    	var req = {};
 		    req.userId = this.userId;
 		    req.pageNumber = 1; 
-		    req.pageSize = 10
+		    req.pageSize = 100
 		    if(this.keyWords != ""){
 		    	req.userNum=this.keyWords;
 		    }

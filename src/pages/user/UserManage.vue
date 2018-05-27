@@ -26,7 +26,7 @@
 					<div>总编号用户</div>
 					<div>{{summar.tSeriUserCount}}</div>
 				</div>
-				<div class="item item-right">
+				<div class="item item-right" @click="totalCodeUsers" >
 					<div>本月新增编号用户</div>
 					<div>{{summar.mSeriUserCount}}</div>
 				</div>

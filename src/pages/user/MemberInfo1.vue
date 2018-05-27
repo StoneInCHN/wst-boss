@@ -23,7 +23,7 @@
 						<span>{{memberInfo.fixPhone2}}</span>
 						<span v-if="memberInfo.fixPhone3">,</span>
 						<span>{{memberInfo.fixPhone3}}</span>
-						<span>{{memberInfo.createDate | formatDate }}</span>
+						<!-- <span>{{memberInfo.createDate | formatDate }}</span> -->
 					</Col>
 					<Col span="4">
 						<span class="green right" v-if="memberInfo.qrCodeId">已关联</span>
