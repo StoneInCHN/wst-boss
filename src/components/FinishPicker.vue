@@ -33,11 +33,11 @@ export default {
   mounted() {
     this.$api.mine
       .listShopEmp({
-        userId: 1
+        userId: this.userId
       })
       .then(r => {
         console.log({ r });
-        this.listSrc = r [];
+        this.listSrc = r || [];
       })
   },
   data() {

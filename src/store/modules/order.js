@@ -4,7 +4,9 @@ const state = {
   pendingList: [],
   processingList: [],
   otherList: [],
-  checkedOrders: []
+  checkedOrders: [],
+  empIncome: 0,
+  empId: "-1"
 };
 
 const actions = {
@@ -19,6 +21,12 @@ const actions = {
   },
   setCheckedOrders({ commit }, checkedOrders) {
     commit(types.ORDER_CHECKED_ORDERS, checkedOrders);
+  },
+  setEmpIncome({ commit }, empIncome) {
+    commit(types.ORDER_EMP_INCOME, empIncome);
+  },
+  setEmpId({ commit }, empId) {
+    commit(types.ORDER_EMP_ID, empId);
   }
 };
 
@@ -60,7 +68,9 @@ const getters = {
     return lists;
   },
   //选中的订单
-  checkedOrders: state => state.checkedOrders 
+  checkedOrders: state => state.checkedOrders ,
+  empIncome: state => state.empIncome,
+  empId: state => state.empId
 };
 
 const mutations = {
@@ -79,6 +89,12 @@ const mutations = {
   [types.ORDER_CHECKED_ORDERS](state, checkedOrders) {
     state.checkedOrders = checkedOrders;
     sessionStorage.setItem("checkedOrders", JSON.stringify(checkedOrders));
+  },
+  [types.ORDER_EMP_INCOME](state, empIncome) {
+    state.empIncome = empIncome;
+  },
+  [types.ORDER_EMP_ID](state, empId) {
+    state.empId = empId;
   }
 };
 

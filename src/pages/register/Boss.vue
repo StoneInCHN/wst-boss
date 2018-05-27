@@ -17,18 +17,16 @@
         <Field label="店铺地址:" v-model="shop.shopAddr" required type="textarea" placeholder="请输入店铺地址" :error-message="errorMessage.shopAddr" @blur="validateCheck('shopAddr')"/>
         <div class="qr-uploader">
             <label class="required">微信收款码:</label>
-            <div class="uploader-view-img" v-show="wxPayCodeUrlShow" @click.stop.prevent="viewWxHandel" :style="wxViewStyle">
-              <Icon class="remove-img" name="delete" @click="removeWxPayUrl"/>
-            </div>
+            <div class="uploader-view-img" v-show="wxPayCodeUrlShow" @click.stop.prevent="viewWxHandel" :style="wxViewStyle" />
+            <Icon class="remove-img" v-show="wxPayCodeUrlShow" name="delete" @click="removeWxPayUrl"/>
             <Uploader class="uploder" :after-read="uploaderWxPayImg" v-show="!wxPayCodeUrlShow">
                 <Icon name="add"/>
             </Uploader>
         </div>
         <div class="qr-uploader">
             <label class="required">支付宝收款码:</label>
-            <div class="uploader-view-img" v-show="alipayCodeUrlShow" @click.stop.prevent="viewAliHandle" :style="aliViewStyle">
-               <Icon class="remove-img" name="delete" @click="removeAliPayUrl"/>
-            </div>
+            <div class="uploader-view-img" v-show="alipayCodeUrlShow" @click.stop.prevent="viewAliHandle" :style="aliViewStyle"/>
+            <Icon class="remove-img" v-show="alipayCodeUrlShow" name="delete" @click="removeAliPayUrl"/>
             <Uploader class="uploder" :after-read="uploaderAliPayImg" v-show="!alipayCodeUrlShow">
                 <Icon name="add"/>
             </Uploader>
@@ -169,20 +167,11 @@ export default {
       this.alipayCodeViewUrl = file.content;
       this.shop.alipayCodeUrl = "111";
     },
-    viewWxHandel() {
+    viewWxHandel(e) {
       ImagePreview([this.wxPayCodeViewUrl])
-      /** 
-      const instance = ImagePreview([this.wxPayCodeViewUrl]);
-      setTimeout(() => {
-        instance.close();
-      }, 2000);
-      */
     },
     viewAliHandle() {
-      const instance = ImagePreview([this.alipayCodeViewUrl]);
-      setTimeout(() => {
-        instance.close();
-      }, 2000);
+      ImagePreview([this.alipayCodeViewUrl]);
     },
     validateCheck(fieldNmae) {
       const result = validate.check(
@@ -259,6 +248,9 @@ export default {
       left: -7px;
       font-size: 14px;
       color: #f44;
+    }
+    .remove-img {
+      margin-left: 20px;
     }
     .uploder {
       margin-left: 30px;

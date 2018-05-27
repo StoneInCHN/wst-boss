@@ -29,8 +29,8 @@
        <div class="order-item-footer" v-if="isPending">
            <ul :disabled="eventDisabled">
                <li class="refuse"><a @click="refuse">拒绝</a></li>
-               <li><a @click="pending2Finish">送达</a></li>
-               <li><a @click="toggleAssign">指派</a></li>
+               <li><a @click="showCommission('pending2Finish')">送达</a></li>
+               <li><a @click="showCommission('openAssign')">指派</a></li>
                <li><a @click="call">电话</a></li>
            </ul>
        </div>
@@ -38,7 +38,7 @@
            <ul :disabled="eventDisabled">
                <li class="refuse"><a @click="unDelivery">无法送到</a></li>
                <li><a @click="toggleFinish">送达</a></li>
-               <li><a @click="toggleReassignment">改派</a></li>
+               <li><a @click="showCommission('openReassignment')">改派</a></li>
                <li><a @click="call">电话</a></li>
            </ul>
        </div>
@@ -57,19 +57,37 @@
    <p v-else>
      暂无订单信息
    </p>
-   <AssignPicker v-if="openAssign" :close="toggleAssign" :isBatch="false"  :id="item.id"/>
-   <AssignPicker v-if="openReassignment" :close="toggleReassignment" :isBatch="false" :id="item.id" type="PROCESSING"/>
-   <PayMethodPicker v-if="openFinish" :isBatch="false" :close="toggleFinish" :id="item.id"/>
+   <AssignPicker v-if="openAssign" :close="toggleAssign" :isBatch="false"  :item="item"/>
+   <AssignPicker v-if="openReassignment" :close="toggleReassignment" :isBatch="false" :item="item" type="PROCESSING"/>
+   <AssignPicker v-if="openAssign2Finish" :close="toggleAssign2Finish" :isBatch="false" :item="item" type="assign2Finish"/>
+   <PayMethodPicker v-if="openFinish" :isBatch="false" :close="toggleFinish" :item="item"/>
    <Actionsheet v-model="showCall" :actions="callActions" cancel-text="取消" />
+   <Popup
+    v-model="showCommissionModel"
+    class="commission-popup"
+   >
+    <h4>提成金额</h4>
+      <Field
+        v-model="commissionPrice"
+        label="提成金额"
+        required
+        placeholder="请输入提成金额"
+        @blur="checkCommissionPrice"
+        :error-message="errorMsgshow.commissionPrice"
+      />
+      <Button size="large" :loading="commissionLoading" @click="onCommissionConfirm">确定</Button>
+   </Popup>
   </div>
 </template>
 <script>
-import { Tag, Checkbox, Actionsheet, Popup, Picker, Dialog, Toast } from "vant";
+import { Tag, Checkbox, Actionsheet, Popup, Picker, Dialog, Toast, Field, Button } from "vant";
 import AssignPicker from "@/components/AssignPicker";
 import PayMethodPicker from "@/components/PayMethodPicker";
 import { mapActions, mapGetters } from "vuex";
 import { CobPayTypeEnum } from "@/shared/consts";
 import { formatDateTime } from "@/utils";
+import validate from "../../utils/validate";
+
 export default {
   name: "orderItem",
   components: {
@@ -81,7 +99,9 @@ export default {
     Dialog,
     Toast,
     AssignPicker,
-    PayMethodPicker
+    PayMethodPicker,
+    Field,
+    Button
   },
   props: {
     item: {
@@ -103,6 +123,7 @@ export default {
       checked: false,
       openAssign: false,
       openReassignment: false,
+      openAssign2Finish:false,
       openFinish: false,
       showCall: false,
       callActions: [],
@@ -112,7 +133,14 @@ export default {
         REJECT: "已拒绝",
         CANCEL: "已取消"
       },
-      nextShowPayMethod: false
+      nextShowPayMethod: false,
+      showCommissionModel:false,
+      errorMsgshow:{
+        commissionPrice:""
+      },
+      commissionLoading: false,
+      commissionPrice: "",
+      assignType:"openAssign"
     };
   },
   computed: {
@@ -140,6 +168,18 @@ export default {
       const { oStatus } = this.item;
       const { otherStatus } = this;
       return otherStatus[oStatus] || "";
+    },
+    checkRules() {
+      return [
+        {
+          el: this.commissionPrice,
+          alias: "commissionPrice",
+          rules: [
+            { rule: "isNoNull", msg: "提成金额不能为空" },
+            { rule: "isPrice", msg: "提成金额只能为大于或等于0的数字且最多两位小数" }
+          ]
+        }
+      ];
     }
   },
   watch: {
@@ -163,7 +203,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["setCheckedOrders", "setPendingList", "setProcessingList"]),
+    ...mapActions(["setCheckedOrders", "setPendingList", "setProcessingList", "setEmpIncome"]),
     call() {
       console.log("call");
       this.callActions = [];
@@ -177,6 +217,42 @@ export default {
       console.log("打电话", item.name);
       location.href = `tel:${item.name}`
     },
+    showCommission(key){
+      this.showCommissionModel = true
+      this.assignType = key
+      console.log({key})
+      console.log(`this.assignType == ${this.assignType}`)
+      //toggleAssign
+    },
+    onCommissionConfirm(){
+      const result = validate.checkAll(this.checkRules);
+      if (result) {
+        result.forEach(item => {
+          this.errorMsgshow[item.alias] = item.msg;
+        });
+      } else {
+        //this.commissionLoading = true;
+        const commissionPrice = this.commissionPrice;
+        console.log({commissionPrice})
+        if(this.assignType === "openReassignment"){
+          this.toggleReassignment()
+        }else if(this.assignType === "pending2Finish"){
+          this.toggleAssign2Finish()
+        }else{
+          this.toggleAssign()
+        }
+        this.setEmpIncome(commissionPrice)
+        this.showCommissionModel = false
+      }
+    },
+    checkCommissionPrice() {
+      const result = validate.check(
+        this.checkRules.filter(item => {
+          return item.alias === "commissionPrice";
+        })
+      );
+      this.errorMsgshow.commissionPrice = result ? result : "";
+    },
     toggleAssign() {
       this.$api.mine
       .listShopEmp({
@@ -184,28 +260,31 @@ export default {
       })
       .then(r => {
         if(r&&r.length>0){
+          console.log(`this.openAssign == ${this.openAssign}`)
             this.openAssign = !this.openAssign;
-            setTimeout(() => {
-              if (this.nextShowPayMethod) {
-                this.openFinish = !this.openFinish;
-              }
-            }, 100);
         }else{
           Toast.fail("请添加配送员");
         }
       });
-
-
     },
-    //不指派 直接完成
-    pending2Finish() {
-      this.toggleAssign();
-      setTimeout(() => {
-        this.nextShowPayMethod = !this.nextShowPayMethod;
-      }, 500);
-    },
+   
     toggleReassignment() {
       this.openReassignment = !this.openReassignment;
+    },
+     //不指派 直接完成
+    toggleAssign2Finish(type){
+      console.log(`this.openAssign2Finish == ${this.openAssign2Finish}`)
+      console.log({type})
+      if(this.openAssign2Finish){
+        this.openAssign2Finish = false
+        if("openFinish" === type){
+          setTimeout(() => {
+            this.openFinish = true;
+          }, 100);
+        }
+      }else{
+        this.openAssign2Finish = true
+      }
     },
     toggleFinish() {
       console.log("关闭 finish ");
@@ -388,4 +467,18 @@ export default {
     display: flex;
   }
 }
+ .commission-popup {
+    width: 80vw;
+    padding: 1rem;
+    box-sizing: border-box;
+    h4 {
+      text-align: center;
+      padding: 0.5rem 0;
+    }
+    .van-button--default {
+      margin-top: 0.5rem;
+      background-color: #00a0e9;
+      color: #fff;
+    }
+  }
 </style>

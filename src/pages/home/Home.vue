@@ -20,8 +20,8 @@ export default {
     };
   },
   created() {
-    //this.initTest(); 
-    this.initData()
+    this.initTest(); 
+    //this.initData()
   },
   computed: {
     ...mapGetters(["userId"])
@@ -51,12 +51,12 @@ export default {
           .then(r => {
             console.log({ r });
             this.setCobType(r.cobPayType);
-            this.$router.push("/order")
+            this.$router.replace("/order")
           });
       }
     },
     initTest(){
-      let userId = 13;
+      let userId = 1;
       this.$api.common
         .auth({
           userId: userId
@@ -69,7 +69,7 @@ export default {
         .then(r => {
           console.log({ r });
           this.setCobType(r.cobPayType);
-          this.$router.push("/order")
+          this.$router.replace("/order")
         });
     }
   }

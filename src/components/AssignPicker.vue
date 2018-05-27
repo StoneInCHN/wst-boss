@@ -22,8 +22,8 @@ export default {
       type: Boolean,
       default: false
     },
-    id: {
-      type: Number | String,
+    item: {
+      type: Object,
       default: 0
     },
     title: {
@@ -46,8 +46,6 @@ export default {
       .then(r => {
         this.listSrc = r;
       });
-    const _this = this;
-    console.log({ _this });
   },
   data() {
     return {
@@ -55,7 +53,14 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["checkedOrders", "userId", "pendingList", "processingList", "editable"]),
+    ...mapGetters([
+      "checkedOrders",
+      "userId",
+      "pendingList",
+      "processingList",
+      "editable",
+      "empIncome"
+    ]),
     show() {
       return this.isShow;
     },
@@ -70,9 +75,16 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["setCheckedOrders", "setPendingList", "setProcessingList", "setEditable"]),
+    ...mapActions([
+      "setCheckedOrders",
+      "setPendingList",
+      "setProcessingList",
+      "setEditable",
+      "setEmpIncome",
+      "setEmpId"
+    ]),
     confirm(value, index) {
-      const ids = this.isBatch ? this.checkedOrders : [this.id];
+      const ids = this.isBatch ? this.checkedOrders : [this.item.id];
       const desc = this.isBatch ? `批量指派` : "单个订单指派";
       const emp = this.listSrc[index];
       if (ids && ids.length > 0) {
@@ -81,7 +93,7 @@ export default {
           oprStatus: "PROCESSING",
           userId: this.userId,
           empId: emp.id,
-          empIncome: 0
+          empIncome: this.empIncome
         };
         this.$api.order.oprSO(params).then(r => {
           Toast.success("指派成功");
@@ -92,20 +104,28 @@ export default {
             this.setPendingList(lists);
           } else {
             let lists = [];
-            debugger
             this.processingList.forEach(item => {
               if (ids.includes(item.id)) {
                 const { realName, id } = emp;
                 item.empName = realName;
                 item.empId = id;
+                item.empAmout = this.empIncome;
               }
               lists.push(item);
             });
             this.setProcessingList(lists);
-            this.setEditable(false)
-            this.setCheckedOrders([])
+            this.setEditable(false);
+            this.setCheckedOrders([]);
+            if (this.type !== "assign2Finish") {
+              this.setEmpIncome(0);
+            }
           }
-          this.close();
+          if (this.type === "assign2Finish") {
+            this.close("openFinish");
+            this.setEmpId(emp.id);
+          } else {
+            this.close();
+          }
         });
       }
     }
@@ -113,5 +133,4 @@ export default {
 };
 </script>
 <style>
-
 </style>

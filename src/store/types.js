@@ -12,5 +12,7 @@ export const ORDER_PENDING_LIST = 'ORDER_PENDING_LIST' //待处理订单
 export const ORDER_PROCESSING_LIST = 'ORDER_PROCESSING_LIST' //配送中订单
 export const ORDER_OTHER_LIST = 'ORDER_OTHER_LIST' //其他订单 （除去待处理和配送中外的订单）
 export const ORDER_CHECKED_ORDERS = 'ORDER_CHECKED_ORDERS' //批量处理时选中的ID
+export const ORDER_EMP_INCOME = 'ORDER_EMP_INCOME' //订单指派时员工提成金额
+export const ORDER_EMP_ID = 'ORDER_EMP_ID' //订单指派时员工id
 
 //mine

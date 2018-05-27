@@ -18,9 +18,9 @@ export default {
     WstPicker
   },
   props: {
-    id: {
-      type: Number | String,
-      default: 0
+    item: {
+      type: Object,
+      require: true
     },
     close: {
       type: Function
@@ -30,21 +30,19 @@ export default {
   data() {
     return {
       title: "请选择支付方式",
-      currentPayType: "",
-      listSrc: []
+      currentPayType: ""
     };
   },
   computed: {
-    ...mapGetters(["checkedOrders", "userId", "cobType", "processingList"]),
-    columns() {
-      let lists = [];
-      if (this.listSrc.length > 0) {
-        this.listSrc.forEach(item => {
-          lists.push(item.realName);
-        });
-      }
-      return lists;
-    },
+    ...mapGetters([
+      "checkedOrders",
+      "userId",
+      "cobType",
+      "processingList",
+      "pendingList",
+      "empIncome",
+      "empId"
+    ]),
     payMethodColumns() {
       const types = this.cobType || [];
       console.log({ types });
@@ -56,44 +54,50 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["setProcessingList"]),
+    ...mapActions([
+      "setProcessingList",
+      "setPendingList",
+      "setEmpIncome",
+      "setEmpId"
+    ]),
     confirm(value, index) {
       const payType = this.cobType[index];
-      const ids = this.isBatch ? this.checkedOrders : [this.id];
-      const emp = this.listSrc[index];
-      const empId = emp ? emp.id || 0 : 0;
-      const empIncome = prompt("请输入员工提成金额", 0);
-      if (empIncome) {
-        const income = parseInt(empIncome);
-        if (income || income === 0) {
-          if (ids && ids.length > 0) {
-            const params = {
-              entityIds: ids,
-              oprStatus: "FINISH",
-              cobType: payType,
-              userId: this.userId,
-              empId,
-              empIncome
-            };
-            this.$api.order.oprSO(params).then(r => {
-              Toast.success("操作成功");
-              const lists = this.processingList.filter(item => {
-                return !ids.includes(item.id);
-              });
-              this.setProcessingList(lists);
-              this.close();
+      const ids = this.isBatch ? this.checkedOrders : [this.item.id];
+      const { empId } = this.item.oStatus === "PROCESSING" ? this.item : this;
+      const empIncome =
+        this.item.oStatus === "PROCESSING"
+          ? this.item.empAmout
+          : this.empIncome;
+      if (ids && ids.length > 0) {
+        const params = {
+          entityIds: ids,
+          oprStatus: "FINISH",
+          cobType: payType,
+          userId: this.userId,
+          empIncome,
+          empId
+        };
+        this.$api.order.oprSO(params).then(r => {
+          Toast.success("操作成功");
+          if (this.item.oStatus === "PENDING") {
+            const lists = this.pendingList.filter(item => {
+              return !ids.includes(item.id);
             });
+            this.setPendingList(lists);
+          } else if (this.item.oStatus === "PROCESSING") {
+            const lists = this.processingList.filter(item => {
+              return !ids.includes(item.id);
+            });
+            this.setProcessingList(lists);
           }
-        } else {
-          Toast("请输入数字");
-        }
-      } else {
-        console.log("你点了取消");
+          this.setEmpIncome(0);
+          this.setEmpId(-1);
+          this.close();
+        });
       }
     }
   }
 };
 </script>
 <style>
-
 </style>
