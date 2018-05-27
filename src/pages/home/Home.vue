@@ -20,8 +20,8 @@ export default {
     };
   },
   created() {
-    this.initTest(); 
-    //this.initData()
+    //this.initTest(); 
+    this.initData()
   },
   computed: {
     ...mapGetters(["userId"])

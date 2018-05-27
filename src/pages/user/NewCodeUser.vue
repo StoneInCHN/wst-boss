@@ -167,8 +167,8 @@ export default{
 			.then(res => {
 			    	Toast.success("操作成功");
 			    	
-			    	this.$router.push('/user/totalCodeUsers');  
-			    	location.history.go(-1);  
+			    	//this.$router.push('/user/totalCodeUsers');  
+			    	window.history.go(-1);
 			})
 			.catch(error => {
 			        console.log(error);
