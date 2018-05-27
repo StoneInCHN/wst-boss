@@ -153,7 +153,8 @@ export default{
 		    	})
 		},
 		formatDate(dateTime) {
-      		return utils.formatDateTime(dateTime, "yyyy-MM-dd hh:mm");
+			const date = new Date(dateTime)
+      		return dateTime?utils.formatDateTime(date, "yyyy-MM-dd hh:mm"):""
     	},
     	formatPayType(payKey){
     		if(payKey == 'ALIPAY'){

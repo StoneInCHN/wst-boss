@@ -4,7 +4,7 @@
 			<div>
 				<Row>
 					<Col span="6"><span>{{memberInfo.serialNo}}</span></Col>
-					<Col span="12">{{memberInfo.addrInfo}}</Col>					
+					<Col span="12">{{ `${memberInfo.addrInfo} ${memberInfo.doorNum || ""}` }}</Col>					
 					<Col span="6"><span class="right">{{memberInfo.realName}}</span></Col>
 				</Row>
 			</div>
@@ -56,226 +56,234 @@
 </template>
 
 <script>
-import { Row, Col, Dialog, Toast } from 'vant'
-import {mapGetters} from 'vuex'
+import { Row, Col, Dialog, Toast } from "vant";
+import { mapGetters } from "vuex";
 import { formatDateTime } from "@/utils";
-export default{
-	computed: { ...mapGetters([ "userId"]) },
-	name: "UserCard",
-	components: { Row, Col, Dialog, Toast },
-	props: {
-        memberInfo: Object,
-        memberList: Array,
-        keyWords: String,
+export default {
+  computed: { ...mapGetters(["userId"]) },
+  name: "UserCard",
+  components: { Row, Col, Dialog, Toast },
+  props: {
+    memberInfo: Object,
+    memberList: Array,
+    keyWords: String
+  },
+  data() {
+    return {
+      config: {},
+			urlPre: "http://test.yeager.vip",
+			tempQrCode:""
+    };
+  },
+  methods: {
+    addCoupon() {
+      this.$store.state.seriUser = this.memberInfo;
+      this.$router.push("/user/addCoupon");
     },
-    data () {
-		return {			
-	        config: {},
-			urlPre: 'http://test.yeager.vip',
-		}
-	},
-	methods: {
-		addCoupon(){
-			this.$store.state.seriUser = this.memberInfo;
-			this.$router.push('/user/addCoupon');
-		},
-		addOrder(){
-			this.$store.state.seriUser = this.memberInfo;
-			this.$router.push('/user/addOrder');
-		},
-		deleteItem(){
-			Dialog.confirm({
-			  title: '提示',
-			  message: '确认要删除编号用户吗？'
-			}).then(() => {
-				var req = {};
-			    req.userId = this.userId;
-			    req.entityId=this.memberInfo.id;
-				this.$api.user.deleteSeriUser(req)
-				.then(res => {
-				    //if(res.code = "0000"){
-				    	//刷新 编号用户列表 数据
-				    	this.$emit('refreshSeriUsers');
-				    	Toast.success("操作成功");
-				    //}	        
-				})
-				.catch(error => {
-				        console.log(error);
-				});
-			  
-			  
-			}).catch(() => {
-			  // on cancel
-			});
-		},
-		editItem(){
-			console.info(this.memberInfo);
-			this.$store.state.seriUser = this.memberInfo;
-			this.$router.push('/user/editCodeUser');
-		},
-		addQr(){
-        	this.$wechat.scanQRCode({
-	          needResult: 1,
-	          scanType: [ 'qrCode' ],
-	          desc: 'scanQRCode desc',
-	          success: (res) => {
-	            let url = res.resultStr;
-	            let paramsObj = {};
-			    const paramsArrays = url.split("?")[1].split("&");	
-			    paramsArrays.forEach(item => {
-			      paramsObj[item.split("=")[0]] = item.split("=")[1];
-			    });
-	            if (url && url.indexOf(this.urlPre) !== -1) {
-	            	//从url中获取qrCodeId	  
-	            	if (paramsObj.id) {
-	            		this.memberInfo.qrCodeId = paramsObj.id;
-	            		this.edit();
-	            	}
-	            } else {
-	              Toast.fail("请扫描正确的二维码");
-	            }
-	          },
-	          cancel: (res) => {
-	          	console.inf(res);
-	            this.$wechat.closeWindow();
-	          }
-	        })
-		},
-		edit(){
-				var seriUser = {};
-			    seriUser.userId = this.userId;
-			    seriUser.entityId = this.memberInfo.id;
-			    seriUser.userNum = this.memberInfo.userNum;
-			    seriUser.realName = this.memberInfo.realName;
-			    seriUser.addrInfo = this.memberInfo.addrInfo;
-			    seriUser.doorNum = this.memberInfo.doorNum;
-			    seriUser.qrCodeId = this.memberInfo.qrCodeId;
-			    seriUser.remark = this.memberInfo.remark;
-
-			    seriUser.contactPhone = this.memberInfo.contactPhone;
-			    seriUser.contactPhone2 = this.memberInfo.contactPhone2;
-			    seriUser.contactPhone3 = this.memberInfo.contactPhone3;
-
-			    seriUser.fixPhone = this.memberInfo.fixPhone;
-			    seriUser.fixPhone2 = this.memberInfo.fixPhone2;
-			    seriUser.fixPhone3 = this.memberInfo.fixPhone3;
-				this.$api.user.editSeriUser(seriUser)
-				.then(res => {
-				    //if(res.code = "0000"){
-				    	//刷新 编号用户列表 数据
-				    	this.$emit('refreshSeriUsers');
-				    	//Toast.success("操作成功");
-				    //}	        
-				})
-				.catch(error => {
-				        console.log(error);
-				});	
-		},
-		confirmClear(){
-			Dialog.confirm({
-			  title: '提示',
-			  message: '确认要解除编号和二维码的关联吗？'
-			}).then(() => {			
-			 	var req = {};
-		        req.userId = this.userId;
-		        req.entityId = this.memberInfo.id;
-				this.$api.user.unbindQrCode(req)
-				.then(res => {
-				    this.memberInfo.qrCodeId = null;	
-				    this.$emit('refreshSeriUsers');
-				    Toast.success("操作成功");        
-				})
-				.catch(error => {
-				        console.log(error);
-				});
-			}).catch(() => {
-			  // on cancel
-			});
+    addOrder() {
+      this.$store.state.seriUser = this.memberInfo;
+      this.$router.push("/user/addOrder");
+    },
+    deleteItem() {
+      Dialog.confirm({
+        title: "提示",
+        message: "确认要删除编号用户吗？"
+      })
+        .then(() => {
+          var req = {};
+          req.userId = this.userId;
+          req.entityId = this.memberInfo.id;
+          this.$api.user
+            .deleteSeriUser(req)
+            .then(res => {
+              //if(res.code = "0000"){
+              //刷新 编号用户列表 数据
+              this.$emit("refreshSeriUsers");
+              Toast.success("操作成功");
+              //}
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        })
+        .catch(() => {
+          // on cancel
+        });
+    },
+    editItem() {
+      console.info(this.memberInfo);
+      this.$store.state.seriUser = this.memberInfo;
+      this.$router.push("/user/editCodeUser");
+    },
+    addQr() {
+      this.$wechat.scanQRCode({
+        needResult: 1,
+        scanType: ["qrCode"],
+        desc: "scanQRCode desc",
+        success: res => {
+          let url = res.resultStr;
+          let paramsObj = {};
+          const paramsArrays = url.split("?")[1].split("&");
+          paramsArrays.forEach(item => {
+            paramsObj[item.split("=")[0]] = item.split("=")[1];
+          });
+          if (url && url.indexOf(this.urlPre) !== -1) {
+            //从url中获取qrCodeId
+            if (paramsObj.id) {
+						//	this.memberInfo.qrCodeId = paramsObj.id;
+							this.tempQrCode = paramsObj.id
+              this.edit();
+            }
+          } else {
+            Toast.fail("请扫描正确的二维码");
+          }
         },
-        getConfig () {
-		      let params = {
-		        userName: location.href.split('#')[0]
-		      }
-		      this.$api.common.jsApiConfig(params).then(res => {
-
-		        if (res && res.code === '0000' && res.msg) {
-		          this.config.jsapi_ticket = res.msg.jsapi_ticket
-		          this.config.signature = res.msg.signature
-		          this.config.nonceStr = res.msg.nonceStr
-		          this.config.timestamp = res.msg.timestamp
-		          this.config.url = res.msg.url
-		          this.config.appId = res.msg.appId
-		        }
-				
-		        if (this.config) {		        	
-		          this.$wechat.config({
-		            debug: false,
-		            appId: this.config.appId,
-		            timestamp: this.config.timestamp,
-		            nonceStr: this.config.nonceStr,
-		            signature: this.config.signature,
-		            jsApiList: [
-		              'scanQRCode',
-		              'closeWindow'
-		            ]
-		          });
-		          this.$wechat.error((res) => {
-		            console.log('wx loading error')
-		          })
-		        }
-		      }).catch(error => {
-		        console.log(error)
-		      })
-    	},
+        cancel: res => {
+          console.inf(res);
+          this.$wechat.closeWindow();
+        }
+      });
     },
-	filters: {
-	    formatDate(time) {
-	      var date = new Date(time);
-	      return formatDateTime(date, "yyyy-MM-dd hh:mm");
-	    }
-	},
-    mounted(){
-    	this.getConfig();
+    edit() {
+      var seriUser = {};
+      seriUser.userId = this.userId;
+      seriUser.entityId = this.memberInfo.id;
+      seriUser.userNum = this.memberInfo.userNum;
+      seriUser.realName = this.memberInfo.realName;
+      seriUser.addrInfo = this.memberInfo.addrInfo;
+      seriUser.doorNum = this.memberInfo.doorNum;
+      seriUser.qrCodeId = this.tempQrCode;
+      seriUser.remark = this.memberInfo.remark;
+
+      seriUser.contactPhone = this.memberInfo.contactPhone;
+      seriUser.contactPhone2 = this.memberInfo.contactPhone2;
+      seriUser.contactPhone3 = this.memberInfo.contactPhone3;
+
+      seriUser.fixPhone = this.memberInfo.fixPhone;
+      seriUser.fixPhone2 = this.memberInfo.fixPhone2;
+      seriUser.fixPhone3 = this.memberInfo.fixPhone3;
+      this.$api.user
+        .editSeriUser(seriUser)
+        .then(res => {
+          //if(res.code = "0000"){
+					//刷新 编号用户列表 数据
+					this.memberInfo.qrCodeId = this.tempQrCode;
+					this.tempQrCode = ""
+          this.$emit("refreshSeriUsers");
+          //Toast.success("操作成功");
+          //}
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    confirmClear() {
+      Dialog.confirm({
+        title: "提示",
+        message: "确认要解除编号和二维码的关联吗？"
+      })
+        .then(() => {
+          var req = {};
+          req.userId = this.userId;
+          req.entityId = this.memberInfo.id;
+          this.$api.user
+            .unbindQrCode(req)
+            .then(res => {
+              this.memberInfo.qrCodeId = null;
+              this.$emit("refreshSeriUsers");
+              Toast.success("操作成功");
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        })
+        .catch(() => {
+          // on cancel
+        });
+    },
+    getConfig() {
+      let params = {
+        userName: location.href.split("#")[0]
+      };
+      this.$api.common
+        .jsApiConfig(params)
+        .then(res => {
+          if (res && res.code === "0000" && res.msg) {
+            this.config.jsapi_ticket = res.msg.jsapi_ticket;
+            this.config.signature = res.msg.signature;
+            this.config.nonceStr = res.msg.nonceStr;
+            this.config.timestamp = res.msg.timestamp;
+            this.config.url = res.msg.url;
+            this.config.appId = res.msg.appId;
+          }
+
+          if (this.config) {
+            this.$wechat.config({
+              debug: false,
+              appId: this.config.appId,
+              timestamp: this.config.timestamp,
+              nonceStr: this.config.nonceStr,
+              signature: this.config.signature,
+              jsApiList: ["scanQRCode", "closeWindow"]
+            });
+            this.$wechat.error(res => {
+              console.log("wx loading error");
+            });
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
-}
+  },
+  filters: {
+    formatDate(time) {
+      var date = new Date(time);
+      return formatDateTime(date, "yyyy-MM-dd hh:mm");
+    }
+  },
+  mounted() {
+    this.getConfig();
+  }
+};
 </script>
 
 <style scoped>
-	.operation{
-		color:green;
-	}
-	.right{
-		float:right
-	}
-	.member_div{
-		font-size: 12px;
-		margin:18px;
-		text-align: left;
-		border-bottom:1px solid #999
-	}
-	.member_div div{
-		margin:5px 0;
-	}
-	.tel_title{
-		color:#999;
-	}
-	.green{
-		color:#fff;
-		background-color: green;
-		border-radius: 3px;
-		padding:5px;
-	}
-	.red{
-		color:#fff;
-		background-color: #EB5573;
-		border-radius: 3px;
-		padding:5px;
-	}
-	.card_footer{
-		color:#4CC78D;		
-		text-align: right;
-	}
-	.card_footer span{
-		padding:0 5px;
-	}
+.operation {
+  color: green;
+}
+.right {
+  float: right;
+}
+.member_div {
+  font-size: 12px;
+  margin: 18px;
+  text-align: left;
+  border-bottom: 1px solid #999;
+}
+.member_div div {
+  margin: 5px 0;
+}
+.tel_title {
+  color: #999;
+}
+.green {
+  color: #fff;
+  background-color: green;
+  border-radius: 3px;
+  padding: 5px;
+}
+.red {
+  color: #fff;
+  background-color: #eb5573;
+  border-radius: 3px;
+  padding: 5px;
+}
+.card_footer {
+  color: #4cc78d;
+  text-align: right;
+}
+.card_footer span {
+  padding: 0 5px;
+}
 </style>

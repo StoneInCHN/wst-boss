@@ -3,9 +3,7 @@
    <div  v-if="item" class="order-item">
        <section class="order-item-section">
            <p>{{item.createDate | formatDate }}</p>
-           <Tag v-if="!isOther" type="primary">{{payType}}</Tag>
-          <!-- <Tag v-if="isOther" type="primary">{{item.seriUserNum}}</Tag> -->
-           <Tag v-else type="primary">{{item.seriUserNum}}</Tag>
+           <Tag type="primary">{{item.seriUserNum}}</Tag>
        </section>
        <section class="order-item-section">
          <h6>{{item.addrInfo.fullAddr}}</h6>
@@ -20,6 +18,7 @@
            <span>{{`￥${orderItem.amount}`}}</span>
        </section>
        <section class="order-item-section">
+         <Tag v-if="!isOther" type="primary" plain class="pay-type">{{payType}}</Tag>
          <p class="total-price">{{`合计:￥${item.amount}`}}</p>
        </section>
        <section class="order-item-section" v-if="isProcessing">
@@ -80,7 +79,17 @@
   </div>
 </template>
 <script>
-import { Tag, Checkbox, Actionsheet, Popup, Picker, Dialog, Toast, Field, Button } from "vant";
+import {
+  Tag,
+  Checkbox,
+  Actionsheet,
+  Popup,
+  Picker,
+  Dialog,
+  Toast,
+  Field,
+  Button
+} from "vant";
 import AssignPicker from "@/components/AssignPicker";
 import PayMethodPicker from "@/components/PayMethodPicker";
 import { mapActions, mapGetters } from "vuex";
@@ -123,7 +132,7 @@ export default {
       checked: false,
       openAssign: false,
       openReassignment: false,
-      openAssign2Finish:false,
+      openAssign2Finish: false,
       openFinish: false,
       showCall: false,
       callActions: [],
@@ -134,13 +143,13 @@ export default {
         CANCEL: "已取消"
       },
       nextShowPayMethod: false,
-      showCommissionModel:false,
-      errorMsgshow:{
-        commissionPrice:""
+      showCommissionModel: false,
+      errorMsgshow: {
+        commissionPrice: ""
       },
       commissionLoading: false,
       commissionPrice: "",
-      assignType:"openAssign"
+      assignType: "openAssign"
     };
   },
   computed: {
@@ -161,8 +170,8 @@ export default {
     eventDisabled() {
       return this.editable;
     },
-    oStatusType(){
-      return this.item.oStatus
+    oStatusType() {
+      return this.item.oStatus;
     },
     otherStatusText() {
       const { oStatus } = this.item;
@@ -176,7 +185,10 @@ export default {
           alias: "commissionPrice",
           rules: [
             { rule: "isNoNull", msg: "提成金额不能为空" },
-            { rule: "isPrice", msg: "提成金额只能为大于或等于0的数字且最多两位小数" }
+            {
+              rule: "isPrice",
+              msg: "提成金额只能为大于或等于0的数字且最多两位小数"
+            }
           ]
         }
       ];
@@ -203,7 +215,12 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["setCheckedOrders", "setPendingList", "setProcessingList", "setEmpIncome"]),
+    ...mapActions([
+      "setCheckedOrders",
+      "setPendingList",
+      "setProcessingList",
+      "setEmpIncome"
+    ]),
     call() {
       console.log("call");
       this.callActions = [];
@@ -215,16 +232,16 @@ export default {
     },
     callSomeone(item) {
       console.log("打电话", item.name);
-      location.href = `tel:${item.name}`
+      location.href = `tel:${item.name}`;
     },
-    showCommission(key){
-      this.showCommissionModel = true
-      this.assignType = key
-      console.log({key})
-      console.log(`this.assignType == ${this.assignType}`)
+    showCommission(key) {
+      this.showCommissionModel = true;
+      this.assignType = key;
+      console.log({ key });
+      console.log(`this.assignType == ${this.assignType}`);
       //toggleAssign
     },
-    onCommissionConfirm(){
+    onCommissionConfirm() {
       const result = validate.checkAll(this.checkRules);
       if (result) {
         result.forEach(item => {
@@ -233,16 +250,16 @@ export default {
       } else {
         //this.commissionLoading = true;
         const commissionPrice = this.commissionPrice;
-        console.log({commissionPrice})
-        if(this.assignType === "openReassignment"){
-          this.toggleReassignment()
-        }else if(this.assignType === "pending2Finish"){
-          this.toggleAssign2Finish()
-        }else{
-          this.toggleAssign()
+        console.log({ commissionPrice });
+        if (this.assignType === "openReassignment") {
+          this.toggleReassignment();
+        } else if (this.assignType === "pending2Finish") {
+          this.toggleAssign2Finish();
+        } else {
+          this.toggleAssign();
         }
-        this.setEmpIncome(commissionPrice)
-        this.showCommissionModel = false
+        this.setEmpIncome(commissionPrice);
+        this.showCommissionModel = false;
       }
     },
     checkCommissionPrice() {
@@ -255,35 +272,35 @@ export default {
     },
     toggleAssign() {
       this.$api.mine
-      .listShopEmp({
-        userId: this.userId
-      })
-      .then(r => {
-        if(r&&r.length>0){
-          console.log(`this.openAssign == ${this.openAssign}`)
+        .listShopEmp({
+          userId: this.userId
+        })
+        .then(r => {
+          if (r && r.length > 0) {
+            console.log(`this.openAssign == ${this.openAssign}`);
             this.openAssign = !this.openAssign;
-        }else{
-          Toast.fail("请添加配送员");
-        }
-      });
+          } else {
+            Toast.fail("请添加配送员");
+          }
+        });
     },
-   
+
     toggleReassignment() {
       this.openReassignment = !this.openReassignment;
     },
-     //不指派 直接完成
-    toggleAssign2Finish(type){
-      console.log(`this.openAssign2Finish == ${this.openAssign2Finish}`)
-      console.log({type})
-      if(this.openAssign2Finish){
-        this.openAssign2Finish = false
-        if("openFinish" === type){
+    //不指派 直接完成
+    toggleAssign2Finish(type) {
+      console.log(`this.openAssign2Finish == ${this.openAssign2Finish}`);
+      console.log({ type });
+      if (this.openAssign2Finish) {
+        this.openAssign2Finish = false;
+        if ("openFinish" === type) {
           setTimeout(() => {
             this.openFinish = true;
           }, 100);
         }
-      }else{
-        this.openAssign2Finish = true
+      } else {
+        this.openAssign2Finish = true;
       }
     },
     toggleFinish() {
@@ -332,7 +349,7 @@ export default {
         this.$api.order.oprSO(params).then(r => {
           //Toast.success("操作成功");
 
-          const ids = params.entityIds || []
+          const ids = params.entityIds || [];
           if (this.oStatusType === "PENDING") {
             const lists = this.pendingList.filter(item => {
               return !ids.includes(item.id);
@@ -346,18 +363,21 @@ export default {
           }
 
           let actions = "";
-          if(params.oprStatus == 'REJECT'){
+          if (params.oprStatus == "REJECT") {
             actions = "已被拒绝";
-          }else if(params.oprStatus == 'UNDELIVER') {
+          } else if (params.oprStatus == "UNDELIVER") {
             actions = "无法送达";
           }
           Dialog.alert({
-            message: '订单'+actions+'，请尽快联系用户提醒他：'+this.item.addrInfo.contactPhone,
-            confirmButtonText:'拨打电话'
+            message:
+              "订单" +
+              actions +
+              "，请尽快联系用户提醒他：" +
+              this.item.addrInfo.contactPhone,
+            confirmButtonText: "拨打电话"
           }).then(() => {
-            location.href = `tel:${this.item.addrInfo.contactPhone}`
+            location.href = `tel:${this.item.addrInfo.contactPhone}`;
           });
-
         });
       }
     }
@@ -400,6 +420,10 @@ export default {
       position: absolute;
       right: 10px;
       top: 0;
+    }
+    .pay-type {
+      position: relative;
+      margin-left: 10px;
     }
     .total-price {
       font-size: 14px;
@@ -467,18 +491,18 @@ export default {
     display: flex;
   }
 }
- .commission-popup {
-    width: 80vw;
-    padding: 1rem;
-    box-sizing: border-box;
-    h4 {
-      text-align: center;
-      padding: 0.5rem 0;
-    }
-    .van-button--default {
-      margin-top: 0.5rem;
-      background-color: #00a0e9;
-      color: #fff;
-    }
+.commission-popup {
+  width: 80vw;
+  padding: 1rem;
+  box-sizing: border-box;
+  h4 {
+    text-align: center;
+    padding: 0.5rem 0;
   }
+  .van-button--default {
+    margin-top: 0.5rem;
+    background-color: #00a0e9;
+    color: #fff;
+  }
+}
 </style>

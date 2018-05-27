@@ -139,7 +139,7 @@ export default{
     		//console.info("this.goodsList",this.goodsList);
     		var totalAmount = 0;
     		for (var i = 0; i < this.goodsList.length; i++) {
-    			totalAmount += this.goodsList[i].gCount * this.goodsList[i].gAmount;
+    			totalAmount += this.goodsList[i].gCount * this.goodsList[i].gDistPrice;
     		}
     		return totalAmount;
     	},
