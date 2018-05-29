@@ -156,7 +156,14 @@ export default{
 	            if (url && url.indexOf(this.urlPre) !== -1) {
 	            	//从url中获取qrCodeId	  
 	            	if (paramsObj.id) {
-	            		this.userCard.qrCodeId = paramsObj.id;
+	            		Dialog.confirm({
+						  title: '提示',
+						  message: '确认要将编号关联此二维码？'
+						}).then(() => {
+						  	this.userCard.qrCodeId = paramsObj.id;
+						}).catch(() => {
+						  // on cancel
+						});
 	            	}
 	            } else {
 	              Toast.fail("请扫描正确的二维码");

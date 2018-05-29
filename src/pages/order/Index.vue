@@ -2,11 +2,11 @@
   <div class="order" :class="{ 'order-edit': editable }">    
       <Button v-if="currentState !== 'OTHER'" class="order-setting" size="small" @click="setting">{{settingText}}</Button>
       <ul class="order-setting-edit" >
-          <li v-if="currentState === 'PENDING'"><a @click="batchRefuse">拒绝</a></li>
+          <li v-if="currentState === '_OTHER'"><a @click="batchRefuse">拒绝</a></li>
           <li v-if="currentState === 'PENDING'"><a @click="batchAssign">指派</a></li>
           <li v-if="currentState === 'PROCESSING'"><a @click="batchReassignment">改派</a></li>
-          <li v-if="currentState === '_OTHER'"><a @click="batchService">送达</a></li>
-          <li v-if="currentState === 'PROCESSING'"><a @click="batchUnDelivery">无法送达</a></li>
+          <li v-if="currentState === 'PROCESSING' || currentState === 'PENDING'"><a @click="batchService">送达</a></li>
+          <li v-if="currentState === '_OTHER'"><a @click="batchUnDelivery">无法送达</a></li>
       </ul>
       
       <Tabs :actice="active"  class="order-tabs" @click="onTabsClick">
@@ -197,15 +197,26 @@ export default {
       const desc = `批量送达`;
       //console.log({ desc, ids });
       if (ids && ids.length > 0) {
-        const params = {
-          entityIds: ids,
-          cobType: "OFFLINE_TICKET",
-          oprStatus: "FINISH",
-          userId: this.userId,
-          empId: 2,
-          empIncome: "8"
-        };
-        this.oprSO(params);
+          Dialog.confirm({
+            title: "批量送达",
+            message: `确定要将当前选择的订单的状态改为送达吗`
+          })
+          .then(() => {
+            const params = {
+              entityIds: ids,
+              cobType: "OFFLINE_TICKET",
+              oprStatus: "FINISH",
+              userId: this.userId,
+              empId: 2,
+              empIncome: "8"
+            };
+            this.oprSO(params);
+          })
+          .catch(() => {
+            // on cancel
+          });
+      } else {
+        Toast("请先选择订单");
       }
     },
     batchReassignment() {
@@ -245,7 +256,7 @@ export default {
       }
     },
     batchOption(openFlag, msg) {
-      debugger
+      //debugger
       const ids = this.checkedOrders;
       if (ids && ids.length > 0) {
         this[openFlag] = true;
@@ -253,9 +264,11 @@ export default {
         Toast(msg);
       }
     },
-    oprSO(params) {
+    oprSO(params,curStatus) {
       if (params) {
         this.$api.order.oprSO(params).then(r => {
+          this.getListByStatus(["PENDING"], "PENDING");
+          this.getListByStatus(["PROCESSING"], "PROCESSING");
           Toast.success("操作成功");
         });
       }

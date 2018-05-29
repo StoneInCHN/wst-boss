@@ -12,8 +12,8 @@
 				  <Field label="店铺名称" v-model="store.shopName" placeholder="请输入店铺名称"/>
 				  <Field label="店家座机号" v-model="store.telphoneNum" placeholder="请输入区号 请输入电话号码" type="tel"/>
 				  <Field label="店家手机号" v-model="store.mobilePhoneNum" placeholder="请输入11位手机号码" type="tel" :error-message="telError"/>
-				  <Field label="营业时间"  v-model="store.bussBeginTime" placeholder="请选择开始时间" type="datetime" @click="selectTime(0)"/>
-				  <Field label=" "  v-model="store.bussEndTime" placeholder="请选择开始时间"  type="datetime" @click="selectTime(1)"/>
+				  <Field label="营业时间"  v-model="store.bussBeginTime" placeholder="请选择开始时间" type="datetime" :error-message="beginTimeError" @click="selectTime(0)"/>
+				  <Field label=" "  v-model="store.bussEndTime" placeholder="请选择结束时间"  type="datetime" :error-message="endTimeError" @click="selectTime(1)"/>
 				  <Field label="店铺公告" v-model="store.notice" placeholder="100字以内，例如本店保证下单后，2小时之内送到" type="textarea"/>
 				</CellGroup>
 			</div>	
@@ -46,11 +46,29 @@ export default{
 		    minDate: null,
 		    show:false,
 		    tips:"",
-		    telError:null
+		    telError:null,
+		    beginTimeError:null,
+		    endTimeError:null,
 		}
 	},
 	methods: {
+		validate(){
+			var valid = true;
+			if(!this.store.bussBeginTime){
+				valid = false;
+        		this.beginTimeError = "请选择营业开始时间!";
+        	}
+        	if(!this.store.bussEndTime){
+        		valid = false;
+        		this.endTimeError = "请选择营业结束时间!";	
+        	}
+			return valid;
+		},
         save () {
+        	var valid = this.validate();
+        	if(!valid){
+        		return;
+        	}
         	this.store.userId = this.userId;
         	this.$api.mine.updateInfo(this.store)
 			.then(res => {

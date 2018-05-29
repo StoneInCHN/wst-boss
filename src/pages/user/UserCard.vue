@@ -92,8 +92,8 @@ export default{
 						  title: '提示',
 						  message: '确认要将编号关联此二维码？'
 						}).then(() => {
-						  	this.userCard.qrCodeId = paramsObj.id;
-	            			this.edit();
+						  	// this.userCard.qrCodeId = paramsObj.id;
+	            			this.edit(paramsObj.id);
 						}).catch(() => {
 						  // on cancel
 						});
@@ -108,7 +108,7 @@ export default{
 	          }
 	        })
 		},
-		edit(){
+		edit(qrCodeId){
 			    var seriUser = {};
 			    seriUser.userId = this.userId;
 			    seriUser.entityId = this.userCard.id;
@@ -116,7 +116,7 @@ export default{
 			    seriUser.realName = this.userCard.realName;
 			    seriUser.addrInfo = this.userCard.addrInfo;
 			    seriUser.doorNum = this.userCard.doorNum;
-			    seriUser.qrCodeId = this.userCard.qrCodeId;
+			    seriUser.qrCodeId = qrCodeId;
 			    seriUser.remark = this.userCard.remark;
 
 			    seriUser.contactPhone = this.userCard.contactPhone;

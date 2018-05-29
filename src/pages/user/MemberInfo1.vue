@@ -72,7 +72,7 @@ export default {
     return {
       config: {},
 			urlPre: "http://test.yeager.vip",
-			tempQrCode:""
+			//tempQrCode:""
     };
   },
   methods: {
@@ -130,9 +130,15 @@ export default {
           if (url && url.indexOf(this.urlPre) !== -1) {
             //从url中获取qrCodeId
             if (paramsObj.id) {
-						//	this.memberInfo.qrCodeId = paramsObj.id;
-							this.tempQrCode = paramsObj.id
-              this.edit();
+    						Dialog.confirm({
+                  title: '提示',
+                  message: '确认要将编号关联此二维码？'
+                }).then(() => {
+                    // this.tempQrCode = paramsObj.id
+                    this.edit(paramsObj.id);
+                }).catch(() => {
+                  // on cancel
+                });
             }
           } else {
             Toast.fail("请扫描正确的二维码");
@@ -144,7 +150,7 @@ export default {
         }
       });
     },
-    edit() {
+    edit(qrCodeId) {
       var seriUser = {};
       seriUser.userId = this.userId;
       seriUser.entityId = this.memberInfo.id;
@@ -152,7 +158,8 @@ export default {
       seriUser.realName = this.memberInfo.realName;
       seriUser.addrInfo = this.memberInfo.addrInfo;
       seriUser.doorNum = this.memberInfo.doorNum;
-      seriUser.qrCodeId = this.tempQrCode;
+      // seriUser.qrCodeId = this.tempQrCode;
+      seriUser.qrCodeId = qrCodeId;
       seriUser.remark = this.memberInfo.remark;
 
       seriUser.contactPhone = this.memberInfo.contactPhone;
@@ -165,13 +172,10 @@ export default {
       this.$api.user
         .editSeriUser(seriUser)
         .then(res => {
-          //if(res.code = "0000"){
 					//刷新 编号用户列表 数据
-					this.memberInfo.qrCodeId = this.tempQrCode;
-					this.tempQrCode = ""
+					this.memberInfo.qrCodeId = qrCodeId;
+					// this.tempQrCode = ""
           this.$emit("refreshSeriUsers");
-          //Toast.success("操作成功");
-          //}
         })
         .catch(error => {
           console.log(error);
