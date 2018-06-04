@@ -17,7 +17,7 @@
         <Field label="店铺地址:" v-model="shop.shopAddr" required type="textarea" placeholder="请输入店铺地址" :error-message="errorMessage.shopAddr" @blur="validateCheck('shopAddr')"/>
         <div class="qr-uploader">
             <label class="required">微信收款码:</label>
-            <div class="uploader-view-img" v-show="wxPayCodeUrlShow" @click.stop.prevent="viewWxHandel" :style="wxViewStyle" />
+            <div class="uploader-view-img" v-show="wxPayCodeUrlShow" @click.stop.prevent="previewHandel('wx')" :style="wxViewStyle" />
             <Icon class="remove-img" v-show="wxPayCodeUrlShow" name="delete" @click="removeWxPayUrl"/>
             <Uploader class="uploder" :after-read="uploaderWxPayImg" v-show="!wxPayCodeUrlShow">
                 <Icon name="add"/>
@@ -25,14 +25,14 @@
         </div>
         <div class="qr-uploader">
             <label class="required">支付宝收款码:</label>
-            <div class="uploader-view-img" v-show="alipayCodeUrlShow" @click.stop.prevent="viewAliHandle" :style="aliViewStyle"/>
+            <div class="uploader-view-img" v-show="alipayCodeUrlShow" @click.stop.prevent="previewHandel('alipay')" :style="aliViewStyle"/>
             <Icon class="remove-img" v-show="alipayCodeUrlShow" name="delete" @click="removeAliPayUrl"/>
             <Uploader class="uploder" :after-read="uploaderAliPayImg" v-show="!alipayCodeUrlShow">
                 <Icon name="add"/>
             </Uploader>
         </div>
       </CellGroup>
-      <Button class="btn-submit" size="large" @click.stop.prevent="submit1">免费注册</Button>
+      <Button class="btn-submit" size="large" @click.stop.prevent="submit">免费注册</Button>
   </form>
 </template>
 
@@ -47,6 +47,7 @@ import {
   ImagePreview
 } from "vant";
 import validate from "../../utils/validate";
+import lrz from "lrz";
 export default {
   name: "RegisterBoss",
   components: {
@@ -72,6 +73,10 @@ export default {
       },
       wxPayCodeViewUrl: "",
       alipayCodeViewUrl: "",
+      previewUrl: {
+        wx: "",
+        alipay: ""
+      },
       errorMessage: {
         shopName: "",
         shopAccout: "",
@@ -94,12 +99,12 @@ export default {
     },
     wxViewStyle() {
       return {
-        backgroundImage: `url(${this.wxPayCodeViewUrl})`
+        backgroundImage: `url(${this.previewUrl.wx})`
       };
     },
     aliViewStyle() {
       return {
-        backgroundImage: `url(${this.alipayCodeViewUrl})`
+        backgroundImage: `url(${this.previewUrl.alipay})`
       };
     },
     checkRules() {
@@ -128,16 +133,12 @@ export default {
         {
           el: this.shop.ownerName,
           alias: "ownerName",
-          rules: [
-            { rule: "isNoNull", msg: "店主姓名不能为空" }
-          ]
+          rules: [{ rule: "isNoNull", msg: "店主姓名不能为空" }]
         },
         {
           el: this.shop.shopAddr,
           alias: "shopAddr",
-          rules: [
-            { rule: "isNoNull", msg: "店铺地址不能为空" }
-          ]
+          rules: [{ rule: "isNoNull", msg: "店铺地址不能为空" }]
         }
       ];
     }
@@ -150,28 +151,51 @@ export default {
       this.shop.alipayCodeUrl = "";
     },
     uploaderWxPayImg(file) {
-      console.log({ file });
-      let param = new FormData();
-      param.append("file", file, file.filename);
-      param.append("imageType", "PAY_QRCODE");
-      console.log({ param });
-      console.log(param.get('file'))
-      this.$api.common.uploadImg(param).then(r => {
-        console.log({ r });
-      });
-      this.wxPayCodeViewUrl = file.content;
-      this.shop.wxPayCodeUrl = "11111";
+      this.fileOperation(file, "wx");
     },
     uploaderAliPayImg(file) {
-      console.log(file);
-      this.alipayCodeViewUrl = file.content;
-      this.shop.alipayCodeUrl = "111";
+      this.fileOperation(file, "alipay");
     },
-    viewWxHandel(e) {
-      ImagePreview([this.wxPayCodeViewUrl])
+    fileOperation(file, type = wx) {
+      if (!file) {
+        return false;
+      }
+      //当上传图片大于200kb时，需要进行压缩处理后在上传
+      const size = file.file.size;
+      if (size && size > 200 * 1024) {
+        let imgInfo = lrz(file.content)
+          .then(res => {
+            const fileObj = {
+              content: res.base64,
+              orientation: 1,
+              file: new File([res.file], file.file.name),
+              type: file.file.type
+            };
+            this.uploadFile(fileObj, type);
+          })
+          .catch(error => {
+            console.log("lrz catch res:", error);
+          })
+          .always(() => {});
+      } else {
+        this.uploadFile(file, type);
+      }
     },
-    viewAliHandle() {
-      ImagePreview([this.alipayCodeViewUrl]);
+    uploadFile(file, type) {
+      let param = new FormData();
+      param.append("file", file.file, file.file.name);
+      param.append("imageType", "PAY_QRCODE");
+      this.$api.common.uploadImg(param).then(r => {
+        if (type === "wx") {
+          this.shop.wxPayCodeUrl = r.desc;
+        } else {
+          this.shop.alipayCodeUrl = r.desc;
+        }
+        this.previewUrl[type] = file.content;
+      });
+    },
+    previewHandel(type) {
+      ImagePreview([this.previewUrl[type]]);
     },
     validateCheck(fieldNmae) {
       const result = validate.check(
@@ -181,7 +205,7 @@ export default {
       );
       this.errorMessage[fieldNmae] = result ? result : "";
     },
-    submit1() {
+    submit() {
       const result = validate.checkAll(this.checkRules);
       if (result) {
         result.forEach(item => {
@@ -189,15 +213,12 @@ export default {
         });
       } else {
         console.log("验证通过");
-      }
-    },
-    submit() {
-      const params = this.shop;
-      console.log({ params });
-      this.$api.common.regSeller(params).then(r => {
+         const params = this.shop;
+        this.$api.common.regSeller(params).then(r => {
         console.log({ r });
         this.$router.replace("/registerSuccess");
       });
+      }
     }
   }
 };
