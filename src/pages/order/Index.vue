@@ -3,9 +3,10 @@
       <Button v-if="currentState !== 'OTHER'" class="order-setting" size="small" @click="setting">{{settingText}}</Button>
       <ul class="order-setting-edit" >
           <li v-if="currentState === '_OTHER'"><a @click="batchRefuse">拒绝</a></li>
-          <li v-if="currentState === 'PENDING'"><a @click="batchAssign">指派</a></li>
-          <li v-if="currentState === 'PROCESSING'"><a @click="batchReassignment">改派</a></li>
-          <li v-if="currentState === 'PROCESSING' || currentState === 'PENDING'"><a @click="batchService">送达</a></li>
+          <li v-if="currentState === 'PENDING'"><a @click="showCommission('openAssign')">指派</a></li>
+          <li v-if="currentState === 'PROCESSING'"><a @click="showCommission('openReassignment')">改派</a></li>
+          <li v-if="currentState === 'PENDING'"><a @click="showCommission('openAssign2Finish')">送达</a></li>
+          <li v-if="currentState === 'PROCESSING'"><a @click="batchFinish()">送达</a></li>
           <li v-if="currentState === '_OTHER'"><a @click="batchUnDelivery">无法送达</a></li>
       </ul>
       
@@ -53,7 +54,24 @@
       <Footer/>
       <AssignPicker v-if="openAssign" :isBatch="true" :close="closeAssgin" />
       <AssignPicker v-if="openReassignment" :isBatch="true" :close="closeReassignment" type="PROCESSING"/>
-      <FinishPicker v-if="openFinish" :isBatch="true" :close="closeFinish"/>
+      <AssignPicker v-if="openAssign2Finish" :close="closeAssign2Finish" :isBatch="true" type="assign2Finish"/>
+      <PayMethodPicker v-if="openFinish" :isBatch="true" :close="closeFinish" type="processing2Finish"/>
+      <PayMethodPicker v-if="openFinish4Assign" :isBatch="true" :close="closeFinish4Assign" type="assign2Finish"/>
+       <Popup
+          v-model="showCommissionModel"
+          class="commission-popup"
+        >
+          <h4>提成金额</h4>
+            <Field
+              v-model="commissionPrice"
+              label="提成金额"
+              required
+              placeholder="请输入提成金额"
+              @blur="checkCommissionPrice"
+              :error-message="errorMsgshow.commissionPrice"
+            />
+            <Button size="large" :loading="commissionLoading" @click="onCommissionConfirm">确定</Button>
+        </Popup>
   </div>
 </template>
 <script>
@@ -61,9 +79,11 @@ import Header from "@/pages/wechat/Header";
 import Footer from "@/pages/wechat/Footer";
 import OrderItem from "@/pages/order/OrderItem";
 import AssignPicker from "@/components/AssignPicker";
+import PayMethodPicker from "@/components/PayMethodPicker";
 import Item from "@/pages/order/Item";
-import { Tab, Tabs, Icon, Button, Toast, Dialog } from "vant";
+import { Tab, Tabs, Icon, Button, Toast, Dialog, Field, Popup } from "vant";
 import { mapActions, mapGetters } from "vuex";
+import validate from "../../utils/validate";
 
 export default {
   name: "order",
@@ -78,7 +98,10 @@ export default {
     Dialog,
     Header,
     Footer,
-    AssignPicker
+    AssignPicker,
+    PayMethodPicker,
+    Field,
+    Popup
   },
   data() {
     return {
@@ -91,9 +114,18 @@ export default {
       ],
       openAssign: false,
       openReassignment: false,
+      openAssign2Finish: false,
       openFinish: false,
+      openFinish4Assign: false,
       isLoading: false,
-      count: 0
+      count: 0,
+      showCommissionModel: false,
+      commissionPrice: "",
+      commissionLoading: false,
+      errorMsgshow: {
+        commissionPrice: ""
+      },
+      assignType: "openAssign"
     };
   },
   mounted() {
@@ -106,10 +138,26 @@ export default {
       "pendingList",
       "processingList",
       "otherList",
-      "editable"
+      "editable",
+      "empIncome"
     ]),
     settingText() {
       return this.editable ? "取消" : "管理";
+    },
+    checkRules() {
+      return [
+        {
+          el: this.commissionPrice,
+          alias: "commissionPrice",
+          rules: [
+            { rule: "isNoNull", msg: "提成金额不能为空" },
+            {
+              rule: "isPrice",
+              msg: "提成金额只能为大于或等于0的数字且最多两位小数"
+            }
+          ]
+        }
+      ];
     }
   },
   methods: {
@@ -119,9 +167,10 @@ export default {
       "setProcessingList",
       "setOtherList",
       "setEditable",
-      "setToken", 
+      "setToken",
       "setUserId",
-      "setCobType"
+      "setCobType",
+      "setEmpIncome"
     ]),
     setting() {
       this.setCheckedOrders([]);
@@ -133,6 +182,14 @@ export default {
         Toast.succes("刷新成功:" + this.count);
         this.isLoading = false;
       }, 500);
+    },
+    checkCommissionPrice() {
+      const result = validate.check(
+        this.checkRules.filter(item => {
+          return item.alias === "commissionPrice";
+        })
+      );
+      this.errorMsgshow.commissionPrice = result ? result : "";
     },
     onTabsClick(i) {
       this.setEditable(false);
@@ -187,49 +244,82 @@ export default {
       }
     },
     batchAssign() {
-      this.batchOption("openAssign" , "请先选择要指派的订单");
+      this.batchOption("openAssign", "请先选择要指派的订单");
     },
     closeAssgin() {
       this.openAssign = false;
     },
-    batchService() {
+    showCommission(key){
       const ids = this.checkedOrders;
       const desc = `批量送达`;
-      //console.log({ desc, ids });
+      console.log({ desc, ids });
       if (ids && ids.length > 0) {
-          Dialog.confirm({
-            title: "批量送达",
-            message: `确定要将当前选择的订单的状态改为送达吗`
-          })
-          .then(() => {
-            const params = {
-              entityIds: ids,
-              cobType: "OFFLINE_TICKET",
-              oprStatus: "FINISH",
-              userId: this.userId,
-              empId: 2,
-              empIncome: "8"
-            };
-            this.oprSO(params);
-          })
-          .catch(() => {
-            // on cancel
-          });
-      } else {
+        this.showCommissionModel = true;
+        this.assignType = key;
+      }else{
         Toast("请先选择订单");
       }
     },
+    onCommissionConfirm() {
+      const result = validate.checkAll(this.checkRules);
+      if (result) {
+        result.forEach(item => {
+          this.errorMsgshow[item.alias] = item.msg;
+        });
+      } else {
+        const commissionPrice = this.commissionPrice;
+        if (this.assignType === "openReassignment") {
+          this.batchReassignment();
+        }else if(this.assignType === "openAssign2Finish"){
+          this.openAssign2Finish = true;
+        }else {
+          this.batchAssign();
+        }
+        this.setEmpIncome(commissionPrice);
+        this.showCommissionModel = false;
+      }
+    },
+    batchService() {
+      const ids = this.checkedOrders;
+      if(ids && ids.length > 0){
+        this.showCommissionModel = true;
+      }else{
+         Toast("请先选择订单");
+      }
+    },
     batchReassignment() {
-      this.batchOption("openReassignment" , "请先选择要改派的订单");
+      this.batchOption("openReassignment", "请先选择要改派的订单");
     },
     closeReassignment() {
       this.openReassignment = false;
     },
+    //不指派 直接送达
+    closeAssign2Finish(type){
+      if (this.openAssign2Finish) {
+        this.openAssign2Finish = false;
+        setTimeout(() => {
+          this.openFinish4Assign = true;
+        }, 100);
+      } else {
+        this.openAssign2Finish = true;
+      }
+    },
+    //送达
     batchFinish() {
-      this.batchOption("openFinish", "请先选择订单");
+      const ids = this.checkedOrders;
+        const desc = `批量送达`;
+        console.log({ desc, ids });
+        if (ids && ids.length > 0) {
+          this.openFinish = true;
+        } else {
+          Toast("请先选择订单");
+        }
     },
     closeFinish() {
       this.openFinish = false;
+    },
+    closeFinish4Assign(){
+      this.openFinish4Assign = false
     },
     batchUnDelivery() {
       const ids = this.checkedOrders;
@@ -256,7 +346,6 @@ export default {
       }
     },
     batchOption(openFlag, msg) {
-      //debugger
       const ids = this.checkedOrders;
       if (ids && ids.length > 0) {
         this[openFlag] = true;
@@ -264,7 +353,7 @@ export default {
         Toast(msg);
       }
     },
-    oprSO(params,curStatus) {
+    oprSO(params, curStatus) {
       if (params) {
         this.$api.order.oprSO(params).then(r => {
           this.getListByStatus(["PENDING"], "PENDING");
@@ -338,6 +427,20 @@ export default {
   }
   .van-tabs--line {
     padding-top: 44px;
+  }
+}
+.commission-popup {
+  width: 80vw;
+  padding: 1rem;
+  box-sizing: border-box;
+  h4 {
+    text-align: center;
+    padding: 0.5rem 0;
+  }
+  .van-button--default {
+    margin-top: 0.5rem;
+    background-color: #00a0e9;
+    color: #fff;
   }
 }
 </style>

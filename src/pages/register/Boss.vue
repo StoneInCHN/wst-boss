@@ -44,7 +44,8 @@ import {
   CellGroup,
   Button,
   Icon,
-  ImagePreview
+  ImagePreview,
+Toast
 } from "vant";
 import validate from "../../utils/validate";
 import lrz from "lrz";
@@ -212,10 +213,17 @@ export default {
           this.errorMessage[item.alias] = item.msg;
         });
       } else {
-        console.log("验证通过");
-         const params = this.shop;
+        const {wxPayCodeUrl, alipayCodeUrl} = this.shop 
+        if(!wxPayCodeUrl || wxPayCodeUrl ===""){
+          Toast("微信收款二维码不能为空", 1.5)
+          return 
+        }
+        if(!alipayCodeUrl || alipayCodeUrl ===""){
+          Toast("支付宝收款二维码不能为空", 1.5)
+          return 
+        }
+        const params = this.shop;
         this.$api.common.regSeller(params).then(r => {
-        console.log({ r });
         this.$router.replace("/registerSuccess");
       });
       }
@@ -253,7 +261,7 @@ export default {
     width: 100%;
     display: flex;
     align-items: center;
-    padding: 10px 15px 10px 0;
+    padding: 10px 15px;
     box-sizing: border-box;
     line-height: 24px;
     background-color: #fff;
@@ -266,7 +274,7 @@ export default {
     .required::before {
       content: "*";
       position: absolute;
-      left: -7px;
+      left: 9px;
       font-size: 14px;
       color: #f44;
     }

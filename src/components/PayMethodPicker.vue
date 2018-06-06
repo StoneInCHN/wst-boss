@@ -24,6 +24,14 @@ export default {
     },
     close: {
       type: Function
+    },
+    type: {
+      type: String,
+      default: ""
+    },
+    isBatch: {
+      type: Boolean,
+      default: false
     }
   },
   mounted() {},
@@ -61,15 +69,29 @@ export default {
       "setEmpId"
     ]),
     confirm(value, index) {
+      const params = this.getParams(index);
+      console.log({ params });
+      this.orderOperation(params)
+    },
+    getParams(index) {
       const payType = this.cobType[index];
       const ids = this.isBatch ? this.checkedOrders : [this.item.id];
-      const { empId } = this.item.oStatus === "PROCESSING" ? this.item : this;
-      const empIncome =
-        this.item.oStatus === "PROCESSING"
-          ? this.item.empAmout
-          : this.empIncome;
-      if (ids && ids.length > 0) {
-        const params = {
+      let params = {
+        entityIds: ids,
+        oprStatus: "FINISH",
+        cobType: payType,
+        userId: this.userId
+      };
+      if (!this.isBatch || this.type !== "processing2Finish") {
+        const { empId } =
+          !this.isBatch && this.item && this.item.oStatus === "PROCESSING"
+            ? this.item
+            : this;
+        const empIncome =
+          !this.isBatch && this.item && this.item.oStatus === "PROCESSING"
+            ? this.item.empAmout
+            : this.empIncome;
+        params = {
           entityIds: ids,
           oprStatus: "FINISH",
           cobType: payType,
@@ -77,24 +99,29 @@ export default {
           empIncome,
           empId
         };
-        this.$api.order.oprSO(params).then(r => {
-          Toast.success("操作成功");
-          if (this.item.oStatus === "PENDING") {
-            const lists = this.pendingList.filter(item => {
-              return !ids.includes(item.id);
-            });
-            this.setPendingList(lists);
-          } else if (this.item.oStatus === "PROCESSING") {
-            const lists = this.processingList.filter(item => {
-              return !ids.includes(item.id);
-            });
-            this.setProcessingList(lists);
-          }
-          this.setEmpIncome(0);
-          this.setEmpId(-1);
-          this.close();
-        });
       }
+      return params;
+    },
+    orderOperation(params) {
+      //非已指派 在完成
+      const ids = params.entityIds;
+      this.$api.order.oprSO(params).then(r => {
+        Toast.success("操作成功", 1.5);
+        if (this.type === "assign2Finish") {
+          const lists = this.pendingList.filter(item => {
+            return !ids.includes(item.id);
+          });
+          this.setPendingList(lists);
+        } else {
+          const lists = this.processingList.filter(item => {
+            return !ids.includes(item.id);
+          });
+          this.setProcessingList(lists);
+        }
+        this.setEmpIncome(0);
+        this.setEmpId(-1);
+        this.close();
+      });
     }
   }
 };

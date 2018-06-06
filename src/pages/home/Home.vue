@@ -20,8 +20,8 @@ export default {
     };
   },
   created() {
-    this.initTest(); 
-    //this.initData()
+    //this.initTest(); 
+    this.initData()
   },
   computed: {
     ...mapGetters(["userId"])
@@ -56,7 +56,7 @@ export default {
       }
     },
     initTest(){
-      let userId = 1;
+      let userId = 12;
       this.$api.common
         .auth({
           userId: userId

@@ -24,7 +24,7 @@ export default {
     },
     item: {
       type: Object,
-      default: 0
+      require: true
     },
     title: {
       type: String,
@@ -59,7 +59,8 @@ export default {
       "pendingList",
       "processingList",
       "editable",
-      "empIncome"
+      "empIncome",
+      "empId"
     ]),
     show() {
       return this.isShow;
@@ -88,45 +89,51 @@ export default {
       const desc = this.isBatch ? `批量指派` : "单个订单指派";
       const emp = this.listSrc[index];
       if (ids && ids.length > 0) {
-        const params = {
-          entityIds: ids,
-          oprStatus: "PROCESSING",
-          userId: this.userId,
-          empId: emp.id,
-          empIncome: this.empIncome
-        };
-        this.$api.order.oprSO(params).then(r => {
-          Toast.success("指派成功");
-          if (this.type === "PENDING") {
-            const lists = this.pendingList.filter(item => {
-              return !ids.includes(item.id);
-            });
-            this.setPendingList(lists);
-          } else {
-            let lists = [];
-            this.processingList.forEach(item => {
-              if (ids.includes(item.id)) {
-                const { realName, id } = emp;
-                item.empName = realName;
-                item.empId = id;
-                item.empAmout = this.empIncome;
+        if (!this.isBatch && this.type !== "assign2Finish") {
+          const params = {
+            entityIds: ids,
+            oprStatus: "PROCESSING",
+            userId: this.userId,
+            empId: emp.id,
+            empIncome: this.empIncome
+          };
+          this.$api.order.oprSO(params).then(r => {
+            Toast.success("指派成功");
+            if (this.type === "PENDING") {
+              const lists = this.pendingList.filter(item => {
+                return !ids.includes(item.id);
+              });
+              this.setPendingList(lists);
+            } else {
+              let lists = [];
+              this.processingList.forEach(item => {
+                if (ids.includes(item.id)) {
+                  const { realName, id } = emp;
+                  item.empName = realName;
+                  item.empId = id;
+                  item.empAmout = this.empIncome;
+                }
+                lists.push(item);
+              });
+              this.setProcessingList(lists);
+              this.setEditable(false);
+              this.setCheckedOrders([]);
+              if (this.type !== "assign2Finish") {
+                this.setEmpIncome(0);
               }
-              lists.push(item);
-            });
-            this.setProcessingList(lists);
-            this.setEditable(false);
-            this.setCheckedOrders([]);
-            if (this.type !== "assign2Finish") {
-              this.setEmpIncome(0);
             }
-          }
-          if (this.type === "assign2Finish") {
-            this.close("openFinish");
-            this.setEmpId(emp.id);
-          } else {
-            this.close();
-          }
-        });
+            if (this.type === "assign2Finish") {
+              this.close("openFinish");
+              this.setEmpId(emp.id);
+            } else {
+              this.close();
+            }
+          });
+        } else {
+          this.close("openFinish");
+          this.setEmpId(emp.id);
+          console.log("批量送达")
+        }
       }
     }
   }

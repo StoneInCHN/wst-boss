@@ -73,10 +73,13 @@ export default {
           empId: emp.id,
           empIncome: "8"
         };
+        console.log({params})
+        /**
         this.$api.order.oprSO(params).then(r => {
           Toast.success("操作成功");
           this.close();
         });
+        */
       }
     }
   }

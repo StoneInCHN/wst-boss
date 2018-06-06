@@ -198,7 +198,6 @@ export default {
     checked(newVal, oldVal) {
       const { id } = this.item;
       const desc = `的checked 监听:`;
-      console.log({ id, desc, newVal, oldVal });
       if (this.editable && id) {
         const checkedOrders = this.checkedOrders || [];
         if (newVal) {
@@ -219,7 +218,8 @@ export default {
       "setCheckedOrders",
       "setPendingList",
       "setProcessingList",
-      "setEmpIncome"
+      "setEmpIncome",
+      "setEmpId"
     ]),
     call() {
       console.log("call");
@@ -231,15 +231,11 @@ export default {
       this.showCall = !this.showCall;
     },
     callSomeone(item) {
-      console.log("打电话", item.name);
       location.href = `tel:${item.name}`;
     },
     showCommission(key) {
       this.showCommissionModel = true;
       this.assignType = key;
-      console.log({ key });
-      console.log(`this.assignType == ${this.assignType}`);
-      //toggleAssign
     },
     onCommissionConfirm() {
       const result = validate.checkAll(this.checkRules);
