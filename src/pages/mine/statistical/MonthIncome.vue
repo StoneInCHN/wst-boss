@@ -6,6 +6,7 @@
 			<Col span="8" class="h">收支明细</Col>
 			<Col span="8" class="right"><Icon  v-if="bType" name="search" @click="search"/></Col>
 		</Row>	
+		<div class="content">
 		<Tabs :active="active" @click="clickType">
 			<Tab v-for="(type,index) in allType" :title="type.name" :key="index">
 				<div class="sub-title">
@@ -27,14 +28,15 @@
 							<div v-if="detail.type == 'OUTCOME'">{{detail.empName}}</div>
 						</Col>
 						<Col span="4">
-							<div v-if="detail.type == 'INCOME'" class="income">+{{detail.amount}}</div>
-							<div v-if="detail.type == 'OUTCOME'" class="outcome">-{{detail.amount}}</div>
+							<div v-if="detail.type == 'INCOME'" class="income">+{{formatPrice(detail.amount)}}</div>
+							<div v-if="detail.type == 'OUTCOME'" class="outcome">-{{formatPrice(detail.amount)}}</div>
 							
 						</Col>				
 					</Row>			
 				</div>
 			</Tab>	
 		</Tabs>
+	    </div>
 		<Actionsheet v-model="show" title="选择年月">
 			<DatetimePicker @confirm="confirmMonth" @cancel="cancelSelect"
 			  v-model="minDate"
@@ -111,12 +113,19 @@ export default{
 		}
 	},
 	methods: {
+		formatPrice(num){
+	    	if(num){
+				return parseFloat(num).toFixed(2);
+	    	}else{
+	    		return 0;
+	    	}	    	
+	    },
 		allDetail(){
 			    this.finReport();
 				var req = {};
 		    	req.userId = this.userId;
 		    	req.ym = this.ym;
-		    	req.pageSize = 10;
+		    	req.pageSize = 500;
 		    	req.pageNumber = 1;
 		    	req.bType = this.bType;
 		    	req.payType = this.payType;
@@ -236,6 +245,9 @@ export default{
 </script>
 
 <style scoped>
+	.content{
+		padding-bottom: 80px;
+	}
 	.search{
 		margin-left: 40px;
 		text-align: right;
@@ -276,6 +288,7 @@ export default{
 	.order{
 		font-size:13px;
 		margin:10px 15px 10px 15px;
+		background-color: #fff;
 	}
 
 
