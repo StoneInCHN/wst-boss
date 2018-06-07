@@ -3,9 +3,13 @@
 			<div class="goodsDiv">
 				<Row>
 					<Col span="4" class="row"><img :src="'/wst-boss/'+goods.gPic" width="45" height="45"/></Col>
-					<Col span="12" class="green row"><span>{{goods.gName}}<span>【{{formatPrice(goods.gAmount)}}】</span></span></Col>
-					<Col span="6" class="row">
-					<!-- <input type="number" v-model="goods.gCount" class="num_input"/> -->
+					<Col span="15" class="green row">
+						<span>{{goods.gName}}
+							(<span :class="goods.distPrice?'line':''">{{formatPrice(goods.gAmount)}}</span>
+							<span v-if="goods.distPrice">{{formatPrice(goods.distPrice)}}</span>)
+						</span>
+					</Col>
+					<Col span="3" class="row">
 				    {{goods.gCount}} 桶</Col>
 					<Col span="2" class="red row big"><Icon name="close" @click="deleteGoods"/></Col>					
 				</Row>				
@@ -48,6 +52,10 @@ export default{
 </script>
 
 <style scoped>
+	.line{
+		text-decoration: line-through;
+		color:gray;
+	}
 	.big{
 		padding-top:3px;
 		font-size:16px;

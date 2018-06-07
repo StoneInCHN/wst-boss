@@ -12,10 +12,10 @@
 				  			<label>商品名称：</label> {{coupon.gNameSpec}}
 				  			</div>
 				  			<div>
-				  				<span slot="icon" class="line">
+				  				<span slot="icon" :class="coupon.distAmount?'line':''">
 				  				<label>原价：</label>{{formatPrice(coupon.distPrice)}}
 				  				</span>
-				  				<span>
+				  				<span v-if="coupon.distAmount">
 				  				<label>优惠价：</label>{{formatPrice(coupon.distAmount)}}
 				  				</span>
 				  			</div>

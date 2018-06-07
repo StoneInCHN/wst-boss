@@ -61,6 +61,10 @@ export default{
         		Toast.fail("请选择优惠商品");
         		return;
         	}
+        	if(!this.distAmount){
+        		this.tips = "请输入优惠价";
+        		return;
+        	}
         	if(this.distAmount>=this.goods.distPrice){
         		this.tips = "优惠价必须小于原价";
         		return;

@@ -97,7 +97,6 @@ export default{
 		    req.addDistMap = addDistMap;
 		    req.entityIds = deleteIds;
 		    req.distCause = this.distCause;
-		    console.info(req);
 	    	this.$api.user.saveGsDist(req)
 			.then(res => {
 			    //if(res.code = "0000"){

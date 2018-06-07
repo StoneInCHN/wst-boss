@@ -56,7 +56,8 @@ export default{
        	setGoods(item) {
        		this.goods.gId = item.id;
        		this.goods.gPic = item.picUrl;
-       		this.goods.gAmount = item.distPrice;
+       		this.goods.gAmount = item.gAmount;
+       		this.goods.distPrice = item.distPrice;
 	      	this.goods.gName = item.name;
 	      	this.showGoods = false;
 	    },
@@ -70,9 +71,10 @@ export default{
 			    	this.allGoods = [];
 			    	for (var i = 0; i < res.gList.length; i++) {
 			    		var cGoods = {};
-			    		cGoods.distPrice = res.gList[i].distPrice;
-			    		cGoods.picUrl = res.gList[i].picUrl;
 			    		cGoods.id = res.gList[i].id;
+			    		cGoods.gAmount = res.gList[i].distPrice;
+			    		cGoods.distPrice = res.distList[cGoods.id];
+			    		cGoods.picUrl = res.gList[i].picUrl;
 			    		cGoods.name = res.gList[i].gNameSpec;
 			    		cGoods.callback = this.setGoods;
 			    		this.allGoods.push(cGoods);

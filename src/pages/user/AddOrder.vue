@@ -102,16 +102,13 @@ export default{
 			console.info("lastSO",req);
 			this.$api.user.lastSO(req)
 			.then(res => {
-			    //if(res.code = "0000"){
 			    	this.goodsList = [];
 			    	if(res){
 			    		res.gCount = 1;
 			    		res.gAmount = res.gDistPrice
 			    		this.goodsList.push(res);
 			    		this.$store.state.goodsList = this.goodsList;
-			    	}
-
-			    //}	        
+			    	}     
 			})
 			.catch(error => {
 			        console.log(error);
@@ -146,7 +143,11 @@ export default{
     		console.info("this.goodsList",this.goodsList);
     		var totalAmount = 0;
     		for (var i = 0; i < this.goodsList.length; i++) {
-    			totalAmount += this.goodsList[i].gCount * this.goodsList[i].gAmount;
+    			var price = this.goodsList[i].gAmount;
+    			if (this.goodsList[i].distPrice) {
+    				price = this.goodsList[i].distPrice;
+    			}
+    			totalAmount += this.goodsList[i].gCount * price;
     		}
     		return totalAmount;
     	},
