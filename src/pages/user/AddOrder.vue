@@ -162,9 +162,20 @@ export default{
     },   
     mounted(){
     	this.seriUser = this.$store.state.seriUser; 
-    	if(this.$store.state.orderGoods.gId){
+    	var newGoods = this.$store.state.orderGoods;
+    	if(newGoods.gId){
     		this.goodsList = this.$store.state.goodsList;
-    		this.goodsList.push(this.$store.state.orderGoods);
+    		var exist = false;
+    		this.goodsList.forEach(item => {
+		        if(item.gId == newGoods.gId){
+		        	item.gCount += newGoods.gCount;
+		        	exist = true;
+		        	return;
+		        }
+		    });
+		    if (!exist) {
+		    	this.goodsList.push(newGoods);
+		    }
 			this.$store.state.orderGoods = {};
     	}else{
 			this.lastSO();
