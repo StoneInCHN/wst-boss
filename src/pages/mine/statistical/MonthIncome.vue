@@ -7,7 +7,9 @@
 			</Col>
 			<Col span="8" class="h">收支明细</Col>
 			<Col span="8" class="right">
-				<img v-if="bType" src="@/assets/images/filter.png" width="18" height="18" @click="search"/>
+				<div v-if="bType">
+					<img src="@/assets/images/filter.png" width="18" height="18" @click="search"/>
+				</div>
 			</Col>
 		</Row>	
 		<div class="content">
@@ -18,7 +20,7 @@
 						<Cell :title="ym" :value="reportValue"></Cell>
 					</CellGroup>
 				</div>				
-				<div class="order" v-for="(detail, index) in detailList" :key="index">
+				<div class="orderStatist" v-for="(detail, index) in detailList" :key="index">
 					<Row class="address">
 						<Col span="24">{{detail.addrInfo}}</Col>
 					</Row>
@@ -42,10 +44,9 @@
 	    </div>
 		<Actionsheet v-model="show" title="选择年月">
 			<DatetimePicker @confirm="confirmMonth" @cancel="cancelSelect"
-			  v-model="minDate"
-			  type="date"
-			  :min-hour="minHour"
-			  :max-hour="maxHour"
+			  v-model="currentDate"
+			  type="year-month"
+			  :min-date="minDate"
 			/>
 		</Actionsheet>
 		<Actionsheet v-model="showSelectType"  :actions="payways" cancel-text="取消"/>
@@ -70,6 +71,11 @@ export default{
 			showSelectType:false,
 			showSelectEmp:false,
 			payways: [
+				{
+		          name: '所有支付方式',
+		          key:null,
+		          callback: this.searchPay
+		        },
 		        {
 		          name: '微信',
 		          key:'WECHAT',
@@ -85,16 +91,20 @@ export default{
 		          key:'CASH',
 		          callback: this.searchPay
 		        },
-		        {
-		          name: '纸质水票',
-		          key:'PICKET',
-		          callback: this.searchPay
-		        }
-		      ],
+		        // {
+		        //   name: '纸质水票',
+		        //   key:'PICKET',
+		        //   callback: this.searchPay
+		        // },
+		    ],
 		    emps:[],
-			minHour: 0,
-		    maxHour: 31,
-		    minDate: null,
+		    empAll:{
+		    	name:'所有配送员',
+		    	key:null,
+		    	callback:this.searchEmp
+		    },
+			minDate: new Date('2018-01'),
+		    currentDate: new Date(),
 			active: 0,
 			allType: [{
 				key:'ALL',
@@ -135,9 +145,7 @@ export default{
 		    	req.empId = this.empId;
 		    	this.$api.mine.pageFinDetail(req)
 		    	.then(res =>{
-		    		//if(res.code = '0000'){
 		    			this.detailList = res;
-		    		//}
 		    	}).catch(error => {
 		    		console.error(error);
 		    	})		    
@@ -147,7 +155,6 @@ export default{
 		    	req.userId = this.userId;
 		    	this.$api.mine.finReport(req)
 		    	.then(res =>{
-		    		//if(res.code = '0000'){
 		    			this.report = res;
 		    			if(this.bType){
 		    				if(this.bType == 'INCOME'){
@@ -158,8 +165,6 @@ export default{
 		    			}else{
 		    				this.reportValue = "收入："+ this.report.monIncome+ "，支出："+ this.report.monEmpExp;
 		    			}
-		    			
-		    		//}
 		    	}).catch(error => {
 		    		console.error(error);
 		    	})
@@ -173,6 +178,12 @@ export default{
     			return "支付宝";
     		} else if(payKey == 'WECHAT'){
 				return "微信";
+    		} else if(payKey == 'CASH'){
+				return "现金";
+    		} else if(payKey == 'PICKET'){
+				return "纸质水票";
+    		} else {
+    			return "-";
     		}
     	},
     	selectMonth(){
@@ -181,6 +192,8 @@ export default{
     	clickType(index){
     		if(index == 0){
     			this.bType = null;
+    			this.payType = null;
+    			this.empId = null;
     		}else if(index == 1){
     			this.bType = 'INCOME';
     		}else if(index == 2){
@@ -210,27 +223,43 @@ export default{
     	},
     	search(){
     		if(this.bType == 'INCOME'){
+    			this.listPayType();
 				this.showSelectType = true;
 		    }else if(this.bType == 'OUTCOME'){
 		    	this.listShopEmp(); 
 				this.showSelectEmp = true;
 		    }
     	},
+    	listPayType(){
+    		this.payways.forEach(item => {
+			    if (this.payType == item.key) {
+			    	item.subname = ' √ ';
+			    } else {
+			    	item.subname = null;
+			    }
+			}); 
+    	},
     	listShopEmp(){
         	var req = {};
 		    req.userId = this.userId;
 			this.$api.mine.listShopEmp(req)
 			.then(res => {
-			    //if(res.code = "0000"){
 			    	this.emps = [];
+			    	this.emps.push(this.empAll);
 			    	for(var i=0; i<res.length;i++){
 			    		var emp = {};
 			    		emp.key = res[i].id;
 			    		emp.name = res[i].realName;
 			    		emp.callback=this.searchEmp;
 			    		this.emps.push(emp);
-			    	}
-			    //}	        
+			    	}     
+			    	this.emps.forEach(item => {
+			    		if (this.empId == item.key) {
+			    			item.subname = ' √ ';
+			    		} else {
+			    			item.subname = null;
+			    		}
+			    	});  
 			})
 			.catch(error => {
 			        console.log(error);
@@ -283,6 +312,7 @@ export default{
 		text-align: right;
 		margin:20px 0 10px 0;
 		padding-right: 15px;
+		font-size: 12px;
 	}
 	.left{
 		text-align: left;
@@ -293,10 +323,14 @@ export default{
 		font-size:14px;
 		margin:10px 0 10px 15px;
 	}
-	.order{
+	.orderStatist{
 		font-size:13px;
 		margin:10px 15px 10px 15px;
 		background-color: #fff;
+	}
+	.red{
+		color:red;
+		background-color: #000
 	}
 
 
