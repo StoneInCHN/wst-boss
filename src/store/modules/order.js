@@ -1,4 +1,5 @@
 import * as types from "../types";
+import { getItem , getBooleanItem} from '../../utils'
 
 const state = {
   pendingList: [],
@@ -6,7 +7,7 @@ const state = {
   otherList: [],
   checkedOrders: [],
   empIncome: 0,
-  empId: "-1"
+  empId: -1
 };
 
 const actions = {

@@ -10,7 +10,7 @@ const state = {
   key: sessionStorage.getItem("key") || "",
   userId: sessionStorage.getItem("userId"),
   cobType: getItem("cobType") || [] ,
-  editable: getBooleanItem("editable") || false
+  editable: false
 };
 
 const actions = {
@@ -58,7 +58,6 @@ const mutations = {
   },
   [types.COM_SET_EDITABLE](state, editable) {
     state.editable = editable;
-    sessionStorage.setItem("editable", editable);
   }
 };
 

@@ -15,15 +15,15 @@
           <p> 
             {{`${orderItem.gName} X ${orderItem.count}`}}
           </p>
-           <span>{{`￥${orderItem.amount}`}}</span>
+           <span> ￥{{orderItem.amount | firmatPrice}}</span>
        </section>
        <section class="order-item-section">
          <Tag v-if="!isOther" type="primary" plain class="pay-type">{{payType}}</Tag>
-         <p class="total-price">{{`合计:￥${item.amount}`}}</p>
+         <p class="total-price">合计:{{item.amount | firmatPrice}}</p>
        </section>
        <section class="order-item-section" v-if="isProcessing">
            <p>配送员<span>{{item.empName}}</span> </p>
-           <p>提成金额:<span>{{`${item.empAmout|| 0 } 元`}}</span></p>
+           <p>提成金额:<span>{{item.empAmout | firmatPrice}}元</span></p>
        </section>
        <div class="order-item-footer" v-if="isPending">
            <ul :disabled="eventDisabled">
@@ -48,7 +48,7 @@
                </li>
                <li>{{item.empName}}</li>
                <li>提成金额:</li>
-               <li>{{`${item.empAmout|| 0 } 元`}}</li>
+               <li>{{ item.empAmout | firmatPrice }}元</li>
            </ul>
        </div>
        <Checkbox class="order-item-checkbox" v-model="checked" v-if="editable"/>
@@ -59,7 +59,8 @@
    <AssignPicker v-if="openAssign" :close="toggleAssign" :isBatch="false"  :item="item"/>
    <AssignPicker v-if="openReassignment" :close="toggleReassignment" :isBatch="false" :item="item" type="PROCESSING"/>
    <AssignPicker v-if="openAssign2Finish" :close="toggleAssign2Finish" :isBatch="false" :item="item" type="assign2Finish"/>
-   <PayMethodPicker v-if="openFinish" :isBatch="false" :close="toggleFinish" :item="item"/>
+   <PayMethodPicker v-if="openFinish" :close="toggleFinish" :item="item"/>
+   <PayMethodPicker v-if="openFinish4Assign"  :close="closeFinish4Assign" :item="item" type="assign2Finish"/>
    <Actionsheet v-model="showCall" :actions="callActions" cancel-text="取消" />
    <Popup
     v-model="showCommissionModel"
@@ -94,7 +95,7 @@ import AssignPicker from "@/components/AssignPicker";
 import PayMethodPicker from "@/components/PayMethodPicker";
 import { mapActions, mapGetters } from "vuex";
 import { CobPayTypeEnum } from "@/shared/consts";
-import { formatDateTime } from "@/utils";
+import { formatDateTime, toDecimal2 } from "@/utils";
 import validate from "../../utils/validate";
 
 export default {
@@ -127,6 +128,9 @@ export default {
       default: false
     }
   },
+  mounted(){
+    this.checked = false;
+  },
   data() {
     return {
       checked: false,
@@ -134,6 +138,7 @@ export default {
       openReassignment: false,
       openAssign2Finish: false,
       openFinish: false,
+      openFinish4Assign: false,
       showCall: false,
       callActions: [],
       otherStatus: {
@@ -247,6 +252,8 @@ export default {
         //this.commissionLoading = true;
         const commissionPrice = this.commissionPrice;
         console.log({ commissionPrice });
+        this.setEmpIncome(commissionPrice);
+        this.showCommissionModel = false;
         if (this.assignType === "openReassignment") {
           this.toggleReassignment();
         } else if (this.assignType === "pending2Finish") {
@@ -254,8 +261,7 @@ export default {
         } else {
           this.toggleAssign();
         }
-        this.setEmpIncome(commissionPrice);
-        this.showCommissionModel = false;
+        
       }
     },
     checkCommissionPrice() {
@@ -286,13 +292,15 @@ export default {
     },
     //不指派 直接完成
     toggleAssign2Finish(type) {
-      console.log(`this.openAssign2Finish == ${this.openAssign2Finish}`);
-      console.log({ type });
       if (this.openAssign2Finish) {
         this.openAssign2Finish = false;
         if ("openFinish" === type) {
           setTimeout(() => {
             this.openFinish = true;
+          }, 100);
+        }else if("openFinish4Assign" === type){
+          setTimeout(() => {
+            this.openFinish4Assign = true;
           }, 100);
         }
       } else {
@@ -302,6 +310,9 @@ export default {
     toggleFinish() {
       console.log("关闭 finish ");
       this.openFinish = !this.openFinish;
+    },
+    closeFinish4Assign(){
+      this.openFinish4Assign = false;
     },
     refuse() {
       console.log("refuse");
@@ -382,6 +393,10 @@ export default {
     formatDate(time) {
       var date = new Date(time);
       return formatDateTime(date, "yyyy-MM-dd hh:mm");
+    },
+    firmatPrice(price){
+      price = price || 0
+      return toDecimal2(price)
     }
   }
 };
