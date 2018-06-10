@@ -13,13 +13,13 @@
        </section>
        <section v-for="orderItem in item.orderItems" :key="orderItem.gName" class="order-item-section">
           <p> 
-            {{`${orderItem.gName} X ${orderItem.count}`}}
+            {{`${orderItem.gName} x ${orderItem.count}`}}
           </p>
            <span> ￥{{orderItem.amount | firmatPrice}}</span>
        </section>
        <section class="order-item-section">
          <!-- <Tag v-if="!isOther" type="primary" plain class="pay-type">{{payType}}</Tag> -->
-         <p class="total-price">合计:￥{{item.amount | firmatPrice}}</p>
+         <p class="total-price">合计 : <span>￥{{item.amount | firmatPrice}}</span></p>
        </section>
        <section class="order-item-section" v-if="isProcessing">
            <p>配送员<span>{{item.empName}}</span> </p>
@@ -414,14 +414,14 @@ export default {
     display: flex;
     position: relative;
     font-size: 12px;
-    padding: 2px 0;
+    padding: 3px 0;
     font-weight: 200;
     h6 {
       font-weight: 500;
       font-size: 14px;
     }
     p {
-      font-size: 12px;
+      font-size: 14px;
       flex: 1;
       span {
         margin-left: 20px;
@@ -441,6 +441,10 @@ export default {
       font-weight: 500;
       text-align: right;
       padding-right: 10px;
+    }
+    .total-price span{
+      color:red;
+      margin-left:0px;
     }
   }
   .order-item-footer {
