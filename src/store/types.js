@@ -2,6 +2,7 @@
 export const COM_SET_KEY     = 'COM_SET_KEY'   //设置公共密钥
 export const COM_SET_TOKEN   = "COM_SET_TOKEN" //设置token
 export const COM_SET_USER_ID = "COM_SET_USER_ID" //设置userId
+export const COM_SET_OPEN_ID = "COM_SET_OPEN_ID" //设置userId
 export const COM_SET_COB_PAY_TYPE = "COM_SET_COB_PAY_TYPE" //设置userId
 export const COM_SET_EDITABLE = "COM_SET_EDITABLE" //设置editable
 //user

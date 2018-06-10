@@ -49,6 +49,8 @@ Toast
 } from "vant";
 import validate from "../../utils/validate";
 import lrz from "lrz";
+import { mapActions, mapGetters } from "vuex";
+
 export default {
   name: "RegisterBoss",
   components: {
@@ -92,6 +94,9 @@ export default {
     };
   },
   computed: {
+    ...mapGetters([
+      "openId"
+    ]),
     wxPayCodeUrlShow() {
       return this.shop.wxPayCodeUrl && this.shop.wxPayCodeUrl !== "";
     },
@@ -223,6 +228,7 @@ export default {
           return 
         }
         const params = this.shop;
+        Object.assign(params, {openId: this.openId})
         this.$api.common.regSeller(params).then(r => {
         this.$router.replace("/registerSuccess");
       });

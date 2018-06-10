@@ -9,6 +9,7 @@ const state = {
   token: sessionStorage.getItem("token") || "",
   key: sessionStorage.getItem("key") || "",
   userId: sessionStorage.getItem("userId"),
+  openId: sessionStorage.getItem("openId"),
   cobType: getItem("cobType") || [] ,
   editable: false
 };
@@ -23,6 +24,9 @@ const actions = {
   setUserId({ commit }, userId) {
     commit(types.COM_SET_USER_ID, userId);
   },
+  setOpenId({ commit }, openId) {
+    commit(types.COM_SET_OPEN_ID, openId);
+  },
   setCobType({ commit }, cobType) {
     commit(types.COM_SET_COB_PAY_TYPE, cobType);
   },
@@ -36,7 +40,8 @@ const getters = {
   key: state => state.key,
   userId: state => state.userId,
   cobType: state => state.cobType ,
-  editable: state => state.editable
+  editable: state => state.editable,
+  openId: state => state.openId
 };
 
 const mutations = {
@@ -51,6 +56,10 @@ const mutations = {
   [types.COM_SET_USER_ID](state, userId) {
     state.userId = userId;
     sessionStorage.setItem("userId", userId);
+  },
+  [types.COM_SET_OPEN_ID](state, openId) {
+    state.openId = openId;
+    sessionStorage.setItem("openId", openId);
   },
   [types.COM_SET_COB_PAY_TYPE](state, cobType) {
     state.cobType = cobType;

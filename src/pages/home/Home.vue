@@ -27,7 +27,7 @@ export default {
     ...mapGetters(["userId"])
   },
   methods: {
-    ...mapActions(["setToken", "setUserId", "setCobType"]),
+    ...mapActions(["setToken", "setUserId", "setCobType", "setOpenId"]),
     initData(){
       if(this.userId){        
         return;
@@ -46,12 +46,23 @@ export default {
           .then(r => {
             this.setToken(r.token);
             this.setUserId(r.userId);
-            return this.$api.common.getCobType();
+            //注册页面
+            if(paramsObj.state === 2){
+              return this.$api.common.getOpenId()
+            }else{
+              return this.$api.common.getCobType();
+            }
           })
           .then(r => {
             console.log({ r });
-            this.setCobType(r.cobPayType);
-            this.$router.replace("/order")
+            if(paramsObj.state === 2){
+              console.log('跳转到注册页面')
+              this.setOpenId(r.openId);
+              this.$router.replace("/register")
+            }else{
+              this.setCobType(r.cobPayType);
+              this.$router.replace("/order")
+            }
           });
       }
     },
