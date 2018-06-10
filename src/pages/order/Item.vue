@@ -18,8 +18,8 @@
            <span> ￥{{orderItem.amount | firmatPrice}}</span>
        </section>
        <section class="order-item-section">
-         <Tag v-if="!isOther" type="primary" plain class="pay-type">{{payType}}</Tag>
-         <p class="total-price">合计:{{item.amount | firmatPrice}}</p>
+         <!-- <Tag v-if="!isOther" type="primary" plain class="pay-type">{{payType}}</Tag> -->
+         <p class="total-price">合计:￥{{item.amount | firmatPrice}}</p>
        </section>
        <section class="order-item-section" v-if="isProcessing">
            <p>配送员<span>{{item.empName}}</span> </p>

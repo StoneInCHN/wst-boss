@@ -2,17 +2,20 @@
 	<div>
 		<Header backUrl="/statistics"/>
 		<Row>
-			<Col span="8">&nbsp;</Col>
+			<Col span="8" class="left">
+				<img src="@/assets/images/datePicker.png" width="18" height="18" @click="selectMonth"/>
+			</Col>
 			<Col span="8" class="h">收支明细</Col>
-			<Col span="8" class="right"><Icon  v-if="bType" name="search" @click="search"/></Col>
+			<Col span="8" class="right">
+				<img v-if="bType" src="@/assets/images/filter.png" width="18" height="18" @click="search"/>
+			</Col>
 		</Row>	
 		<div class="content">
 		<Tabs :active="active" @click="clickType">
 			<Tab v-for="(type,index) in allType" :title="type.name" :key="index">
 				<div class="sub-title">
 					<CellGroup>
-						<Cell :title="ym" :value="reportValue" icon="edit" @click="selectMonth">
-						</Cell>
+						<Cell :title="ym" :value="reportValue"></Cell>
 					</CellGroup>
 				</div>				
 				<div class="order" v-for="(detail, index) in detailList" :key="index">
@@ -278,8 +281,13 @@ export default{
 	}
 	.right{
 		text-align: right;
-		margin:15px auto;
+		margin:20px 0 10px 0;
 		padding-right: 15px;
+	}
+	.left{
+		text-align: left;
+		margin:20px 0 10px 0;
+		padding-left: 15px;
 	}
 	p{
 		font-size:14px;

@@ -20,32 +20,34 @@
 				</Col>
 			</Row>
 		</div>
-		<div v-if="this.userCards.length == 0">
-			<div class="container">
-				<div class="item item-left" @click="totalCodeUsers" >
-					<div>总编号用户</div>
-					<div>{{summar.tSeriUserCount}}</div>
+		<div style="margin-bottom:80px">
+			<div v-if="this.userCards.length == 0">
+				<div class="container">
+					<div class="item item-left" @click="totalCodeUsers" >
+						<div>总编号用户</div>
+						<div>{{summar.tSeriUserCount}}</div>
+					</div>
+					<div class="item item-right" @click="totalCodeUsers" >
+						<div>本月新增编号用户</div>
+						<div>{{summar.mSeriUserCount}}</div>
+					</div>
 				</div>
-				<div class="item item-right" @click="totalCodeUsers" >
-					<div>本月新增编号用户</div>
-					<div>{{summar.mSeriUserCount}}</div>
-				</div>
+				<div class="container">
+					<div class="item item-left" @click="totalOrderUsers">
+						<div>总订单用户</div>
+						<div>{{summar.tOrderUserCount}}</div>
+					</div>
+					<div class="empty">
+						<div></div>
+						<div></div>
+					</div>
+				</div>			
 			</div>
-			<div class="container">
-				<div class="item item-left" @click="totalOrderUsers">
-					<div>总订单用户</div>
-					<div>{{summar.tOrderUserCount}}</div>
-				</div>
-				<div class="empty">
-					<div></div>
-					<div></div>
-				</div>
-			</div>			
-		</div>
-		<div v-else>
-			<div>		
-				<UserCard v-for="userCard in userCards" :key="userCard.id" :userCard="userCard" :currentCode="userCard.serialNo"  @refreshSeriUsers="searchUser"/>
-			</div>		
+			<div v-else>
+				<div>		
+					<UserCard v-for="userCard in userCards" :key="userCard.id" :userCard="userCard" :currentCode="userCard.serialNo"  @refreshSeriUsers="searchUser"/>
+				</div>		
+			</div>
 		</div>
 		<NumInput :show="show" :input="keyWords" extraKey=""  @hide="hideNumInput" @input="inputKey"/>
 		<Footer/>
@@ -69,7 +71,7 @@ export default{
 			summar:{},
 			userCards:[],
 			type:0,
-			searchTips:"请输入二维码编号",
+			searchTips:"请输入用户编号",
 			show:false,
 			keyWords:"",
 

@@ -37,7 +37,7 @@
 import { Panel, CellGroup, Field, Button, Cell, Icon, Dialog, Toast } from 'vant'
 import Header from "../wechat/Header"
 import {mapGetters} from 'vuex'
-import NumInput from "../../components/NumInput"
+import NumInput from "@/components/NumInput"
 import { checkTel } from "@/utils";
 
 export default{

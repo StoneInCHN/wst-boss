@@ -8,7 +8,7 @@
 						<div class="search_title">总编号用户</div>
 					</Col>
 					<Col span="19">
-						<Search v-model="keyWords" placeholder="输入用户编号搜索" 
+						<Search v-model="keyWords" placeholder="输入用户编号" 
 								show-action background="#fff" @search="onSearch">
 			  				<div slot="action" @click="onSearch" class="searchBtn">
 			  					<Button type="primary" size="small">搜索</Button>
@@ -93,7 +93,7 @@ export default{
 
 <style scoped>
 	.totalCode{
-		margin-bottom: 50px;
+		margin-bottom: 80px;
 	}
 	.fixed {
 	  position: fixed;
