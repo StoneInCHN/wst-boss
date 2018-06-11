@@ -70,7 +70,7 @@ export default {
         telphoneNum: "",
         ownerName: "",
         shopAddr: "",
-        wxOid: "",
+        wxOid: this.openId,
         wxPayCodeUrl: "",
         alipayCodeUrl: ""
       },
@@ -228,7 +228,7 @@ export default {
           return 
         }
         const params = this.shop;
-        Object.assign(params, {openId: this.openId})
+        Object.assign(params, {wxOid: this.openId})
         this.$api.common.regSeller(params).then(r => {
         this.$router.replace("/registerSuccess");
       });

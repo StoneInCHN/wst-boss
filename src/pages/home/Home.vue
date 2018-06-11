@@ -1,8 +1,6 @@
 <template>
 	<div>
 		<Header/>
-		
-		<Footer/>
 	</div>
 </template>
 
@@ -20,24 +18,26 @@ export default {
     };
   },
   created() {
-    //this.initTest(); 
-    this.initData()
+    //this.initTest();
+    this.initData();
   },
   computed: {
     ...mapGetters(["userId"])
   },
   methods: {
     ...mapActions(["setToken", "setUserId", "setCobType", "setOpenId"]),
-    initData(){
+    initData() {
+      /** 
       if(this.userId){        
         return;
       }
+      */
       let paramsObj = {};
       const paramsArrays = location.search.substring(1).split("&");
       paramsArrays.forEach(item => {
         paramsObj[item.split("=")[0]] = item.split("=")[1];
       });
-      if (paramsObj.code) {
+      if (paramsObj.code && paramsObj.state === "0") {
         this.$api.common
           .wxAuthToken({
             authCode: paramsObj.code,
@@ -47,26 +47,29 @@ export default {
             this.setToken(r.token);
             this.setUserId(r.userId);
             //注册页面
-            if(paramsObj.state === 2){
-              return this.$api.common.getOpenId()
-            }else{
-              return this.$api.common.getCobType();
-            }
+            return this.$api.common.getCobType();
           })
           .then(r => {
-            console.log({ r });
-            if(paramsObj.state === 2){
-              console.log('跳转到注册页面')
-              this.setOpenId(r.openId);
-              this.$router.replace("/register")
-            }else{
-              this.setCobType(r.cobPayType);
-              this.$router.replace("/order")
-            }
+            this.setCobType(r.cobPayType);
+            this.$router.replace("/order");
+          });
+      } else if (paramsObj.state === "2") {
+        const params = {
+          authCode: paramsObj.code,
+          pageId: paramsObj.state
+        }
+        this.$api.common
+          .getOpenId(params)
+          .then(r => {
+            this.setOpenId(r.openId);
+            this.$router.replace("/register");
+          })
+          .catch(e => {
+            Toast(e.message)
           });
       }
     },
-    initTest(){
+    initTest() {
       let userId = 13;
       this.$api.common
         .auth({
@@ -80,7 +83,7 @@ export default {
         .then(r => {
           console.log({ r });
           this.setCobType(r.cobPayType);
-          this.$router.replace("/order")
+          this.$router.replace("/order");
         });
     }
   }
