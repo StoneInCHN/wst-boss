@@ -93,7 +93,7 @@ export default{
 
 <style scoped>
 	.totalCode{
-		margin-bottom: 150px;
+		padding-bottom: 80px;
 	}
 	.fixed {
 	  position: fixed;

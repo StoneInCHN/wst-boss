@@ -20,7 +20,7 @@
 				</Col>
 			</Row>
 		</div>
-		<div style="margin-bottom:150px">
+		<div class="main-content">
 			<div v-if="this.userCards.length == 0">
 				<div class="container">
 					<div class="item item-left" @click="totalCodeUsers" >
@@ -162,6 +162,9 @@ export default{
 </script>
 
 <style scoped>
+	.main-content{
+		padding-bottom:80px
+	}
 	.selectText{
 		text-align: right;
 	    font-size: 14px;

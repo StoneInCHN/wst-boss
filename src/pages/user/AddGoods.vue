@@ -4,7 +4,7 @@
 		<Panel>
 			<div slot="header" class="header">
 				<Cell title="添加商品" class="cell">
-			    	<Button type="primary" size="small" @click="save">完成</Button>
+			    	<Button class="green-btn" size="small" @click="save">完成</Button>
 			  	</Cell>
 			</div>
 			<Row class="gRow" v-if="goods.gId">
@@ -113,5 +113,6 @@ export default{
 	.green-btn{
 		background-color:#0a0;
 		border-radius: 5px;
+		color:#fff;
 	}
 </style>
