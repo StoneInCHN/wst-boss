@@ -20,7 +20,7 @@
 				</Col>
 			</Row>
 		</div>
-		<div style="margin-bottom:80px">
+		<div style="margin-bottom:150px">
 			<div v-if="this.userCards.length == 0">
 				<div class="container">
 					<div class="item item-left" @click="totalCodeUsers" >

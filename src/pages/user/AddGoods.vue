@@ -7,19 +7,23 @@
 			    	<Button type="primary" size="small" @click="save">完成</Button>
 			  	</Cell>
 			</div>
-			<Row class="gRow">
+			<Row class="gRow" v-if="goods.gId">
 				<Col span="3">
 					<img :src="'/wst-boss/'+goods.gPic" width="35" height="35"/>
 			     </Col>
 				<Col span="12">
-				  <Field label="" v-model="goods.gName" placeholder="请选择购买商品"  @click="showAllGoods" @focus="hideKeyboard"/>
+				  <Field label="" v-model="goods.gName" disabled/>
 				  
 				 </Col>
 			     <Col span="9">
 					<Stepper v-model="goods.gCount" :min="1" :max="100"  :default-value="1" class="step"/>
-			     </Col>
-				
-			</Row>	
+			     </Col>				
+			</Row>
+			<Row class="gRow">
+				<Col span="24">
+					<Button class="green-btn" bottom-action @click="showAllGoods">请选择需要购买的商品</Button>
+				</Col>
+			</Row>
 		</Panel>
 		<Actionsheet  v-model="showGoods" :actions="allGoods" cancel-text="取消"/>
 	</div>
@@ -97,7 +101,7 @@ export default{
 		padding-top: 10px;
 	}
 	.gRow{
-		margin:0 15px;
+		margin:15px;
 	}
 	.header{
 		margin:15px 15px 0 15px;
@@ -106,4 +110,8 @@ export default{
 	.cell{
 		padding: 0;
 	}	
+	.green-btn{
+		background-color:#0a0;
+		border-radius: 5px;
+	}
 </style>

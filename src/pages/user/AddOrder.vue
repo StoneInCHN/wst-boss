@@ -31,9 +31,9 @@
 			</div>	
 		</Panel>
 		<div class="fixed">
-			<Button bottom-action style="background-color:#fff;color:#000;border:1px solid #eee" @click="cancel"> 取 消 </Button>
+			<Button bottom-action class="cancel" @click="cancel"> 取 消 </Button>
 			<br>
-			<Button bottom-action style="background-color:#0a0" @click="save">提交订单</Button>
+			<Button bottom-action class="green" @click="save">提交订单</Button>
 		</div>	
 	</div>
 </template>
@@ -223,5 +223,13 @@ export default{
 	.addLable{
 		font-size:14px;
 		margin:15px 0 auto 15px;
+	}
+	.green{
+		background-color:#0a0
+	}
+	.cancel{
+		background-color:#fff;
+		color:#000;
+		border:1px solid #eee
 	}
 </style>

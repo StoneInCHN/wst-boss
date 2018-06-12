@@ -3,7 +3,7 @@
    <div  v-if="item" class="order-item">
        <section class="order-item-section">
            <p>{{item.createDate | formatDate }}</p>
-           <Tag type="primary">{{item.seriUserNum}}</Tag>
+           <Tag type="primary" class="tag">{{item.seriUserNum}}</Tag>
        </section>
        <section class="order-item-section">
          <h6>{{item.addrInfo.fullAddr}}</h6>
@@ -413,7 +413,7 @@ export default {
   .order-item-section {
     display: flex;
     position: relative;
-    font-size: 12px;
+    font-size: 14px;
     padding: 3px 0;
     font-weight: 200;
     h6 {
@@ -445,6 +445,10 @@ export default {
     .total-price span{
       color:red;
       margin-left:0px;
+    }
+    .tag{
+      padding:4px 8px 2px;
+      font-size:14px;
     }
   }
   .order-item-footer {
