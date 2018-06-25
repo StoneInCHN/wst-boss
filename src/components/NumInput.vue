@@ -24,7 +24,7 @@ export default{
     },
     data () {
 		return {			
-			keyWordObj:[]
+			keyWordObj:null,
 		}
 	},
 	computed:{
@@ -38,17 +38,27 @@ export default{
     },
 	methods: {
 		onBlur(){
-			this.keyWordObj = [];
+			this.keyWordObj = null;
 			this.$emit('hide');
 		},
 		onInput(value){
+			this.initData();
 			this.keyWordObj.push(value);
 			this.$emit('input', this.key);
 		},
 		onDelete(){
+			this.initData();
 			this.keyWordObj.pop();
 			this.$emit('input', this.key);
 		},
+		initData(){
+			if(this.keyWordObj == null){
+				this.keyWordObj = [];
+		    	for(var i=0;i<this.input.length;i++){
+		 			this.keyWordObj.push(this.input.charAt(i));
+				}
+			}			
+		}
     }
 }
 </script>
