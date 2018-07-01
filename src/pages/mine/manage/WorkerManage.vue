@@ -7,22 +7,7 @@
 					<span v-else>编辑</span>
 				</a>
 			</p>
-			<table class="list-table">
-				<tr v-for="(worker,index) in workers" :key="index">
-					<td>						
-						<span v-if="editable" @click="selecteWorker(worker.id)">
-							<Checkbox  v-model="worker.checked"/>
-						</span>
-						<span v-else>
-							<Checkbox disabled/>
-						</span>
-					</td>
-					<td>{{worker.realName}}</td>
-					<td>{{worker.cellPhoneNum}}</td>
-					<td>{{worker.wechatAcct}}</td>
-					<td><Icon name="edit"  @click="editWorker(worker)"/></td>
-				</tr>
-			</table>
+			<WorkerCrumb v-for="(worker,index) in workers" :worker="worker" :editable="editable" :editIds="selecteWorkerIds" :key="index"/>
 			<p class="fixed">			
 				<a v-if="editable==false" @click="searchWorker" class="add">添加</a>
 				<a v-else @click="deleteWork" class="delete"><Icon name="delete"/> 删除</a>
@@ -34,15 +19,16 @@
 <script>
 import { Row, Col, Icon, Checkbox, Actionsheet, Toast, Dialog  } from 'vant'
 import Header from "../../wechat/Header"
+import WorkerCrumb from "./WorkerCrumb"
 import {mapGetters} from 'vuex'
 export default{
 	computed: { ...mapGetters([ "userId"]) },
 	name: "StoreManage",
-	components: { Header, Row, Col, Icon, Checkbox, Actionsheet, Toast, Dialog  },
+	components: { Header, Row, Col, Icon, Checkbox, Actionsheet, Toast, Dialog, WorkerCrumb  },
 	data () {
 		return {
+			editable: false,
 			workers:[],
-			editable:false,
 			showAction:false,
 			actions:[
 		        { name: '删除', callback: this.deleteSelected }
