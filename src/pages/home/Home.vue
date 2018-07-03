@@ -18,8 +18,11 @@ export default {
     };
   },
   created() {
-    //this.initTest();
-    this.initData();
+    if(process.env.NODE_ENV == "production"){
+      this.initData();
+    }else{
+      this.initTest();
+    };
   },
   computed: {
     ...mapGetters(["userId"])
@@ -27,11 +30,6 @@ export default {
   methods: {
     ...mapActions(["setToken", "setUserId", "setCobType", "setOpenId"]),
     initData() {
-      /** 
-      if(this.userId){        
-        return;
-      }
-      */
       let paramsObj = {};
       const paramsArrays = location.search.substring(1).split("&");
       paramsArrays.forEach(item => {
@@ -70,7 +68,7 @@ export default {
       }
     },
     initTest() {
-      let userId = 13;
+      let userId = 1;
       this.$api.common
         .auth({
           userId: userId
