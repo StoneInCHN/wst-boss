@@ -47,6 +47,7 @@
 			  v-model="currentDate"
 			  type="year-month"
 			  :min-date="minDate"
+			  cancel-button-text="重置"
 			/>
 		</Actionsheet>
 		<Actionsheet v-model="showSelectType"  :actions="payways" cancel-text="取消"/>
@@ -91,11 +92,11 @@ export default{
 		          key:'CASH',
 		          callback: this.searchPay
 		        },
-		        // {
-		        //   name: '纸质水票',
-		        //   key:'PICKET',
-		        //   callback: this.searchPay
-		        // },
+		        {
+		          name: '纸质水票',
+		          key:'OFFLINE_TICKET',
+		          callback: this.searchPay
+		        },
 		    ],
 		    emps:[],
 		    empAll:{
@@ -180,9 +181,9 @@ export default{
 				return "微信";
     		} else if(payKey == 'CASH'){
 				return "现金";
-    		} else if(payKey == 'PICKET'){
+    		} else if(payKey == 'OFFLINE_TICKET'){
 				return "纸质水票";
-    		} else {
+    		}  else {
     			return "-";
     		}
     	},
@@ -202,7 +203,7 @@ export default{
     		this.allDetail();
     	},
     	cancelSelect(){
-    		this.show = !this.show; 
+    		this.currentDate = new Date();
     	},
     	confirmMonth(value){
     		this.ym = value.getFullYear()+"-"+(value.getMonth()+1);

@@ -38,8 +38,7 @@ export default{
 	components: { Header, Footer, Field, CellGroup, Button, Toast,Dialog,NumInput },
 	data () {
 		return {
-			count: null,
-			baseUrl:'http://test.yeager.vip/wst-boss',
+			count: "",
 			qrUrl:null,
 			show:false,
 			keyWords:"",
@@ -85,7 +84,7 @@ export default{
 				.then(res => {
 					console.info(res);
 					if(res.code = "0000"){
-						this.qrUrl = this.baseUrl+res.desc;
+						this.qrUrl = process.env.BASE_URL+res.desc;
 			    	}	        
 				})
 				.catch(error => {

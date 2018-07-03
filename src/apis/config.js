@@ -7,16 +7,8 @@ import qs from "qs";
 // 超时时间
 axios.defaults.timeout = 5000;
 
-//axios.defaults.baseURL = "/wst-boss/";
+axios.defaults.baseURL = process.env.BASE_URL;
 
-//正式
-//axios.defaults.baseURL = "http://test.yeager.vip/wst-boss/";
-//axios.defaults.baseURL = "http://47.106.96.230:10002/wst-boss/";
-
-//测试
-axios.defaults.baseURL = "http://stone.yeager.vip/wst-boss/";
-
-//
 axios.defaults.headers.post["Content-Type"] = "application/json;charset=UTF-8";
 
 // http请求拦截器
