@@ -5,6 +5,7 @@ export const COM_SET_USER_ID = "COM_SET_USER_ID" //设置userId
 export const COM_SET_OPEN_ID = "COM_SET_OPEN_ID" //设置userId
 export const COM_SET_COB_PAY_TYPE = "COM_SET_COB_PAY_TYPE" //设置userId
 export const COM_SET_EDITABLE = "COM_SET_EDITABLE" //设置editable
+export const COM_SET_ACTIVE = "COM_SET_ACTIVE" //设置footer样式 
 //user
 
 

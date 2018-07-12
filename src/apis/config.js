@@ -17,7 +17,7 @@ axios.interceptors.request.use(
     const { token } = store.state.common;
     //console.log({ store });
     Toast.loading({
-      mask: true,
+      mask: false,
       message: "加载中...",
       duration: 10000
     });

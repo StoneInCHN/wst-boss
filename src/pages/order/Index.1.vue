@@ -1,31 +1,56 @@
 <template>
   <div class="order" :class="{ 'order-edit': editable }">    
-      <div class="order-nav">
-        <Button v-if="currentState !== 'OTHER'" class="order-setting" size="small" @click="setting">{{settingText}}</Button>
-        <ul class="order-setting-edit" >
-            <li v-if="currentState === '_OTHER'"><a @click="batchRefuse">拒绝</a></li>
-            <li v-if="currentState === 'PENDING'"><a @click="showCommission('openAssign')">指派</a></li>
-            <li v-if="currentState === 'PROCESSING'"><a @click="showCommission('openReassignment')">改派</a></li>
-            <li v-if="currentState === 'PENDING'"><a @click="showCommission('openAssign2Finish')">送达</a></li>
-            <li v-if="currentState === 'PROCESSING'"><a @click="batchFinish()">送达</a></li>
-            <li v-if="currentState === '_OTHER'"><a @click="batchUnDelivery">无法送达</a></li>
-        </ul>
-        <Tabs :actice="active"  class="order-tabs" @click="onTabsClick">
-            <Tab v-for="item in tabDatas" :title="item.title" :key="item.status"/>
-        </Tabs>
-      </div>
-      <div class="order-list order-wrapper">
-        <ul class="content" v-if="orderList.length > 0">
+      <Button v-if="currentState !== 'OTHER'" class="order-setting" size="small" @click="setting">{{settingText}}</Button>
+      <ul class="order-setting-edit" >
+          <li v-if="currentState === '_OTHER'"><a @click="batchRefuse">拒绝</a></li>
+          <li v-if="currentState === 'PENDING'"><a @click="showCommission('openAssign')">指派</a></li>
+          <li v-if="currentState === 'PROCESSING'"><a @click="showCommission('openReassignment')">改派</a></li>
+          <li v-if="currentState === 'PENDING'"><a @click="showCommission('openAssign2Finish')">送达</a></li>
+          <li v-if="currentState === 'PROCESSING'"><a @click="batchFinish()">送达</a></li>
+          <li v-if="currentState === '_OTHER'"><a @click="batchUnDelivery">无法送达</a></li>
+      </ul>
+      
+      <Tabs :actice="active"  class="order-tabs" @click="onTabsClick">
+          <Tab title="待处理">
             <Item
-              v-for="item in orderList" 
+              v-if="pendingList.length >0"
+              v-for="item in pendingList" 
               :key="item.id"  
               :item="item" 
               state="PENDING" 
               :editable="editable"
             />
-        </ul>
-            <Empty v-else/>
-      </div>
+            <p v-else>
+              暂无订单数据
+            </p>
+          </Tab>
+          <Tab title="配送中">
+              <Item
+                v-if="processingList.length >0"
+                v-for="item in processingList" 
+                :key="item.id"  
+                :item="item" 
+                state="PROCESSING" 
+                :editable="editable"
+              />
+              <p v-else>
+              暂无订单数据
+              </p>
+          </Tab>
+          <Tab title="已完成">
+              <Item
+                v-if="otherList.length >0"
+                v-for="item in otherList" 
+                :key="item.id"  
+                :item="item" 
+                state="OTHER" 
+                :editable="editable"
+              />
+              <p v-else>
+              暂无订单数据
+            </p>
+          </Tab>
+      </Tabs>
       <Footer/>
       <AssignPicker v-if="openAssign" :isBatch="true" :close="closeAssgin" />
       <AssignPicker v-if="openReassignment" :isBatch="true" :close="closeReassignment" type="PROCESSING"/>
@@ -56,8 +81,6 @@ import OrderItem from "@/pages/order/OrderItem";
 import AssignPicker from "@/components/AssignPicker";
 import PayMethodPicker from "@/components/PayMethodPicker";
 import Item from "@/pages/order/Item";
-import Empty from "@/components/Empty";
-import BScroll from "better-scroll";
 import { Tab, Tabs, Icon, Button, Toast, Dialog, Field, Popup } from "vant";
 import { mapActions, mapGetters } from "vuex";
 import validate from "../../utils/validate";
@@ -78,26 +101,11 @@ export default {
     AssignPicker,
     PayMethodPicker,
     Field,
-    Popup,
-    Empty
+    Popup
   },
   data() {
     return {
       active: -1,
-      tabDatas: [
-        {
-          title: "待处理",
-          status: "PENDING"
-        },
-        {
-          title: "配送中",
-          status: "PROCESSING"
-        },
-        {
-          title: "已完成",
-          status: "Other"
-        }
-      ],
       currentState: "PENDING",
       tabTitles: [
         ["PENDING"],
@@ -117,13 +125,11 @@ export default {
       errorMsgshow: {
         commissionPrice: ""
       },
-      assignType: "openAssign",
-      orderList: []
+      assignType: "openAssign"
     };
   },
   mounted() {
     this.getListByStatus(["PENDING"], "PENDING");
-    const scroll = new BScroll(".order-wrapper");
   },
   computed: {
     ...mapGetters([
@@ -243,14 +249,14 @@ export default {
     closeAssgin() {
       this.openAssign = false;
     },
-    showCommission(key) {
+    showCommission(key){
       const ids = this.checkedOrders;
       const desc = `批量送达`;
       console.log({ desc, ids });
       if (ids && ids.length > 0) {
         this.showCommissionModel = true;
         this.assignType = key;
-      } else {
+      }else{
         Toast("请先选择订单");
       }
     },
@@ -264,9 +270,9 @@ export default {
         const commissionPrice = this.commissionPrice;
         if (this.assignType === "openReassignment") {
           this.batchReassignment();
-        } else if (this.assignType === "openAssign2Finish") {
+        }else if(this.assignType === "openAssign2Finish"){
           this.openAssign2Finish = true;
-        } else {
+        }else {
           this.batchAssign();
         }
         this.setEmpIncome(commissionPrice);
@@ -275,10 +281,10 @@ export default {
     },
     batchService() {
       const ids = this.checkedOrders;
-      if (ids && ids.length > 0) {
+      if(ids && ids.length > 0){
         this.showCommissionModel = true;
-      } else {
-        Toast("请先选择订单");
+      }else{
+         Toast("请先选择订单");
       }
     },
     batchReassignment() {
@@ -288,7 +294,7 @@ export default {
       this.openReassignment = false;
     },
     //不指派 直接送达
-    closeAssign2Finish(type) {
+    closeAssign2Finish(type){
       if (this.openAssign2Finish) {
         this.openAssign2Finish = false;
         setTimeout(() => {
@@ -301,19 +307,19 @@ export default {
     //送达
     batchFinish() {
       const ids = this.checkedOrders;
-      const desc = `批量送达`;
-      console.log({ desc, ids });
-      if (ids && ids.length > 0) {
-        this.openFinish = true;
-      } else {
-        Toast("请先选择订单");
-      }
+        const desc = `批量送达`;
+        console.log({ desc, ids });
+        if (ids && ids.length > 0) {
+          this.openFinish = true;
+        } else {
+          Toast("请先选择订单");
+        }
     },
     closeFinish() {
       this.openFinish = false;
     },
-    closeFinish4Assign() {
-      this.openFinish4Assign = false;
+    closeFinish4Assign(){
+      this.openFinish4Assign = false
     },
     batchUnDelivery() {
       const ids = this.checkedOrders;
@@ -365,68 +371,63 @@ export default {
   background-color: rgba(245, 240, 240, 0.973);
   padding-bottom: 50px;
   background-clip: content-box;
-  .order-nav {
-    position: relative;
-    height: 45px;
-    .order-setting {
-      position: absolute;
-      right: 15px;
-      top: 7px;
-      color: #4db1e5;
-      z-index: 1000;
-      font-size: 14px;
-      border-color: #4db1e5;
-    }
-    .order-setting-edit {
-      position: absolute;
-      top: 50px;
-      left: 10px;
-      right: 9px;
-      display: none;
-      z-index: 100;
-      line-height: 32px;
-      background-color: #fff;
-      box-shadow: 0 0 5px #a9a9a9;
-      border-radius: 3px;
-      li {
-        flex: 1;
-        text-align: center;
-        border-right: 1px solid #ccc;
-        a {
-          color: #06bf04;
-          display: block;
-        }
+  .order-setting {
+    position: fixed;
+    right: 15px;
+    top: 7px;
+    color: #4db1e5;
+    z-index: 1000;
+    font-size: 14px;
+    border-color: #4db1e5;
+  }
+  .order-setting-edit {
+    position: fixed;
+    top: 50px;
+    left: 10px;
+    right: 9px;
+    display: none;
+    z-index: 100;
+    line-height: 32px;
+    background-color: #fff;
+    box-shadow: 0 0 5px #a9a9a9;
+    border-radius: 3px;
+    li {
+      flex: 1;
+      text-align: center;
+      border-right: 1px solid #ccc;
+      a {
+        color: #06bf04;
+        display: block;
       }
     }
-    .van-tabs--line {
-      padding-top: 0;
-    }
-    .van-tabs__nav--line {
-      padding-left: 50px;
-      padding-right: 80px;
-    }
-    .van-tab--active {
-      color: #4db1e5;
-    }
-    .van-tabs__nav-bar {
-      background-color: #4db1e5;
-    }
+  }
+  .van-tabs--line {
+    padding-top: 0;
+  }
+  .van-tabs__nav--line {
+    padding-left: 50px;
+    padding-right: 80px;
+  }
+  .van-tabs__wrap {
+    position: fixed;
+  }
+  .van-tabs__content {
+    margin-top: 50px;
+  }
+  .van-tab--active {
+    color: #4db1e5;
+  }
+  .van-tabs__nav-bar {
+    background-color: #4db1e5;
   }
 }
 .order-edit {
-  .order-nav {
-    .order-setting-edit {
-      display: flex;
-    }
-    .van-tabs--line {
-      padding-top: 44px;
-    }
+  .order-setting-edit {
+    display: flex;
   }
-}
-.order-list{
-  height: calc(~"100vh - 95px");
-  overflow-x: hidden;
-  overflow-y: auto;
+  .van-tabs--line {
+    padding-top: 44px;
+  }
 }
 .commission-popup {
   width: 80vw;

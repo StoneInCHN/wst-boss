@@ -129,6 +129,12 @@ export const getBooleanItem = key => {
   return value && value !== "false";
 };
 
+export const getIntItem = key => {
+  const value = sessionStorage.getItem(key)
+  if(!value) return 0
+  return parseInt(JSON.parse(value))
+};
+
 export function checkTel(tel)
 {
    var mobile = /^1[3|5|8]\d{9}$/ , phone = /^0\d{2,3}-?\d{7,8}$/;

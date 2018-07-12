@@ -1,33 +1,38 @@
 <template>
-		<Tabbar v-model="active">
-		  <TabbarItem icon="records" to="/order" @click="setActive(0)">订单</TabbarItem>
-		  <TabbarItem icon="contact" to="/userManage" @click="setActive(1)">用户</TabbarItem>
-		  <TabbarItem icon="wap-home" to="/mine"  @click="setActive(2)">我的</TabbarItem>
+		<Tabbar v-model="activeIndex">
+		  <TabbarItem icon="records" to="/order" @click="setActiveIndex(0)">订单</TabbarItem>
+		  <TabbarItem icon="contact" to="/userManage" @click="setActiveIndex(1)">用户</TabbarItem>
+		  <TabbarItem icon="gold-coin" to="/goods"  @click="setActiveIndex(2)">商品</TabbarItem>
+      <TabbarItem icon="wap-home" to="/mine"  @click="setActiveIndex(3)">我的</TabbarItem>
 		</Tabbar>
 </template>
 
 <script>
 import { Tabbar, TabbarItem } from "vant";
+import { mapActions, mapGetters } from "vuex";
 export default {
   name: "Footer",
   components: { Tabbar, TabbarItem },
   data() {
     return {
-      active: 0
+      activeIndex: 0
     };
   },
-  methods:{
-      setActive(param){
-        console.info(param);
-         this.$store.state.active = param;
-      }
-  },
   mounted(){
-    this.active = this.$store.state.active;
+    this.activeIndex = this.active
+  },
+  computed: {
+    ...mapGetters(["active"])
+  },
+  methods: {
+    ...mapActions(["setActive"]),
+    setActiveIndex(index){
+      this.activeIndex = index
+      this.setActive(index)
+    }
   }
 };
 </script>
 
 <style scoped>
-
 </style>
