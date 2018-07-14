@@ -4,9 +4,11 @@ import router from './router'
 import store from './store'
 import FastClick from 'fastclick'
 import api from './apis/index'
-import "./assets/css/reset.css"
 import wechat from 'weixin-js-sdk'
 import VeeValidate from 'vee-validate';
+import "./assets/css/reset.css"
+import 'vant/lib/vant-css/icon-local.css';
+
 
 Vue.use(VeeValidate);
 

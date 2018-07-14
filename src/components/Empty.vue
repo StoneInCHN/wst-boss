@@ -1,7 +1,7 @@
 <template>
     <div class="no-data">
        <div class="content">
-            <Icon name="records"/>
+            <div class="img"></div>
             <p>{{content}}</p>
        </div>
     </div>
@@ -28,11 +28,13 @@ export default {
         height: 100%;
         background-color: #fff;
         .content{
-            padding-top: 50%;
+            padding-top: 40%;
             text-align: center;
-            color: #666;
-            .van-icon{
-                font-size: 35px;
+            color: #999;
+            font-size: 3.5vw;
+            .img{
+                height: 15vh;
+                background: #fff url('../assets/images/svg/no-data.svg') no-repeat center;
             }
         }
     }

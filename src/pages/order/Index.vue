@@ -24,7 +24,7 @@
               :editable="editable"
             />
         </ul>
-            <Empty v-else/>
+            <Empty v-else content="暂无订单数据"/>
       </div>
       <Footer/>
       <AssignPicker v-if="openAssign" :isBatch="true" :close="closeAssgin" />
