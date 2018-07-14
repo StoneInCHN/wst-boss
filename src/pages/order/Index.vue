@@ -14,18 +14,24 @@
             <Tab v-for="item in tabDatas" :title="item.title" :key="item.status"/>
         </Tabs>
       </div>
-      <div class="order-list order-wrapper">
-        <ul class="content" v-if="orderList.length > 0">
-            <Item
-              v-for="item in orderList" 
-              :key="item.id"  
-              :item="item" 
-              state="PENDING" 
-              :editable="editable"
+      <WstScroll class="order-list" 
+        :data="orderList"
+        :pullup= "pullup"
+        :pulldown="pulldown"
+      >
+        <ul class="content" v-if="orderList.length > 0 ">
+          <Item
+                v-for="item in orderList" 
+                :key="item.id"  
+                :item="item" 
+                :state="item.oStatus" 
+                :editable="editable"
             />
         </ul>
-            <Empty v-else content="暂无订单数据"/>
-      </div>
+        <ul class="content empty-content" v-else>
+          <Empty  content="暂无订单数据"/>
+        </ul>
+      </WstScroll>
       <Footer/>
       <AssignPicker v-if="openAssign" :isBatch="true" :close="closeAssgin" />
       <AssignPicker v-if="openReassignment" :isBatch="true" :close="closeReassignment" type="PROCESSING"/>
@@ -55,9 +61,9 @@ import Footer from "@/pages/wechat/Footer";
 import OrderItem from "@/pages/order/OrderItem";
 import AssignPicker from "@/components/AssignPicker";
 import PayMethodPicker from "@/components/PayMethodPicker";
-import Item from "@/pages/order/Item";
+import Item from "@/pages/order/OrderItem";
 import Empty from "@/components/Empty";
-import BScroll from "better-scroll";
+import WstScroll from "@/components/WstScroll";
 import { Tab, Tabs, Icon, Button, Toast, Dialog, Field, Popup } from "vant";
 import { mapActions, mapGetters } from "vuex";
 import validate from "../../utils/validate";
@@ -79,11 +85,14 @@ export default {
     PayMethodPicker,
     Field,
     Popup,
-    Empty
+    Empty,
+    WstScroll
   },
   data() {
     return {
       active: -1,
+      pullup: false,
+      pulldown: true,
       tabDatas: [
         {
           title: "待处理",
@@ -123,7 +132,6 @@ export default {
   },
   mounted() {
     this.getListByStatus(["PENDING"], "PENDING");
-    const scroll = new BScroll(".order-wrapper");
   },
   computed: {
     ...mapGetters([
@@ -212,6 +220,7 @@ export default {
         } else {
           this.setOtherList(r);
         }
+        this.orderList = r
       });
     },
     batchRefuse() {
@@ -398,8 +407,9 @@ export default {
         }
       }
     }
-    .van-tabs--line {
+    .van-tabs__line {
       padding-top: 0;
+      background-color: #4db1e5;
     }
     .van-tabs__nav--line {
       padding-left: 50px;
@@ -427,6 +437,9 @@ export default {
   height: calc(~"100vh - 95px");
   overflow-x: hidden;
   overflow-y: auto;
+  .empty-content{
+    height: 100%;
+  }
 }
 .commission-popup {
   width: 80vw;

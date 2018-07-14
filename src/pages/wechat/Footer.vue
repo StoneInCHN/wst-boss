@@ -1,8 +1,8 @@
 <template>
 		<Tabbar v-model="activeIndex">
 		  <TabbarItem icon="records" to="/order" @click="setActiveIndex(0)">订单</TabbarItem>
-		  <TabbarItem icon="contact" to="/userManage" @click="setActiveIndex(1)">用户</TabbarItem>
-		  <TabbarItem icon="gold-coin" to="/goods"  @click="setActiveIndex(2)">商品</TabbarItem>
+      <TabbarItem icon="gold-coin" to="/manage/goodsManage"  @click="setActiveIndex(1)">商品</TabbarItem>
+		  <TabbarItem icon="contact" to="/userManage" @click="setActiveIndex(2)">用户</TabbarItem>
       <TabbarItem icon="wap-home" to="/mine"  @click="setActiveIndex(3)">我的</TabbarItem>
 		</Tabbar>
 </template>

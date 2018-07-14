@@ -3,10 +3,9 @@
 		<Header backUrl="/"/>
 		<h2 class="sub_title">我的</h2>
 		<CellGroup>
-		    <Cell title="管理" icon="shop" is-link to="/manage" />
-			<Cell title="统计" icon="balance-details" is-link to="/statistics">
-			    <Icon slot="right-icon" name="search" class="right_icon" />
-			</Cell>
+			<Cell title="店铺管理" icon="shop" is-link to="/manage/storeManage" />
+			<Cell title="员工管理" icon="shop" is-link to="/manage/workerManage" />
+			<Cell title="二维码管理" icon="shop" is-link to="/manage/qrManage" />
 		</CellGroup>
 		<Footer/>
 	</div>
