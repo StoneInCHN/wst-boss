@@ -4,7 +4,7 @@
 			<h2 class="title">收支统计</h2>
 			<div class="statistical-item">
 				<div class="statistical-sub-item">
-					<div >
+					<div>
 						<p class="sub-title">本月收入</p>
 						<p>15077.00</p>
 					</div>
@@ -13,12 +13,12 @@
 						<p>1022.00</p>
 					</div>
 				</div>
-				<p>累计收入：140532.00</p>
+				<p class="total">累计收入：140532.00</p>
 			</div>
 			<div class="statistical-item">
 				<div class="statistical-sub-item">
 					<div>
-						<p class="sub-title">本月支出</p>
+						<p class="sub-title ">本月支出</p>
 						<p>3377.00</p>
 					</div>
 					<div>
@@ -26,7 +26,7 @@
 						<p>122.00</p>
 					</div>
 				</div>
-				<p>累计支出：20490.00</p>
+				<p class="total">累计支出：20490.00</p>
 			</div>
 		</div>
 		<CellGroup>
@@ -55,31 +55,39 @@ export default {
 .mine {
   .statistical {
     .title {
-		text-align: center;
-    }
-    .sub_title {
-      margin: 0;
-      font-weight: 400;
-      font-size: 14px;
-      color: rgba(69, 90, 100, 0.6);
-      padding: 20px 15px 10px;
-    }
+			text-align: center;
+			height: 45px;
+			line-height: 45px;
+			color: #333;
+		}
     &-item {
       .statistical-sub-item {
         display: flex;
         align-items: center;
-        justify-content: center;
+				justify-content: center;
+				padding: 0 3vw;
         & > div {
-          flex: 1 1 auto;
-          text-align: center;
+					flex: 1 1 auto;
+					padding: 2vw;
         }
         & > div:last-child {
-          border-left: 1px solid #333;
+          border-left: 1px dashed #f1f1f1;
         }
       }
-      & > p {
-        text-align: center;
-      }
+      &  p {
+				text-align: center;
+				color: #999;
+				font-size: 12px;
+			}
+			.sub-title{
+					color: #999;
+					font-size: 12px;
+			}
+			.total{
+				padding: 4vw 3vw;
+				font-size: 14px;
+				color: #666;
+			}
     }
   }
 }

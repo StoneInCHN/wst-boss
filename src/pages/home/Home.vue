@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="home-page">
 		<Header/>
 	</div>
 </template>
@@ -18,11 +18,11 @@ export default {
     };
   },
   created() {
-    if(process.env.NODE_ENV == "production"){
+    if (process.env.NODE_ENV == "production") {
       this.initData();
-    }else{
+    } else {
       this.initTest();
-    };
+    }
   },
   computed: {
     ...mapGetters(["userId"])
@@ -55,7 +55,7 @@ export default {
         const params = {
           authCode: paramsObj.code,
           pageId: paramsObj.state
-        }
+        };
         this.$api.common
           .getOpenId(params)
           .then(r => {
@@ -63,12 +63,12 @@ export default {
             this.$router.replace("/register");
           })
           .catch(e => {
-            Toast(e.message)
+            Toast(e.message);
           });
       }
     },
     initTest() {
-      let userId = 1;
+      let userId = 12;
       this.$api.common
         .auth({
           userId: userId
@@ -88,10 +88,15 @@ export default {
 };
 </script>
 
-<style scoped>
-h3 {
+<style lang="less">
+.home-page {
   height: 100%;
-  width: 50%;
-  margin: 40% auto;
+  background: #fff url("../../assets/images/order.png") ;
+  background-size: 100% 32vw;
+  h3 {
+    height: 100%;
+    width: 50%;
+    margin: 40% auto;
+  }
 }
 </style>
