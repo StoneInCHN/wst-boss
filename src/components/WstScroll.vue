@@ -1,9 +1,9 @@
 <template>
     <div class="wst-wrapper" ref="wstWrapper">
-      <ul class="content" >
+      <div class="content" >
         <Empty v-if="!hasContent" :content="emptyContent"/>
         <slot /> 
-      </ul>
+      </div>
       <div class="loading-wrapper"></div>
     </div>
 </template>
@@ -219,9 +219,6 @@ export default {
 
 .wst-wrapper {
     background-color: #fff;
-    .content{
-      height: 100%;
-    }
     .loading-pos, .pulldown-tip {
         position: absolute;
         left: 0;

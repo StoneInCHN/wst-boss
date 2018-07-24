@@ -411,11 +411,7 @@ export default {
 }
 .order-list{
   height: calc(~"100vh - 95px");
-  overflow-x: hidden;
-  overflow-y: auto;
-  .empty-content{
-    height: 100%;
-  }
+  overflow: auto;
 }
 .commission-popup {
   width: 80vw;

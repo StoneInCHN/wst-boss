@@ -1,5 +1,6 @@
 <template>
-<li class="order-item">
+<CellSwipe :right-width="swipeRightWidth" :on-close="onSwipeClose">
+<div class="order-item">
        <section class="order-item-section">
            <p>{{item.createDate | formatDate }}</p>
            <Tag type="primary" class="tag">{{item.seriUserNum}}</Tag>
@@ -26,8 +27,8 @@
        </section>
        <div class="order-item-footer" v-if="isPending">
            <ul :disabled="eventDisabled">
-               <li><a >电话</a></li>
-               <li><a >打印</a></li>
+               <li><a @click="call110">电话</a></li>
+               <li><a v-on:click="alert('1234')">打印</a></li>
                <li><a >送达</a></li>
                <li><a >指派</a></li>
            </ul>
@@ -51,7 +52,9 @@
            </ul>
        </div>
        <Checkbox class="order-item-checkbox" v-model="checked" v-if="editable"/>
-  </li>
+  </div>
+  <span slot="right">{{swipeText}}</span>
+  </CellSwipe>
 </template>
 <script>
 import {
@@ -63,7 +66,8 @@ import {
   Dialog,
   Toast,
   Field,
-  Button
+  Button,
+  CellSwipe
 } from "vant";
 import AssignPicker from "@/components/AssignPicker";
 import PayMethodPicker from "@/components/PayMethodPicker";
@@ -85,7 +89,8 @@ export default {
     AssignPicker,
     PayMethodPicker,
     Field,
-    Button
+    Button,
+    CellSwipe
   },
   props: {
     item: {
@@ -102,10 +107,8 @@ export default {
       default: false
     }
   },
-  created(){
+  created() {
     this.checked = false;
-    const { item, state, editable } = this
-    console.log({item, state, editable})
   },
   data() {
     return {
@@ -130,8 +133,27 @@ export default {
       },
       commissionLoading: false,
       commissionPrice: "",
-      assignType: "openAssign"
+      assignType: "openAssign",
+      swipeText: "",
+      swipeRightWidth: 0
     };
+  },
+  mounted() {
+    const { state } = this;
+    switch (state) {
+      case "PENDING":
+        this.swipeText = "拒绝";
+        this.swipeRightWidth = 65;
+        break;
+      case "PROCESSING":
+        this.swipeText = "无法送达";
+        this.swipeRightWidth = 65;
+        break;
+      case "OTHER":
+        this.swipeText = "";
+        this.swipeRightWidth = 0;
+        break;
+    }
   },
   computed: {
     ...mapGetters(["checkedOrders", "pendingList", "processingList", "userId"]),
@@ -149,6 +171,8 @@ export default {
       return CobPayTypeEnum[type];
     },
     eventDisabled() {
+      const { editable } = this;
+      console.log({ editable });
       return this.editable;
     },
     oStatusType() {
@@ -202,6 +226,22 @@ export default {
       "setEmpIncome",
       "setEmpId"
     ]),
+    onSwipeClose(clickPosition, instance) {
+      switch (clickPosition) {
+        case "left":
+        case "cell":
+        case "outside":
+          instance.close();
+          break;
+        case "right":
+          Dialog.confirm({
+            message: "确定删除吗？"
+          }).then(() => {
+            instance.close();
+          });
+          break;
+      }
+    },
     call() {
       console.log("call");
       this.callActions = [];
@@ -211,6 +251,9 @@ export default {
       });
       this.showCall = !this.showCall;
     },
+    call110() {
+      console.log("call 110");
+    },
     callSomeone(item) {
       location.href = `tel:${item.name}`;
     },
@@ -218,161 +261,31 @@ export default {
       this.showCommissionModel = true;
       this.assignType = key;
     },
-    onCommissionConfirm() {
-      const result = validate.checkAll(this.checkRules);
-      if (result) {
-        result.forEach(item => {
-          this.errorMsgshow[item.alias] = item.msg;
-        });
-      } else {
-        //this.commissionLoading = true;
-        const commissionPrice = this.commissionPrice;
-        console.log({ commissionPrice });
-        this.setEmpIncome(commissionPrice);
-        this.showCommissionModel = false;
-        if (this.assignType === "openReassignment") {
-          this.toggleReassignment();
-        } else if (this.assignType === "pending2Finish") {
-          this.toggleAssign2Finish();
-        } else {
-          this.toggleAssign();
-        }
-        
-      }
-    },
-    checkCommissionPrice() {
-      const result = validate.check(
-        this.checkRules.filter(item => {
-          return item.alias === "commissionPrice";
-        })
-      );
-      this.errorMsgshow.commissionPrice = result ? result : "";
-    },
-    toggleAssign() {
-      this.$api.mine
-        .listShopEmp({
-          userId: this.userId
-        })
-        .then(r => {
-          if (r && r.length > 0) {
-            console.log(`this.openAssign == ${this.openAssign}`);
-            this.openAssign = !this.openAssign;
-          } else {
-            Toast.fail("请添加配送员");
-          }
-        });
-    },
-
+    onCommissionConfirm() {},
+    checkCommissionPrice() {},
+    toggleAssign() {},
     toggleReassignment() {
       this.openReassignment = !this.openReassignment;
     },
     //不指派 直接完成
-    toggleAssign2Finish(type) {
-      if (this.openAssign2Finish) {
-        this.openAssign2Finish = false;
-        if ("openFinish" === type) {
-          setTimeout(() => {
-            this.openFinish = true;
-          }, 100);
-        }else if("openFinish4Assign" === type){
-          setTimeout(() => {
-            this.openFinish4Assign = true;
-          }, 100);
-        }
-      } else {
-        this.openAssign2Finish = true;
-      }
-    },
+    toggleAssign2Finish(type) {},
     toggleFinish() {
-      console.log("关闭 finish ");
       this.openFinish = !this.openFinish;
     },
-    closeFinish4Assign(){
+    closeFinish4Assign() {
       this.openFinish4Assign = false;
     },
-    refuse() {
-      console.log("refuse");
-      Dialog.confirm({
-        title: "拒绝订单",
-        message: `确定要拒绝[${this.item.addrInfo.contactPhone}]的订单吗?`
-      })
-        .then(() => {
-          // on confirm
-          const { id } = this.item;
-          const params = {
-            entityIds: [id],
-            oprStatus: "REJECT",
-            userId: this.userId
-          };
-          this.oprSO(params);
-        })
-        .catch(() => {
-          // on cancel
-        });
-    },
-    unDelivery() {
-      Dialog.confirm({
-        title: "无法送达",
-        message: `确定要将[${
-          this.item.addrInfo.contactPhone
-        }]的订单状态修改为[无法送达]吗?`
-      }).then(() => {
-        // on confirm
-        const { id } = this.item;
-        const params = {
-          entityIds: [id],
-          oprStatus: "UNDELIVER",
-          userId: this.userId
-        };
-        this.oprSO(params);
-      });
-    },
-    oprSO(params) {
-      if (params) {
-        this.$api.order.oprSO(params).then(r => {
-          //Toast.success("操作成功");
-
-          const ids = params.entityIds || [];
-          if (this.oStatusType === "PENDING") {
-            const lists = this.pendingList.filter(item => {
-              return !ids.includes(item.id);
-            });
-            this.setPendingList(lists);
-          } else {
-            const lists = this.processingList.filter(item => {
-              return !ids.includes(item.id);
-            });
-            this.setProcessingList(lists);
-          }
-
-          let actions = "";
-          if (params.oprStatus == "REJECT") {
-            actions = "已被拒绝";
-          } else if (params.oprStatus == "UNDELIVER") {
-            actions = "无法送达";
-          }
-          Dialog.alert({
-            message:
-              "订单" +
-              actions +
-              "，请尽快联系用户提醒他：" +
-              this.item.addrInfo.contactPhone,
-            confirmButtonText: "拨打电话"
-          }).then(() => {
-            location.href = `tel:${this.item.addrInfo.contactPhone}`;
-          });
-        });
-      }
-    }
+    refuse() {},
+    unDelivery() {}
   },
   filters: {
     formatDate(time) {
       var date = new Date(time);
       return formatDateTime(date, "yyyy-MM-dd hh:mm");
     },
-    firmatPrice(price){
-      price = price || 0
-      return toDecimal2(price)
+    firmatPrice(price) {
+      price = price || 0;
+      return toDecimal2(price);
     }
   }
 };
@@ -418,36 +331,44 @@ export default {
       text-align: right;
       padding-right: 10px;
     }
-    .total-price span{
-      color:red;
-      margin-left:0px;
+    .total-price span {
+      color: red;
+      margin-left: 0px;
     }
-    .tag{
-      padding:4px 8px 2px;
-      font-size:14px;
+    .tag {
+      padding: 4px 8px 2px;
+      font-size: 14px;
     }
   }
   .order-item-footer {
-    border-top: 2px solid #e5e5e5;
+    position: relative;
     ul {
-      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 5px 0;
       li {
-        float: right;
-        padding: 5px 2px;
+        flex: 1 1 auto;
+        text-align: center;
         a {
-          color: #06bf04;
-          padding: 0 10px;
-        }
-      }
-      li:not(:last-child) {
-        a {
-          border-left: 2px solid #06bf04;
-        }
-      }
-      li.refuse {
-        float: left;
-        a {
-          border: none;
+          color: #4db1e5;
+          padding: 5px 10px;
+          height: 8vw;
+          line-height: 8vw;
+          position: relative;
+          &::after {
+            content: "";
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: 0;
+            left: 0;
+            border: 1px solid #38f;
+            border-radius: 5px;
+            transform: scale(0.5);
+            transform-origin: 0 0;
+            opacity: 0.5;
+          }
         }
       }
     }
@@ -471,6 +392,17 @@ export default {
       li:last-child {
         text-align: right;
       }
+    }
+    &::after {
+      content: "";
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: 0;
+      left: 0;
+      border-top: 1px solid #e5e5e5;
+      transform: scale(0.5);
+      transform-origin: 0 0;
     }
   }
   .order-item-checkbox {
@@ -499,5 +431,13 @@ export default {
     background-color: #00a0e9;
     color: #fff;
   }
+}
+.van-cell-swipe__right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: red;
+  color: #fff;
+  padding: 0 15px;
 }
 </style>
