@@ -1,6 +1,5 @@
 <template>
-<li>
-   <div  class="order-item">
+<li class="order-item">
        <section class="order-item-section">
            <p>{{item.createDate | formatDate }}</p>
            <Tag type="primary" class="tag">{{item.seriUserNum}}</Tag>
@@ -27,10 +26,10 @@
        </section>
        <div class="order-item-footer" v-if="isPending">
            <ul :disabled="eventDisabled">
-               <li class="refuse"><a @click="refuse">拒绝</a></li>
-               <li><a @click="showCommission('pending2Finish')">送达</a></li>
-               <li><a @click="showCommission('openAssign')">指派</a></li>
-               <li><a @click="call">电话</a></li>
+               <li><a >电话</a></li>
+               <li><a >打印</a></li>
+               <li><a >送达</a></li>
+               <li><a >指派</a></li>
            </ul>
        </div>
        <div class="order-item-footer" v-if="isProcessing">
@@ -52,7 +51,6 @@
            </ul>
        </div>
        <Checkbox class="order-item-checkbox" v-model="checked" v-if="editable"/>
-   </div>
   </li>
 </template>
 <script>
@@ -104,8 +102,10 @@ export default {
       default: false
     }
   },
-  mounted(){
+  created(){
     this.checked = false;
+    const { item, state, editable } = this
+    console.log({item, state, editable})
   },
   data() {
     return {

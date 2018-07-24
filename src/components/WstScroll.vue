@@ -1,9 +1,10 @@
 <template>
     <div class="wst-wrapper" ref="wstWrapper">
       <ul class="content" >
-        <slot name="list" v-if="data.length > 0 "/> 
-        <Empty v-else :content="emptyContent"/>
+        <Empty v-if="!hasContent" :content="emptyContent"/>
+        <slot /> 
       </ul>
+      <div class="loading-wrapper"></div>
     </div>
 </template>
 
@@ -86,11 +87,20 @@ export default {
       default: "暂无数据"
     }
   },
+  data(){
+    return {
+      scroll: {}
+    }
+  },
   mounted() {
     // 保证在DOM渲染完毕后初始化better-scroll
-    setTimeout(() => {
-      this._initScroll();
-    }, 2000);
+    this.$nextTick(() => {
+        this._initScroll();
+    })
+    const res = {
+      data: this.data
+    }
+    console.log({res})
   },
   methods: {
     _initScroll() {
@@ -135,8 +145,6 @@ export default {
       // 是否派发滚动到底部事件，用于上拉加载
       if (this.pullup) {
         this.scroll.on("scrollEnd", () => {
-          console.log("scrollEnd");
-          console.log(this.scroll);
           // 滚动到底部
           if (this.scroll.y <= this.scroll.maxScrollY + 50) {
             this.$emit("scrollToEnd");
@@ -189,11 +197,17 @@ export default {
       this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments);
     }
   },
+  computed: {
+    hasContent(){
+      return this.data && this.data.length > 0
+    }
+  },
   watch: {
     // 监听数据的变化，延时refreshDelay时间后调用refresh方法重新计算，保证滚动效果正常
     data() {
       setTimeout(() => {
         this.refresh();
+        console.log('data 发生了变化... ')
       }, this.refreshDelay);
     }
   }

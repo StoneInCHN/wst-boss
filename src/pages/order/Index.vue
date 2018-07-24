@@ -16,48 +16,27 @@
       </div>
       <WstScroll class="order-list" 
         :data="orderList"
-        :pullup= "pullup"
+        :pullup="pullup"
         :pulldown="pulldown"
         emptyContent="暂无订单数据"
       >
-          <Item
+          <OrderItem
                 v-for="item in orderList" 
                 :key="item.id"  
                 :item="item" 
-                :state="item.oStatus" 
+                :state="currentState" 
                 :editable="editable"
-            />
+          />
       </WstScroll>
       <Footer/>
-      <AssignPicker v-if="openAssign" :isBatch="true" :close="closeAssgin" />
-      <AssignPicker v-if="openReassignment" :isBatch="true" :close="closeReassignment" type="PROCESSING"/>
-      <AssignPicker v-if="openAssign2Finish" :close="closeAssign2Finish" :isBatch="true" type="assign2Finish"/>
-      <PayMethodPicker v-if="openFinish" :isBatch="true" :close="closeFinish" type="processing2Finish"/>
-      <PayMethodPicker v-if="openFinish4Assign" :isBatch="true" :close="closeFinish4Assign" type="assign2Finish"/>
-       <Popup
-          v-model="showCommissionModel"
-          class="commission-popup"
-        >
-          <h4>提成金额</h4>
-            <Field
-              v-model="commissionPrice"
-              label="提成金额"
-              required
-              placeholder="请输入提成金额"
-              @blur="checkCommissionPrice"
-              :error-message="errorMsgshow.commissionPrice"
-            />
-            <Button size="large" :loading="commissionLoading" @click="onCommissionConfirm">确定</Button>
-        </Popup>
   </div>
 </template>
 <script>
 import Header from "@/pages/wechat/Header";
 import Footer from "@/pages/wechat/Footer";
-import OrderItem from "@/pages/order/OrderItem";
+import OrderItem from "./OrderItem";
 import AssignPicker from "@/components/AssignPicker";
 import PayMethodPicker from "@/components/PayMethodPicker";
-import Item from "@/pages/order/OrderItem";
 import Empty from "@/components/Empty";
 import WstScroll from "@/components/WstScroll";
 import { Tab, Tabs, Icon, Button, Toast, Dialog, Field, Popup } from "vant";
@@ -71,7 +50,6 @@ export default {
     Tabs,
     Icon,
     OrderItem,
-    Item,
     Button,
     Toast,
     Dialog,
@@ -202,6 +180,7 @@ export default {
       this.getListByStatus(status, this.currentState);
     },
     getListByStatus(oStatus, type) {
+      this.orderList = []
       const params = {
         oStatus,
         pageNumber: 1,
@@ -216,6 +195,7 @@ export default {
         } else {
           this.setOtherList(r);
         }
+        console.log({r})
         this.orderList = r
       });
     },
