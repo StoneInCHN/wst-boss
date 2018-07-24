@@ -18,8 +18,8 @@
         :data="orderList"
         :pullup= "pullup"
         :pulldown="pulldown"
+        emptyContent="暂无订单数据"
       >
-        <ul class="content" v-if="orderList.length > 0 ">
           <Item
                 v-for="item in orderList" 
                 :key="item.id"  
@@ -27,10 +27,6 @@
                 :state="item.oStatus" 
                 :editable="editable"
             />
-        </ul>
-        <ul class="content empty-content" v-else>
-          <Empty  content="暂无订单数据"/>
-        </ul>
       </WstScroll>
       <Footer/>
       <AssignPicker v-if="openAssign" :isBatch="true" :close="closeAssgin" />
@@ -91,7 +87,7 @@ export default {
   data() {
     return {
       active: -1,
-      pullup: false,
+      pullup: true,
       pulldown: true,
       tabDatas: [
         {

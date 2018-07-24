@@ -53,27 +53,6 @@
        </div>
        <Checkbox class="order-item-checkbox" v-model="checked" v-if="editable"/>
    </div>
-   <AssignPicker v-if="openAssign" :close="toggleAssign" :isBatch="false"  :item="item"/>
-   <AssignPicker v-if="openReassignment" :close="toggleReassignment" :isBatch="false" :item="item" type="PROCESSING"/>
-   <AssignPicker v-if="openAssign2Finish" :close="toggleAssign2Finish" :isBatch="false" :item="item" type="assign2Finish"/>
-   <PayMethodPicker v-if="openFinish" :close="toggleFinish" :item="item"/>
-   <PayMethodPicker v-if="openFinish4Assign"  :close="closeFinish4Assign" :item="item" type="assign2Finish"/>
-   <Actionsheet v-model="showCall" :actions="callActions" cancel-text="取消" />
-   <Popup
-    v-model="showCommissionModel"
-    class="commission-popup"
-   >
-    <h4>提成金额</h4>
-      <Field
-        v-model="commissionPrice"
-        label="提成金额"
-        required
-        placeholder="请输入提成金额"
-        @blur="checkCommissionPrice"
-        :error-message="errorMsgshow.commissionPrice"
-      />
-      <Button size="large" :loading="commissionLoading" @click="onCommissionConfirm">确定</Button>
-   </Popup>
   </li>
 </template>
 <script>

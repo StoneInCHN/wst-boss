@@ -1,6 +1,9 @@
 <template>
-    <div class="wst-wrapper" ref="wstWrapper1">
-        <slot/> 
+    <div class="wst-wrapper" ref="wstWrapper">
+      <ul class="content" >
+        <slot name="list" v-if="data.length > 0 "/> 
+        <Empty v-else :content="emptyContent"/>
+      </ul>
     </div>
 </template>
 
@@ -48,7 +51,7 @@ export default {
      */
     data: {
       type: Array,
-      default: null
+      default: []
     },
     /**
      * 是否派发滚动到底部的事件，用于上拉加载
@@ -77,13 +80,17 @@ export default {
     refreshDelay: {
       type: Number,
       default: 20
+    },
+    emptyContent: {
+      type: String,
+      default: "暂无数据"
     }
   },
   mounted() {
     // 保证在DOM渲染完毕后初始化better-scroll
     setTimeout(() => {
       this._initScroll();
-    }, 200);
+    }, 2000);
   },
   methods: {
     _initScroll() {
@@ -195,8 +202,12 @@ export default {
 
 <style lang="less">
 @wst-scroll-size: 10px; 
-.better-scroll-root {
-    background-color: rgba(7, 17, 27, 0.7);
+
+.wst-wrapper {
+    background-color: #fff;
+    .content{
+      height: 100%;
+    }
     .loading-pos, .pulldown-tip {
         position: absolute;
         left: 0;
@@ -240,44 +251,7 @@ export default {
     .loading-connecting {
         line-height: 35px;
     }
-    .cube{
-        height:@wst-scroll-size;
-        width:@wst-scroll-size;
-        transform-origin:50% 50%;
-        transform-style:preserve-3d;
-        animation:rotate 3s infinite ease-in-out;
-    }
-    .side{
-        position:absolute;
-        height:@wst-scroll-size;
-        width:@wst-scroll-size;
-        border-radius:50%;
-    }
-    .side1{
-        background: #4bc393;
-        transform:translateZ(@wst-scroll-size);
-    }
-    .side2{
-        background:#FF884D;
-        transform:rotateY(90deg) translateZ(@wst-scroll-size);
-    }
-    .side3{
-        background:#32526E;
-        transform:rotateY(180deg) translateZ(@wst-scroll-size);
-    }
-    .side4{
-        background: #c53fa3;
-        transform:rotateY(-90deg) translateZ(@wst-scroll-size);
-    }
-    .side5{
-        background:#FFCC5C;
-        transform:rotateX(90deg) translateZ(@wst-scroll-size);
-    }
-    .side6{
-        background:#FF6B57;
-        transform:rotateX(-90deg) translateZ(@wst-scroll-size);
-    }
-    
+   
     @keyframes rotate{
         0%{
             transform:rotateX(0deg) rotateY(0deg);
