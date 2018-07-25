@@ -29,8 +29,8 @@
            <ul v-if="isPending"  :disabled="eventDisabled">
                <li><a @click="call">电话</a></li>
                <li><a @click="printOrder">打印</a></li>
-               <li><a >送达</a></li>
                <li><a >指派</a></li>
+               <li><a >送达</a></li>
            </ul>
            <ul v-if="isProcessing" :disabled="eventDisabled">
                <li class="refuse"><a >无法送到</a></li>
@@ -87,8 +87,6 @@ export default {
   data() {
     return {
       checked: false,
-      showCall: false,
-      callActions: [],
       swipeText: "",
       swipeRightWidth: 0
     };
@@ -157,7 +155,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["setCheckedOrders"]),
+    ...mapActions(["setCheckedOrders", "callSomeone", "setCallActions"]),
     onSwipeClose(clickPosition, instance) {
       switch (clickPosition) {
         case "left":
@@ -183,18 +181,20 @@ export default {
       }
     },
     call() {
-      console.log("call");
-      this.callActions = [];
-      this.callActions.push({
-        name: this.item.addrInfo.contactPhone,
-        callback: this.callSomeone
-      });
-    },
-    callSomeone(item) {
-      location.href = `tel:${item.name}`;
+      const callActions = [
+        {
+          name: this.item.addrInfo.contactPhone
+        }
+      ];
+      this.setCallActions(callActions);
     },
     printOrder() {
-      alert("printOrder");
+      Dialog.alert({
+        title: "订单打印",
+        message: "打印指令已发出，请等待..."
+      }).then(() => {
+        // on close
+      });
     }
   },
   filters: {

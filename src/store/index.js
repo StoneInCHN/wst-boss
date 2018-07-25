@@ -17,6 +17,7 @@ import user from './modules/user'
 import mine from './modules/mine'
 import order from './modules/order'
 import common from './modules/common'
+import callAction from './modules/callAction'
 
 
 const store = new Vuex.Store({
@@ -28,7 +29,8 @@ const store = new Vuex.Store({
         user,
         mine,
         order,
-        common
+        common,
+        callAction
     }
 })
 

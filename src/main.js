@@ -8,7 +8,7 @@ import wechat from 'weixin-js-sdk'
 import VeeValidate from 'vee-validate';
 import "./assets/css/reset.css"
 import 'vant/lib/vant-css/icon-local.css';
-
+import "./assets/css/common.css"
 
 Vue.use(VeeValidate);
 

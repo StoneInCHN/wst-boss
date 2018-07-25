@@ -30,6 +30,7 @@
           />
       </WstScroll>
       <Footer/>
+      <CallAction/>
   </div>
 </template>
 <script>
@@ -40,6 +41,7 @@ import AssignPicker from "@/components/AssignPicker";
 import PayMethodPicker from "@/components/PayMethodPicker";
 import Empty from "@/components/Empty";
 import WstScroll from "@/components/WstScroll";
+import CallAction from "@/components/CallAction";
 import { Tab, Tabs, Icon, Button, Toast, Dialog, Field, Popup } from "vant";
 import { mapActions, mapGetters } from "vuex";
 import validate from "../../utils/validate";
@@ -61,7 +63,8 @@ export default {
     Field,
     Popup,
     Empty,
-    WstScroll
+    WstScroll,
+    CallAction
   },
   data() {
     return {

@@ -18,3 +18,10 @@ export const ORDER_EMP_INCOME = 'ORDER_EMP_INCOME' //订单指派时员工提成
 export const ORDER_EMP_ID = 'ORDER_EMP_ID' //订单指派时员工id
 
 //mine
+
+
+//callSomeone 打电话
+export const CALL_ACTION_SOMEONE = 'COMMON_ACTION_CALL_SOMEONE' //调起打电话框
+export const CALL_ACTION_CALLACTIONS = 'CALL_ACTION_CALLACTIONS' //调起打电话框
+export const CALL_ACTION_SHOWCALL = 'CALL_ACTION_SHOWCALL' //调起打电话框
+
