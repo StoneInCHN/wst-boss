@@ -18,6 +18,7 @@
         :data="orderList"
         :pullup="pullup"
         :pulldown="pulldown"
+        :style="contentStyle"
         emptyContent="暂无订单数据"
       >
           <OrderItem
@@ -134,6 +135,10 @@ export default {
           ]
         }
       ];
+    },
+    contentStyle() {
+      const flag = !!this.editable
+      return flag ? {marginTop:"10.7vw"}: {}
     }
   },
   methods: {
@@ -378,7 +383,7 @@ export default {
         text-align: center;
         border-right: 1px solid #ccc;
         a {
-          color: #06bf04;
+          color: #4db1e5;
           display: block;
         }
       }

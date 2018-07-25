@@ -22,12 +22,18 @@ export const CobPayTypeEnum = {
   COB: "货到付款"
 };
 
-export const  CobPayTypeText ={
+export const CobPayTypeText = {
   ["OFFLINE_TICKET"]: "水票",
   ["CASH"]: "现金",
   ["WECHAT"]: "微信",
   ["ALIPAY"]: "支付宝",
-  ["COB"]:"货到付款",
+  ["COB"]: "货到付款",
   ["CREDIT"]: "赊账"
-} 
+};
 
+export const OrderOtherStatus = {
+  FINISH: "已完成",
+  UNDELIVER: "无法送达",
+  REJECT: "已拒绝",
+  CANCEL: "已取消"
+};

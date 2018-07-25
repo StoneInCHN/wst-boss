@@ -1,12 +1,13 @@
 <template>
 <CellSwipe :right-width="swipeRightWidth" :on-close="onSwipeClose">
-<div class="order-item">
+  <div class="order-item">
        <section class="order-item-section">
            <p>{{item.createDate | formatDate }}</p>
            <Tag type="primary" class="tag">{{item.seriUserNum}}</Tag>
        </section>
-       <section class="order-item-section">
+       <section class="order-item-section item-section-title">
          <h6>{{item.addrInfo.fullAddr}}</h6>
+          <Tag plain type="primary" class="tag" v-if="!isOther">未打印</Tag>
        </section>
        <section class="order-item-section" v-if="isPending">
          <p>{{item.addrInfo.contactPhone}}</p>
@@ -18,31 +19,26 @@
            <span> ￥{{orderItem.amount | firmatPrice}}</span>
        </section>
        <section class="order-item-section">
-         <!-- <Tag v-if="!isOther" type="primary" plain class="pay-type">{{payType}}</Tag> -->
          <p class="total-price">合计 : <span>￥{{item.amount | firmatPrice}}</span></p>
        </section>
        <section class="order-item-section" v-if="isProcessing">
            <p>配送员<span>{{item.empName}}</span> </p>
            <p>提成金额:<span>{{item.empAmout | firmatPrice}}元</span></p>
        </section>
-       <div class="order-item-footer" v-if="isPending">
-           <ul :disabled="eventDisabled">
-               <li><a @click="call110">电话</a></li>
-               <li><a v-on:click="alert('1234')">打印</a></li>
+       <div  class="order-item-footer" >
+           <ul v-if="isPending"  :disabled="eventDisabled">
+               <li><a @click="call">电话</a></li>
+               <li><a @click="printOrder">打印</a></li>
                <li><a >送达</a></li>
                <li><a >指派</a></li>
            </ul>
-       </div>
-       <div class="order-item-footer" v-if="isProcessing">
-           <ul :disabled="eventDisabled">
-               <li class="refuse"><a @click="unDelivery">无法送到</a></li>
-               <li><a @click="toggleFinish">送达</a></li>
-               <li><a @click="showCommission('openReassignment')">改派</a></li>
+           <ul v-if="isProcessing" :disabled="eventDisabled">
+               <li class="refuse"><a >无法送到</a></li>
+               <li><a >送达</a></li>
+               <li><a >改派</a></li>
                <li><a @click="call">电话</a></li>
            </ul>
-       </div>
-       <div v-if="isOther" class="order-item-footer">
-             <ul class="complete-status">
+           <ul v-if="isOther" class="complete-status">
                <li class="state">
                  <Tag plain type="primary">{{otherStatusText}}</Tag>
                </li>
@@ -52,44 +48,25 @@
            </ul>
        </div>
        <Checkbox class="order-item-checkbox" v-model="checked" v-if="editable"/>
-  </div>
-  <span slot="right">{{swipeText}}</span>
+    </div>
+    <span slot="right">{{swipeText}}</span>
   </CellSwipe>
 </template>
 <script>
-import {
-  Tag,
-  Checkbox,
-  Actionsheet,
-  Popup,
-  Picker,
-  Dialog,
-  Toast,
-  Field,
-  Button,
-  CellSwipe
-} from "vant";
-import AssignPicker from "@/components/AssignPicker";
-import PayMethodPicker from "@/components/PayMethodPicker";
+import { Tag, Checkbox, Popup, Dialog, Toast, CellSwipe } from "vant";
 import { mapActions, mapGetters } from "vuex";
-import { CobPayTypeEnum } from "@/shared/consts";
+import { CobPayTypeEnum, OrderOtherStatus } from "@/shared/consts";
 import { formatDateTime, toDecimal2 } from "@/utils";
 import validate from "../../utils/validate";
 
 export default {
-  name: "orderItem",
+  name: "OrderItem",
   components: {
     Tag,
     Checkbox,
-    Actionsheet,
     Popup,
-    Picker,
     Dialog,
     Toast,
-    AssignPicker,
-    PayMethodPicker,
-    Field,
-    Button,
     CellSwipe
   },
   props: {
@@ -107,38 +84,17 @@ export default {
       default: false
     }
   },
-  created() {
-    this.checked = false;
-  },
   data() {
     return {
       checked: false,
-      openAssign: false,
-      openReassignment: false,
-      openAssign2Finish: false,
-      openFinish: false,
-      openFinish4Assign: false,
       showCall: false,
       callActions: [],
-      otherStatus: {
-        FINISH: "已完成",
-        UNDELIVER: "无法送达",
-        REJECT: "已拒绝",
-        CANCEL: "已取消"
-      },
-      nextShowPayMethod: false,
-      showCommissionModel: false,
-      errorMsgshow: {
-        commissionPrice: ""
-      },
-      commissionLoading: false,
-      commissionPrice: "",
-      assignType: "openAssign",
       swipeText: "",
       swipeRightWidth: 0
     };
   },
   mounted() {
+    this.checked = false;
     const { state } = this;
     switch (state) {
       case "PENDING":
@@ -156,7 +112,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["checkedOrders", "pendingList", "processingList", "userId"]),
+    ...mapGetters(["checkedOrders"]),
     isPending() {
       return this.state === "PENDING";
     },
@@ -171,8 +127,6 @@ export default {
       return CobPayTypeEnum[type];
     },
     eventDisabled() {
-      const { editable } = this;
-      console.log({ editable });
       return this.editable;
     },
     oStatusType() {
@@ -180,23 +134,7 @@ export default {
     },
     otherStatusText() {
       const { oStatus } = this.item;
-      const { otherStatus } = this;
-      return otherStatus[oStatus] || "";
-    },
-    checkRules() {
-      return [
-        {
-          el: this.commissionPrice,
-          alias: "commissionPrice",
-          rules: [
-            { rule: "isNoNull", msg: "提成金额不能为空" },
-            {
-              rule: "isPrice",
-              msg: "提成金额只能为大于或等于0的数字且最多两位小数"
-            }
-          ]
-        }
-      ];
+      return OrderOtherStatus[oStatus] || "";
     }
   },
   watch: {
@@ -219,13 +157,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions([
-      "setCheckedOrders",
-      "setPendingList",
-      "setProcessingList",
-      "setEmpIncome",
-      "setEmpId"
-    ]),
+    ...mapActions(["setCheckedOrders"]),
     onSwipeClose(clickPosition, instance) {
       switch (clickPosition) {
         case "left":
@@ -234,11 +166,19 @@ export default {
           instance.close();
           break;
         case "right":
-          Dialog.confirm({
-            message: "确定删除吗？"
-          }).then(() => {
-            instance.close();
-          });
+          if (isPending) {
+            Dialog.confirm({
+              message: "确定拒绝该订单吗？"
+            }).then(() => {
+              instance.close();
+            });
+          } else if (isProcessing) {
+            Dialog.confirm({
+              message: "确定将该订单标记为[无法送达]吗？"
+            }).then(() => {
+              instance.close();
+            });
+          }
           break;
       }
     },
@@ -249,34 +189,13 @@ export default {
         name: this.item.addrInfo.contactPhone,
         callback: this.callSomeone
       });
-      this.showCall = !this.showCall;
-    },
-    call110() {
-      console.log("call 110");
     },
     callSomeone(item) {
       location.href = `tel:${item.name}`;
     },
-    showCommission(key) {
-      this.showCommissionModel = true;
-      this.assignType = key;
-    },
-    onCommissionConfirm() {},
-    checkCommissionPrice() {},
-    toggleAssign() {},
-    toggleReassignment() {
-      this.openReassignment = !this.openReassignment;
-    },
-    //不指派 直接完成
-    toggleAssign2Finish(type) {},
-    toggleFinish() {
-      this.openFinish = !this.openFinish;
-    },
-    closeFinish4Assign() {
-      this.openFinish4Assign = false;
-    },
-    refuse() {},
-    unDelivery() {}
+    printOrder() {
+      alert("printOrder");
+    }
   },
   filters: {
     formatDate(time) {
@@ -340,6 +259,9 @@ export default {
       font-size: 14px;
     }
   }
+  .item-section-title {
+    padding-right: 20vw;
+  }
   .order-item-footer {
     position: relative;
     ul {
@@ -356,6 +278,7 @@ export default {
           height: 8vw;
           line-height: 8vw;
           position: relative;
+          z-index: 2;
           &::after {
             content: "";
             position: absolute;
@@ -368,6 +291,7 @@ export default {
             transform: scale(0.5);
             transform-origin: 0 0;
             opacity: 0.5;
+            z-index: 1;
           }
         }
       }
@@ -413,23 +337,13 @@ export default {
       border-color: #4db1e5;
       background-color: #4db1e5;
     }
+    & .van-checkbox--checked {
+      border-color: #4db1e5;
+      background-color: #4db1e5;
+    }
   }
   .order-item-section-delivery {
     display: flex;
-  }
-}
-.commission-popup {
-  width: 80vw;
-  padding: 1rem;
-  box-sizing: border-box;
-  h4 {
-    text-align: center;
-    padding: 0.5rem 0;
-  }
-  .van-button--default {
-    margin-top: 0.5rem;
-    background-color: #00a0e9;
-    color: #fff;
   }
 }
 .van-cell-swipe__right {

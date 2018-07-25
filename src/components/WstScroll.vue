@@ -1,6 +1,6 @@
 <template>
     <div class="wst-wrapper" ref="wstWrapper">
-      <div class="content" >
+      <div class="content" :style="contentStyle">
         <Empty v-if="!hasContent" :content="emptyContent"/>
         <slot /> 
       </div>
@@ -85,6 +85,9 @@ export default {
     emptyContent: {
       type: String,
       default: "暂无数据"
+    },
+    contentStyle: {
+      type: Object
     }
   },
   data(){
@@ -97,10 +100,6 @@ export default {
     this.$nextTick(() => {
         this._initScroll();
     })
-    const res = {
-      data: this.data
-    }
-    console.log({res})
   },
   methods: {
     _initScroll() {
