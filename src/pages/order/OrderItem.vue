@@ -29,8 +29,8 @@
            <ul v-if="isPending"  :disabled="eventDisabled">
                <li><a @click="call">电话</a></li>
                <li><a @click="printOrder">打印</a></li>
-               <li><a @click="assign">指派</a></li>
-               <li><a >送达</a></li>
+               <li><a @click="toAssign">指派</a></li>
+               <li><a @click="toFinish">送达</a></li>
            </ul>
            <ul v-if="isProcessing" :disabled="eventDisabled">
                <li class="refuse"><a >无法送到</a></li>
@@ -55,7 +55,7 @@
 <script>
 import { Tag, Checkbox, Popup, Dialog, Toast, CellSwipe } from "vant";
 import { mapActions, mapGetters } from "vuex";
-import { CobPayTypeEnum, OrderOtherStatus } from "@/shared/consts";
+import { CobPayTypeEnum, OrderOtherStatus, AssignActionTypeEnum } from "@/shared/consts";
 import { formatDateTime, toDecimal2 } from "@/utils";
 import validate from "../../utils/validate";
 
@@ -159,8 +159,7 @@ export default {
       "setCheckedOrders",
       "callSomeone",
       "setCallActions",
-      "setOrderIds4Assign",
-      "setAssignType"
+      "assignAction"
     ]),
     onSwipeClose(clickPosition, instance) {
       switch (clickPosition) {
@@ -202,13 +201,23 @@ export default {
         // on close
       });
     },
-    assign() {
+    toAssign() {
       //指派
       console.log("指派");
-      const ids = [1, 2];
+      const action = {
+        ids: [1, 2],
+        actionType: AssignActionTypeEnum.ASSIGN
+      }
+      this.assignAction(action)
+    },
+    toFinish() {
       //指派
-      this.setOrderIds4Assign(ids);
-      //this.setAssignType("reassignment")
+      console.log("指派");
+      const action = {
+        ids: [1],
+        actionType: AssignActionTypeEnum.FINISH
+      }
+      this.assignAction(action)
     }
   },
   filters: {

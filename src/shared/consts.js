@@ -37,3 +37,15 @@ export const OrderOtherStatus = {
   REJECT: "已拒绝",
   CANCEL: "已取消"
 };
+
+export const AssignActionTypeEnum = {
+  ASSIGN: "toAssign", //指派
+  REASSIGNMENT: "toReassignment", //改派
+  FINISH: "toFinish" //直接送达
+};
+
+export const PayMethodActionTypeEnum = {
+  ASSIGN_2_FINISH: "assign2Finish", //指派
+  DIRECT_FINISH: "directFinish" //直接送达
+};
+

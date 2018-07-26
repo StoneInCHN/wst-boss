@@ -9,6 +9,7 @@
 <script>
 import { Toast } from "vant";
 import WstPicker from "./WstPicker";
+import { AssignActionTypeEnum } from "@/shared/consts";
 import { mapActions, mapGetters } from "vuex";
 export default {
   name: "AssignPicker",
@@ -57,7 +58,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["userId", "orderIds4Assign", "assignType"]),
+    ...mapGetters(["userId", "orderIds4Assign", "actionType", "orderList"]),
     show() {
       return this.isShow;
     },
@@ -72,30 +73,42 @@ export default {
     }
   },
   methods: {
+    ...mapActions(["reserveOrderList"]),
     confirm(value, index) {
       const emp = this.listSrc[index];
       const ids = this.orderIds4Assign.concat();
-      this.assignOrder(emp, ids);
-      this.close();
+      const { actionType } = this;
+      if(actionType === AssignActionTypeEnum.FINISH){
+        //直接关闭
+        const employee = Object.assign({},emp)
+        this.close({employee, ids, actionType});
+      }else{
+        this.assignOrder(emp, ids);
+        this.close();
+      }
+       
     },
+    //指派 或 改派订单
     assignOrder(emp, ids) {
       const params = {
         entityIds: ids,
         oprStatus: "PROCESSING",
-        userId: this.userId,
-        empId: emp.id,
-        empIncome: this.empIncome
+        userId: Number(this.userId),
+        empId: Number(emp.id),
+        empIncome: Number(this.empIncome)
       };
-      const { assignType } = this;
-      console.log({ params, assignType });
+      const { actionType } = this;
+      console.log({ params, actionType });
+      /** 
       this.$api.order.oprSO(params).then(r => {
         console.log({ r });
-        if (assignType === "assign") {
+        if (actionType === "assign") {
           Toast.success("指派成功");
-        } else if(assignType === "reassignment") {
+        } else if(actionType === "reassignment") {
           Toast.success("改派成功");
         }
       });
+      */
     },
     confirm2(value, index) {
       const { isBatch, type } = this;

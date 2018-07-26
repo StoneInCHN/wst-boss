@@ -16,6 +16,7 @@
             <Button size="large" :loading="commissionLoading" @click="onCommissionConfirm">确定</Button>
         </Popup>
         <AssignPicker v-if="showAssign" :empIncome="commissionPrice" :close="closeAssgin" />
+        <PayMethodPicker v-if="showFinish" :ids="orderIds4Assign" :employee="employee" :close="closeFinish" :type="payMethodType"></PayMethodPicker>
     </div>
 </template>
 
@@ -25,6 +26,7 @@ import AssignPicker from "@/components/AssignPicker";
 import PayMethodPicker from "@/components/PayMethodPicker";
 import { mapActions, mapGetters } from "vuex";
 import validate from "../utils/validate";
+import { AssignActionTypeEnum, PayMethodActionTypeEnum } from "@/shared/consts";
 
 export default {
   name: "CommonAssign",
@@ -41,6 +43,10 @@ export default {
       commissionPrice: null,
       commissionLoading: false,
       showAssign: false,
+      showFinish: false,
+      payMethodType: PayMethodActionTypeEnum.DIRECT_FINISH,
+      employee: {},
+      ids: [],
       errorMsgshow: {
         commissionPrice: ""
       }
@@ -66,7 +72,7 @@ export default {
   },
   watch: {
     orderIds4Assign(ids) {
-        this.showCommissionModel = true
+      this.showCommissionModel = true;
     }
   },
   methods: {
@@ -77,11 +83,11 @@ export default {
           this.errorMsgshow[item.alias] = item.msg;
         });
       } else {
-       console.log(`提成确认: ${this.commissionPrice} 元`);
+        console.log(`提成确认: ${this.commissionPrice} 元`);
         //关闭 金额提成输入框
-        this.showCommissionModel = false
+        this.showCommissionModel = false;
         //打开 员工指派picker
-        this.showAssign = true
+        this.showAssign = true;
       }
     },
     checkCommissionPrice() {
@@ -92,11 +98,30 @@ export default {
       );
       this.errorMsgshow.commissionPrice = result ? result : "";
     },
-    closeAssgin(){
-        console.log("关闭 -> closeAssgin")
+    closeAssgin(params) {
+      console.log("关闭 -> closeAssgin");
+      this.showAssign = false;
+      console.log({ params });
+      //待支付订单 直接 点击完成
+      if (params && params.actionType === AssignActionTypeEnum.FINISH) {
+          const { employee } = params
+        if (employee) {
+          this.employee = {
+              empId : employee.id,
+              empIncome: Number(this.commissionPrice)
+          };
+        }
+        this.showFinish = true;
+        this.payMethodType = PayMethodActionTypeEnum.ASSIGN_2_FINISH;
+      } else {
         // 重置金额
-        this.commissionPrice = null
-        this.showAssign = false
+        this.commissionPrice = null;
+      }
+    },
+    closeFinish() {
+      console.log("关闭 -> closeAssgin");
+      this.showFinish = false;
+      this.commissionPrice = null;
     }
   }
 };

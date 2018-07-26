@@ -16,6 +16,8 @@ export const ORDER_OTHER_LIST = 'ORDER_OTHER_LIST' //其他订单 （除去待�
 export const ORDER_CHECKED_ORDERS = 'ORDER_CHECKED_ORDERS' //批量处理时选中的ID
 export const ORDER_EMP_INCOME = 'ORDER_EMP_INCOME' //订单指派时员工提成金额
 export const ORDER_EMP_ID = 'ORDER_EMP_ID' //订单指派时员工id
+export const ORDER_RESERVE_ORDER_LIST = 'ORDER_RESERVE_ORDER_LIST' //
+
 
 //mine
 
@@ -29,4 +31,5 @@ export const CALL_ACTION_SHOWCALL = 'CALL_ACTION_SHOWCALL' //调起打电话框
 export const COM_ASSIGN_SHOW = 'COM_ASSIGN_SHOW' //调起打电话框
 export const COM_ASSIGN_SET_ORDER_IDS = 'COM_ASSIGN_SET_ORDER_IDS' //调起打电话框
 export const COM_ASSIGN_SET_TYPE = 'COM_ASSIGN_SET_TYPE' //调起打电话框
+export const COM_ASSIGN_SET_ASSIGN_ACTION = 'COM_ASSIGN_SET_ASSIGN_ACTION' //调起打电话框
 

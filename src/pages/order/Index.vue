@@ -3,12 +3,12 @@
       <div class="order-nav">
         <Button v-if="currentState !== 'OTHER'" class="order-setting" size="small" @click="setting">{{settingText}}</Button>
         <ul class="order-setting-edit" >
-            <li v-if="currentState === '_OTHER'"><a @click="batchRefuse">拒绝</a></li>
-            <li v-if="currentState === 'PENDING'"><a @click="showCommission('openAssign')">指派</a></li>
-            <li v-if="currentState === 'PROCESSING'"><a @click="showCommission('openReassignment')">改派</a></li>
-            <li v-if="currentState === 'PENDING'"><a @click="showCommission('openAssign2Finish')">送达</a></li>
-            <li v-if="currentState === 'PROCESSING'"><a @click="batchFinish()">送达</a></li>
-            <li v-if="currentState === '_OTHER'"><a @click="batchUnDelivery">无法送达</a></li>
+            <li v-if="currentState === '_OTHER'"><a >拒绝</a></li>
+            <li v-if="currentState === 'PENDING'"><a >指派</a></li>
+            <li v-if="currentState === 'PROCESSING'"><a >改派</a></li>
+            <li v-if="currentState === 'PENDING'"><a >送达</a></li>
+            <li v-if="currentState === 'PROCESSING'"><a >送达</a></li>
+            <li v-if="currentState === '_OTHER'"><a >无法送达</a></li>
         </ul>
         <Tabs :actice="active"  class="order-tabs" @click="onTabsClick">
             <Tab v-for="item in tabDatas" :title="item.title" :key="item.status"/>
@@ -90,21 +90,7 @@ export default {
         ["PROCESSING"],
         ["FINISH", "UNDELIVER", "REJECT", "CANCEL"]
       ],
-      openAssign: false,
-      openReassignment: false,
-      openAssign2Finish: false,
-      openFinish: false,
-      openFinish4Assign: false,
-      isLoading: false,
-      count: 0,
-      showCommissionModel: false,
-      commissionPrice: "",
-      commissionLoading: false,
-      errorMsgshow: {
-        commissionPrice: ""
-      },
-      assignType: "openAssign",
-      orderList: []
+      count: 0
     };
   },
   mounted() {
@@ -117,26 +103,11 @@ export default {
       "pendingList",
       "processingList",
       "otherList",
-      "editable",
-      "empIncome"
+      "orderList",
+      "editable"
     ]),
     settingText() {
       return this.editable ? "取消" : "管理";
-    },
-    checkRules() {
-      return [
-        {
-          el: this.commissionPrice,
-          alias: "commissionPrice",
-          rules: [
-            { rule: "isNoNull", msg: "提成金额不能为空" },
-            {
-              rule: "isPrice",
-              msg: "提成金额只能为大于或等于0的数字且最多两位小数"
-            }
-          ]
-        }
-      ];
     },
     contentStyle() {
       const flag = !!this.editable
@@ -150,29 +121,12 @@ export default {
       "setProcessingList",
       "setOtherList",
       "setEditable",
+      "reserveOrderList",
       "setToken",
-      "setUserId",
-      "setCobType",
-      "setEmpIncome"
     ]),
     setting() {
       this.setCheckedOrders([]);
       this.setEditable(!this.editable);
-    },
-    onRefresh() {
-      setTimeout(() => {
-        this.count++;
-        Toast.succes("刷新成功:" + this.count);
-        this.isLoading = false;
-      }, 500);
-    },
-    checkCommissionPrice() {
-      const result = validate.check(
-        this.checkRules.filter(item => {
-          return item.alias === "commissionPrice";
-        })
-      );
-      this.errorMsgshow.commissionPrice = result ? result : "";
     },
     onTabsClick(i) {
       this.setEditable(false);
@@ -187,7 +141,7 @@ export default {
       this.getListByStatus(status, this.currentState);
     },
     getListByStatus(oStatus, type) {
-      this.orderList = []
+      this.reserveOrderList([])
       const params = {
         oStatus,
         pageNumber: 1,
@@ -202,151 +156,8 @@ export default {
         } else {
           this.setOtherList(r);
         }
-        console.log({r})
-        this.orderList = r
+        this.reserveOrderList(r)
       });
-    },
-    batchRefuse() {
-      const ids = this.checkedOrders;
-      const desc = `批量拒绝`;
-      if (ids && ids.length > 0) {
-        Dialog.confirm({
-          title: "拒绝订单",
-          message: `确定要拒绝当前选择的订单吗?`
-        })
-          .then(() => {
-            const params = {
-              entityIds: ids,
-              oprStatus: "REJECT",
-              userId: this.userId
-            };
-            this.oprSO(params);
-          })
-          .catch(() => {
-            // on cancel
-          });
-      } else {
-        Toast("请先选择订单");
-      }
-    },
-    batchAssign() {
-      this.batchOption("openAssign", "请先选择要指派的订单");
-    },
-    closeAssgin() {
-      this.openAssign = false;
-    },
-    showCommission(key) {
-      const ids = this.checkedOrders;
-      const desc = `批量送达`;
-      console.log({ desc, ids });
-      if (ids && ids.length > 0) {
-        this.showCommissionModel = true;
-        this.assignType = key;
-      } else {
-        Toast("请先选择订单");
-      }
-    },
-    onCommissionConfirm() {
-      const result = validate.checkAll(this.checkRules);
-      if (result) {
-        result.forEach(item => {
-          this.errorMsgshow[item.alias] = item.msg;
-        });
-      } else {
-        const commissionPrice = this.commissionPrice;
-        if (this.assignType === "openReassignment") {
-          this.batchReassignment();
-        } else if (this.assignType === "openAssign2Finish") {
-          this.openAssign2Finish = true;
-        } else {
-          this.batchAssign();
-        }
-        this.setEmpIncome(commissionPrice);
-        this.showCommissionModel = false;
-      }
-    },
-    batchService() {
-      const ids = this.checkedOrders;
-      if (ids && ids.length > 0) {
-        this.showCommissionModel = true;
-      } else {
-        Toast("请先选择订单");
-      }
-    },
-    batchReassignment() {
-      this.batchOption("openReassignment", "请先选择要改派的订单");
-    },
-    closeReassignment() {
-      this.openReassignment = false;
-    },
-    //不指派 直接送达
-    closeAssign2Finish(type) {
-      if (this.openAssign2Finish) {
-        this.openAssign2Finish = false;
-        setTimeout(() => {
-          this.openFinish4Assign = true;
-        }, 100);
-      } else {
-        this.openAssign2Finish = true;
-      }
-    },
-    //送达
-    batchFinish() {
-      const ids = this.checkedOrders;
-      const desc = `批量送达`;
-      console.log({ desc, ids });
-      if (ids && ids.length > 0) {
-        this.openFinish = true;
-      } else {
-        Toast("请先选择订单");
-      }
-    },
-    closeFinish() {
-      this.openFinish = false;
-    },
-    closeFinish4Assign() {
-      this.openFinish4Assign = false;
-    },
-    batchUnDelivery() {
-      const ids = this.checkedOrders;
-      const desc = `批量无法送达`;
-      //console.log({ desc, ids });
-      if (ids && ids.length > 0) {
-        Dialog.confirm({
-          title: "批量无法送达",
-          message: `确定要将当前选择的订单的状态改为无法送达吗`
-        })
-          .then(() => {
-            const params = {
-              entityIds: ids,
-              oprStatus: "UNDELIVER",
-              userId: this.userId
-            };
-            this.oprSO(params);
-          })
-          .catch(() => {
-            // on cancel
-          });
-      } else {
-        Toast("请先选择订单");
-      }
-    },
-    batchOption(openFlag, msg) {
-      const ids = this.checkedOrders;
-      if (ids && ids.length > 0) {
-        this[openFlag] = true;
-      } else {
-        Toast(msg);
-      }
-    },
-    oprSO(params, curStatus) {
-      if (params) {
-        this.$api.order.oprSO(params).then(r => {
-          this.getListByStatus(["PENDING"], "PENDING");
-          this.getListByStatus(["PROCESSING"], "PROCESSING");
-          Toast.success("操作成功");
-        });
-      }
     }
   }
 };
@@ -419,20 +230,6 @@ export default {
 .order-list{
   height: calc(~"100vh - 95px");
   overflow: auto;
-}
-.commission-popup {
-  width: 80vw;
-  padding: 1rem;
-  box-sizing: border-box;
-  h4 {
-    text-align: center;
-    padding: 0.5rem 0;
-  }
-  .van-button--default {
-    margin-top: 0.5rem;
-    background-color: #00a0e9;
-    color: #fff;
-  }
 }
 </style>
 
