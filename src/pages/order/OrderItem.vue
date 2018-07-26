@@ -29,7 +29,7 @@
            <ul v-if="isPending"  :disabled="eventDisabled">
                <li><a @click="call">电话</a></li>
                <li><a @click="printOrder">打印</a></li>
-               <li><a >指派</a></li>
+               <li><a @click="assign">指派</a></li>
                <li><a >送达</a></li>
            </ul>
            <ul v-if="isProcessing" :disabled="eventDisabled">
@@ -155,7 +155,13 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["setCheckedOrders", "callSomeone", "setCallActions"]),
+    ...mapActions([
+      "setCheckedOrders",
+      "callSomeone",
+      "setCallActions",
+      "setOrderIds4Assign",
+      "setAssignType"
+    ]),
     onSwipeClose(clickPosition, instance) {
       switch (clickPosition) {
         case "left":
@@ -195,6 +201,14 @@ export default {
       }).then(() => {
         // on close
       });
+    },
+    assign() {
+      //指派
+      console.log("指派");
+      const ids = [1, 2];
+      //指派
+      this.setOrderIds4Assign(ids);
+      //this.setAssignType("reassignment")
     }
   },
   filters: {

@@ -25,3 +25,8 @@ export const CALL_ACTION_SOMEONE = 'COMMON_ACTION_CALL_SOMEONE' //调起打电�
 export const CALL_ACTION_CALLACTIONS = 'CALL_ACTION_CALLACTIONS' //调起打电话框
 export const CALL_ACTION_SHOWCALL = 'CALL_ACTION_SHOWCALL' //调起打电话框
 
+//commonAssign  订单指派/改派
+export const COM_ASSIGN_SHOW = 'COM_ASSIGN_SHOW' //调起打电话框
+export const COM_ASSIGN_SET_ORDER_IDS = 'COM_ASSIGN_SET_ORDER_IDS' //调起打电话框
+export const COM_ASSIGN_SET_TYPE = 'COM_ASSIGN_SET_TYPE' //调起打电话框
+

@@ -31,17 +31,17 @@
       </WstScroll>
       <Footer/>
       <CallAction/>
+      <CommonAssign/>
   </div>
 </template>
 <script>
 import Header from "@/pages/wechat/Header";
 import Footer from "@/pages/wechat/Footer";
 import OrderItem from "./OrderItem";
-import AssignPicker from "@/components/AssignPicker";
-import PayMethodPicker from "@/components/PayMethodPicker";
 import Empty from "@/components/Empty";
 import WstScroll from "@/components/WstScroll";
 import CallAction from "@/components/CallAction";
+import CommonAssign from "@/components/CommonAssign";
 import { Tab, Tabs, Icon, Button, Toast, Dialog, Field, Popup } from "vant";
 import { mapActions, mapGetters } from "vuex";
 import validate from "../../utils/validate";
@@ -58,13 +58,12 @@ export default {
     Dialog,
     Header,
     Footer,
-    AssignPicker,
-    PayMethodPicker,
     Field,
     Popup,
     Empty,
     WstScroll,
-    CallAction
+    CallAction,
+    CommonAssign
   },
   data() {
     return {

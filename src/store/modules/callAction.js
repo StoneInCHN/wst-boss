@@ -1,6 +1,4 @@
 import * as types from "../types";
-import apis from "../../apis";
-import { getItem , getBooleanItem, getIntItem} from '../../utils'
 
 /**
  * 通用配置
