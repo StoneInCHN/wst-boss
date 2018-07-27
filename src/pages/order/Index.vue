@@ -3,12 +3,11 @@
       <div class="order-nav">
         <Button v-if="currentState !== 'OTHER'" class="order-setting" size="small" @click="setting">{{settingText}}</Button>
         <ul class="order-setting-edit" >
-            <li v-if="currentState === '_OTHER'"><a >拒绝</a></li>
-            <li v-if="currentState === 'PENDING'"><a >指派</a></li>
-            <li v-if="currentState === 'PROCESSING'"><a >改派</a></li>
-            <li v-if="currentState === 'PENDING'"><a >送达</a></li>
-            <li v-if="currentState === 'PROCESSING'"><a >送达</a></li>
-            <li v-if="currentState === '_OTHER'"><a >无法送达</a></li>
+            <li v-if="currentState !== '_OTHER'"><a @click="printOrder">打印</a></li>
+            <li v-if="currentState === 'PENDING'"><a @click="toAssign">指派</a></li>
+            <li v-if="currentState === 'PROCESSING'"><a @click="toReassignment">改派</a></li>
+            <li v-if="currentState === 'PENDING'"><a @click="toFinish">送达</a></li>
+            <li v-if="currentState === 'PROCESSING'"><a @click="toService">送达</a></li>
         </ul>
         <Tabs :actice="active"  class="order-tabs" @click="onTabsClick">
             <Tab v-for="item in tabDatas" :title="item.title" :key="item.status"/>
@@ -44,6 +43,7 @@ import CallAction from "@/components/CallAction";
 import CommonAssign from "@/components/CommonAssign";
 import { Tab, Tabs, Icon, Button, Toast, Dialog, Field, Popup } from "vant";
 import { mapActions, mapGetters } from "vuex";
+import { CommonActionTypeEnum } from "@/shared/consts";
 import validate from "../../utils/validate";
 
 export default {
@@ -100,9 +100,6 @@ export default {
     ...mapGetters([
       "checkedOrders",
       "userId",
-      "pendingList",
-      "processingList",
-      "otherList",
       "orderList",
       "editable"
     ]),
@@ -117,12 +114,10 @@ export default {
   methods: {
     ...mapActions([
       "setCheckedOrders",
-      "setPendingList",
-      "setProcessingList",
-      "setOtherList",
       "setEditable",
       "reserveOrderList",
       "setToken",
+      "assignAction"
     ]),
     setting() {
       this.setCheckedOrders([]);
@@ -140,22 +135,79 @@ export default {
       }
       this.getListByStatus(status, this.currentState);
     },
+    printOrder(){
+      const { checkedOrders } = this
+      const desc = "打印"
+      console.log({desc, checkedOrders})
+      setTimeout(()=>{
+        this.setEditable(false);
+      }, 1000)
+    },
+    toAssign(){
+      //指派
+      console.log("指派");
+      const { checkedOrders } = this
+      console.log({checkedOrders})
+      if(checkedOrders.length > 0){
+        const action = {
+          ids: checkedOrders.concat(),
+          actionType: CommonActionTypeEnum.ASSIGN
+        }
+        this.assignAction(action)
+      }else{
+        Toast("请先选择订单");
+      }
+    },
+    toReassignment(){
+      //改派
+      console.log("指派直接完成");
+      const { checkedOrders } = this
+      if(checkedOrders.length > 0){
+        const action = {
+          ids: checkedOrders.concat(),
+          actionType: CommonActionTypeEnum.REASSIGNMENT
+        }
+        this.assignAction(action)
+      }else{
+        Toast("请先选择订单");
+      }
+    },
+    toFinish(){
+      //指派时直接完成
+      console.log("指派直接完成");
+      const { checkedOrders } = this
+      if(checkedOrders.length > 0){
+        const action = {
+          ids: checkedOrders.concat(),
+          actionType: CommonActionTypeEnum.FINISH
+        }
+        this.assignAction(action)
+      }else{
+        Toast("请先选择订单");
+      }
+    },
+    toService(){
+      console.log("完成")
+      const { checkedOrders } = this
+      if(checkedOrders.length > 0){
+        const action = {
+          ids: checkedOrders.concat(),
+          actionType: CommonActionTypeEnum.SERVICE
+        }
+        this.assignAction(action)
+      }else{
+        Toast("请先选择订单");
+      }
+    },
     getListByStatus(oStatus, type) {
       this.reserveOrderList([])
       const params = {
         oStatus: ["PENDING"],
         pageNumber: 1,
         pageSize: 50,
-        userId: this.userId
+        userId: Number(this.userId)
       };
       this.$api.order.pageShopOrders(params).then(r => {
-        if (type === "PENDING") {
-          this.setPendingList(r);
-        } else if (type === "PROCESSING") {
-          this.setProcessingList(r);
-        } else {
-          this.setOtherList(r);
-        }
         this.reserveOrderList(r)
       });
     }

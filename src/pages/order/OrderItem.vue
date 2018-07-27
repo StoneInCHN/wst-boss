@@ -146,7 +146,6 @@ export default {
           this.setCheckedOrders(checkedOrders);
         } else {
           const lists = checkedOrders.filter(val => {
-            console.log({ val, id });
             return val !== id;
           });
           this.setCheckedOrders(lists);

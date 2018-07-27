@@ -206,7 +206,6 @@ export default {
     data() {
       setTimeout(() => {
         this.refresh();
-        console.log('data 发生了变化... ')
       }, this.refreshDelay);
     }
   }
