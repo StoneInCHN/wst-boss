@@ -26,7 +26,7 @@ import AssignPicker from "@/components/AssignPicker";
 import PayMethodPicker from "@/components/PayMethodPicker";
 import { mapActions, mapGetters } from "vuex";
 import validate from "../utils/validate";
-import { AssignActionTypeEnum, PayMethodActionTypeEnum } from "@/shared/consts";
+import { CommonActionTypeEnum, PayMethodActionTypeEnum } from "@/shared/consts";
 
 export default {
   name: "CommonAssign",
@@ -53,7 +53,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["orderIds4Assign"]),
+    ...mapGetters(["orderIds4Assign", "actionType"]),
     checkRules() {
       return [
         {
@@ -72,7 +72,12 @@ export default {
   },
   watch: {
     orderIds4Assign(ids) {
-      this.showCommissionModel = true;
+      if(this.actionType !== CommonActionTypeEnum.SERVICE){
+          this.showCommissionModel = true;
+      }else{
+          this.showFinish = true;
+      }
+      
     }
   },
   methods: {
@@ -101,14 +106,14 @@ export default {
     closeAssgin(params) {
       console.log("关闭 -> closeAssgin");
       this.showAssign = false;
-      console.log({ params });
       //待支付订单 直接 点击完成
-      if (params && params.actionType === AssignActionTypeEnum.FINISH) {
-          const { employee } = params
+      if (params && params.actionType === CommonActionTypeEnum.FINISH) {
+        console.log({ params });
+        const { employee } = params;
         if (employee) {
           this.employee = {
-              empId : employee.id,
-              empIncome: Number(this.commissionPrice)
+            empId: employee.id,
+            empIncome: Number(this.commissionPrice)
           };
         }
         this.showFinish = true;

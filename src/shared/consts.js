@@ -38,14 +38,15 @@ export const OrderOtherStatus = {
   CANCEL: "已取消"
 };
 
-export const AssignActionTypeEnum = {
+export const CommonActionTypeEnum = {
   ASSIGN: "toAssign", //指派
   REASSIGNMENT: "toReassignment", //改派
-  FINISH: "toFinish" //直接送达
+  FINISH: "toFinish", //指派时直接送达
+  SERVICE: "toService" //普通送达
 };
 
 export const PayMethodActionTypeEnum = {
-  ASSIGN_2_FINISH: "assign2Finish", //指派
-  DIRECT_FINISH: "directFinish" //直接送达
+  ASSIGN_2_FINISH: "assign2Finish", //指派时直接送达
+  DIRECT_FINISH: "directFinish" //普通送达
 };
 

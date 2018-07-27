@@ -7,7 +7,6 @@
        </section>
        <section class="order-item-section item-section-title">
          <h6>{{item.addrInfo.fullAddr}}</h6>
-          <Tag plain type="primary" class="tag" v-if="!isOther">未打印</Tag>
        </section>
        <section class="order-item-section" v-if="isPending">
          <p>{{item.addrInfo.contactPhone}}</p>
@@ -18,7 +17,8 @@
           </p>
            <span> ￥{{orderItem.amount | firmatPrice}}</span>
        </section>
-       <section class="order-item-section">
+       <section class="order-item-section section-flex">
+         <span  class="tag-print" v-if="!isOther">未打印</span>
          <p class="total-price">合计 : <span>￥{{item.amount | firmatPrice}}</span></p>
        </section>
        <section class="order-item-section" v-if="isProcessing">
@@ -33,10 +33,10 @@
                <li><a @click="toFinish">送达</a></li>
            </ul>
            <ul v-if="isProcessing" :disabled="eventDisabled">
-               <li class="refuse"><a >无法送到</a></li>
-               <li><a >送达</a></li>
-               <li><a >改派</a></li>
-               <li><a @click="call">电话</a></li>
+              <li><a @click="call">电话</a></li>
+              <li><a @click="printOrder">打印</a></li>
+              <li><a @click="toReassignment">改派</a></li>
+              <li><a @click="toService">送达</a></li>
            </ul>
            <ul v-if="isOther" class="complete-status">
                <li class="state">
@@ -55,7 +55,7 @@
 <script>
 import { Tag, Checkbox, Popup, Dialog, Toast, CellSwipe } from "vant";
 import { mapActions, mapGetters } from "vuex";
-import { CobPayTypeEnum, OrderOtherStatus, AssignActionTypeEnum } from "@/shared/consts";
+import { CobPayTypeEnum, OrderOtherStatus, CommonActionTypeEnum } from "@/shared/consts";
 import { formatDateTime, toDecimal2 } from "@/utils";
 import validate from "../../utils/validate";
 
@@ -110,7 +110,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["checkedOrders"]),
+    ...mapGetters(["checkedOrders", "userId"]),
     isPending() {
       return this.state === "PENDING";
     },
@@ -169,18 +169,10 @@ export default {
           instance.close();
           break;
         case "right":
-          if (isPending) {
-            Dialog.confirm({
-              message: "确定拒绝该订单吗？"
-            }).then(() => {
-              instance.close();
-            });
-          } else if (isProcessing) {
-            Dialog.confirm({
-              message: "确定将该订单标记为[无法送达]吗？"
-            }).then(() => {
-              instance.close();
-            });
+          if (this.isPending) {
+            this.refuse()
+          } else if (this.isProcessing) {
+            this.unDelivery()
           }
           break;
       }
@@ -204,21 +196,80 @@ export default {
     toAssign() {
       //指派
       console.log("指派");
+      const { id } = this.item
       const action = {
-        ids: [1, 2],
-        actionType: AssignActionTypeEnum.ASSIGN
+        ids: [id],
+        actionType: CommonActionTypeEnum.ASSIGN
+      }
+      this.assignAction(action)
+    },
+    toReassignment(){
+      //改派
+      console.log("指派直接完成");
+      const { id } = this.item
+      const action = {
+        ids: [id],
+        actionType: CommonActionTypeEnum.REASSIGNMENT
       }
       this.assignAction(action)
     },
     toFinish() {
-      //指派
-      console.log("指派");
+      //指派时直接完成
+      console.log("指派直接完成");
+      const { id } = this.item
       const action = {
-        ids: [1],
-        actionType: AssignActionTypeEnum.FINISH
+        ids: [id],
+        actionType: CommonActionTypeEnum.FINISH
       }
       this.assignAction(action)
-    }
+    },
+    toService(){
+      console.log("完成")
+      const { id } = this.item
+      const action = {
+        ids: [id],
+        actionType: CommonActionTypeEnum.SERVICE
+      }
+      this.assignAction(action)
+    },
+    unDelivery() {
+      Dialog.confirm({
+        title: "无法送达",
+        message: `确定要将[${
+          this.item.addrInfo.contactPhone
+        }]的订单状态修改为[无法送达]吗?`
+      }).then(() => {
+        // on confirm
+        const { id } = this.item;
+        const params = {
+          entityIds: [id],
+          oprStatus: "UNDELIVER",
+          userId: Number(this.userId)
+        };
+        //this.oprSO(params);
+        console.log({params})
+      });
+    },
+    refuse() {
+      console.log("refuse");
+      Dialog.confirm({
+        title: "拒绝订单",
+        message: `确定要拒绝[${this.item.addrInfo.contactPhone}]的订单吗?`
+      })
+        .then(() => {
+          const { id } = this.item;
+          const params = {
+            entityIds: [id],
+            oprStatus: "REJECT",
+            userId: Number(this.userId)
+          };
+          //this.oprSO(params);
+          console.log({params})
+        })
+        .catch(() => {
+          // on cancel
+        });
+    },
   },
   filters: {
     formatDate(time) {
@@ -272,18 +323,23 @@ export default {
       font-weight: 500;
       text-align: right;
       padding-right: 10px;
+      flex: 1 1 auto;
     }
     .total-price span {
       color: red;
       margin-left: 0px;
     }
-    .tag {
-      padding: 4px 8px 2px;
+    .tag-print {
       font-size: 14px;
+      position: relative;
+      flex: 0 0 auto;
+      right: 0;
+      color: #06bf04;
     }
   }
-  .item-section-title {
-    padding-right: 20vw;
+  .section-flex{
+    display: flex;
+    align-items: center;
   }
   .order-item-footer {
     position: relative;
@@ -375,6 +431,6 @@ export default {
   justify-content: center;
   background-color: red;
   color: #fff;
-  padding: 0 15px;
+  width: 65px;
 }
 </style>

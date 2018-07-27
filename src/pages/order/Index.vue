@@ -143,7 +143,7 @@ export default {
     getListByStatus(oStatus, type) {
       this.reserveOrderList([])
       const params = {
-        oStatus,
+        oStatus: ["PENDING"],
         pageNumber: 1,
         pageSize: 50,
         userId: this.userId

@@ -63,7 +63,7 @@ export default {
         entityIds,
         oprStatus: "FINISH",
         cobType,
-        userId
+        userId: Number(userId)
       };
       if( type === PayMethodActionTypeEnum.ASSIGN_2_FINISH ){
         this.assign2Finish(params)
