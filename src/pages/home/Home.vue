@@ -22,6 +22,7 @@ export default {
       this.initData();
     } else {
       this.initTest();
+      //this.initData();
     }
   },
   computed: {

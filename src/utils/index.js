@@ -158,3 +158,7 @@ export function toDecimal2(x) {
   } 
   return s; 
  }
+
+ export function getAbsoluteUrl(url){
+   return process.env.BASE_URL + url;
+ }

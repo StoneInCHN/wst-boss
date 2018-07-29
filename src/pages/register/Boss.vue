@@ -74,8 +74,6 @@ export default {
         wxPayCodeUrl: "",
         alipayCodeUrl: ""
       },
-      wxPayCodeViewUrl: "",
-      alipayCodeViewUrl: "",
       previewUrl: {
         wx: "",
         alipay: ""
