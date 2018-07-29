@@ -23,7 +23,7 @@ export const CobPayTypeEnum = {
 };
 
 export const CobPayTypeText = {
-  ["OFFLINE_TICKET"]: "水票",
+  ["OFFLINE_TICKET"]: "纸质水票",
   ["CASH"]: "现金",
   ["WECHAT"]: "微信",
   ["ALIPAY"]: "支付宝",
