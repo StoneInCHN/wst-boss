@@ -41,10 +41,9 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["userId", "cobType"]),
+    ...mapGetters(["userId", "cobType", "orderList"]),
     payMethodColumns() {
       const types = this.cobType || [];
-      console.log({ types });
       let lists = [];
       if (types && types.length > 0) {
         lists = types.map(item => CobPayTypeText[item]);
@@ -57,7 +56,6 @@ export default {
     confirm(value, index) {
       const cobType = this.cobType[index];
       const { type, userId } = this
-      console.log({ value, index, cobType, type });
       const entityIds = this.ids.concat() || []
       const  params = {
         entityIds,
@@ -73,30 +71,24 @@ export default {
         console.log("未知操作...")
       }
     },
-    directFinish(params){
-      console.log(params)
-      /** 
-      this.$api.order.oprSO(params).then(r => {
-        Toast.success("操作成功", 1.5);
-        this.close();
-      });*/
-      setTimeout(()=>{
-        Toast.success("操作成功", 1.5);
-        this.close();
-      }, 200)
-    },
     assign2Finish(params){
       Object.assign(params, this.employee) 
-      console.log(params)
-      /** 
+      this.oprSO(params)
+    },
+    directFinish(params){
+      this.oprSO(params)
+    },
+    oprSO(params){
       this.$api.order.oprSO(params).then(r => {
         Toast.success("操作成功", 1.5);
+        const { orderList } = this;
+        const { entityIds } = params
+        const tempList = orderList.filter(orderItem => {
+            return !entityIds.includes(orderItem.id);
+        });
+        this.reserveOrderList(tempList);
         this.close();
-      });*/
-       setTimeout(()=>{
-        Toast.success("操作成功", 1.5);
-        this.close();
-      }, 200)
+      });
     }
   }
 };

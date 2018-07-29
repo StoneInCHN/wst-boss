@@ -95,20 +95,16 @@ export default {
   },
   mounted() {
     this.getListByStatus(["PENDING"], "PENDING");
+    this.$eventBus.$on("order:print", this.printSO);
   },
   computed: {
-    ...mapGetters([
-      "checkedOrders",
-      "userId",
-      "orderList",
-      "editable"
-    ]),
+    ...mapGetters(["checkedOrders", "userId", "orderList", "editable"]),
     settingText() {
       return this.editable ? "取消" : "管理";
     },
     contentStyle() {
-      const flag = !!this.editable
-      return flag ? {marginTop:"10.7vw"}: {}
+      const flag = !!this.editable;
+      return flag ? { marginTop: "10.7vw" } : {};
     }
   },
   methods: {
@@ -135,80 +131,103 @@ export default {
       }
       this.getListByStatus(status, this.currentState);
     },
-    printOrder(){
-      const { checkedOrders } = this
-      const desc = "打印"
-      console.log({desc, checkedOrders})
-      setTimeout(()=>{
-        this.setEditable(false);
-      }, 1000)
+    printOrder() {
+      const { checkedOrders } = this;
+      const desc = "打印";
+      if (checkedOrders.length > 0) {
+        const entityIds = checkedOrders.concat();
+        this.printSO({ entityIds }, () => {
+          this.setEditable(false);
+        });
+      } else {
+        Toast("请先选择订单");
+      }
     },
-    toAssign(){
+    toAssign() {
       //指派
-      console.log("指派");
-      const { checkedOrders } = this
-      console.log({checkedOrders})
-      if(checkedOrders.length > 0){
+      const { checkedOrders } = this;
+      if (checkedOrders.length > 0) {
         const action = {
           ids: checkedOrders.concat(),
           actionType: CommonActionTypeEnum.ASSIGN
-        }
-        this.assignAction(action)
-      }else{
+        };
+        this.assignAction(action);
+      } else {
         Toast("请先选择订单");
       }
     },
-    toReassignment(){
+    toReassignment() {
       //改派
-      console.log("指派直接完成");
-      const { checkedOrders } = this
-      if(checkedOrders.length > 0){
+      const { checkedOrders } = this;
+      if (checkedOrders.length > 0) {
         const action = {
           ids: checkedOrders.concat(),
           actionType: CommonActionTypeEnum.REASSIGNMENT
-        }
-        this.assignAction(action)
-      }else{
+        };
+        this.assignAction(action);
+      } else {
         Toast("请先选择订单");
       }
     },
-    toFinish(){
+    toFinish() {
       //指派时直接完成
-      console.log("指派直接完成");
-      const { checkedOrders } = this
-      if(checkedOrders.length > 0){
+      const { checkedOrders } = this;
+      if (checkedOrders.length > 0) {
         const action = {
           ids: checkedOrders.concat(),
           actionType: CommonActionTypeEnum.FINISH
-        }
-        this.assignAction(action)
-      }else{
+        };
+        this.assignAction(action);
+      } else {
         Toast("请先选择订单");
       }
     },
-    toService(){
-      console.log("完成")
-      const { checkedOrders } = this
-      if(checkedOrders.length > 0){
+    toService() {
+      const { checkedOrders } = this;
+      if (checkedOrders.length > 0) {
         const action = {
           ids: checkedOrders.concat(),
           actionType: CommonActionTypeEnum.SERVICE
-        }
-        this.assignAction(action)
-      }else{
+        };
+        this.assignAction(action);
+      } else {
         Toast("请先选择订单");
       }
     },
     getListByStatus(oStatus, type) {
-      this.reserveOrderList([])
+      this.reserveOrderList([]);
       const params = {
-        oStatus: ["PENDING"],
+        oStatus,
         pageNumber: 1,
         pageSize: 50,
         userId: Number(this.userId)
       };
       this.$api.order.pageShopOrders(params).then(r => {
-        this.reserveOrderList(r)
+        this.reserveOrderList(r);
+      });
+    },
+    printSO(params, callback) {
+      Object.assign(params, { userId: Number(this.userId) });
+      this.$api.order.printSO(params).then(r => {
+        Toast.loading({
+          mask: true,
+          message: "打印指令已发出，请等待...",
+          duration: 4000
+        });
+        const { orderList } = this;
+        const { entityIds } = params
+        const tempList = orderList.map(orderItem => {
+          if (entityIds.includes(orderItem.id)) {
+            Object.assign(orderItem, { printStatus: "COMPLETE" });
+          }
+          return orderItem;
+        });
+        this.reserveOrderList(tempList);
+        if (callback) {
+          this.$nextTick(() => {
+            callback();
+          });
+        }
       });
     }
   }
@@ -279,7 +298,7 @@ export default {
     }
   }
 }
-.order-list{
+.order-list {
   height: calc(~"100vh - 95px");
   overflow: auto;
 }

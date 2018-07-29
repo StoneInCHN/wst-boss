@@ -53,7 +53,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["orderIds4Assign", "actionType"]),
+    ...mapGetters(["orderIds4Assign", "actionType", "editable"]),
     checkRules() {
       return [
         {
@@ -81,6 +81,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(["setEditable"]),
     onCommissionConfirm() {
       const result = validate.checkAll(this.checkRules);
       if (result) {
@@ -88,7 +89,6 @@ export default {
           this.errorMsgshow[item.alias] = item.msg;
         });
       } else {
-        console.log(`提成确认: ${this.commissionPrice} 元`);
         //关闭 金额提成输入框
         this.showCommissionModel = false;
         //打开 员工指派picker
@@ -104,11 +104,9 @@ export default {
       this.errorMsgshow.commissionPrice = result ? result : "";
     },
     closeAssgin(params) {
-      console.log("关闭 -> closeAssgin");
       this.showAssign = false;
       //待支付订单 直接 点击完成
       if (params && params.actionType === CommonActionTypeEnum.FINISH) {
-        console.log({ params });
         const { employee } = params;
         if (employee) {
           this.employee = {
@@ -121,12 +119,13 @@ export default {
       } else {
         // 重置金额
         this.commissionPrice = null;
+        this.setEditable(false)
       }
     },
     closeFinish() {
-      console.log("关闭 -> closeAssgin");
       this.showFinish = false;
       this.commissionPrice = null;
+      this.setEditable(false)
     }
   }
 };

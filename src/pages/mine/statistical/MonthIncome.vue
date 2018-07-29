@@ -159,12 +159,12 @@ export default{
 		    			this.report = res;
 		    			if(this.bType){
 		    				if(this.bType == 'INCOME'){
-								this.reportValue = "收入："+ this.report.monIncome;
+								this.reportValue = `收入：${this.report.monIncome}`;
 		    				}else if(this.bType == 'OUTCOME'){
-								this.reportValue = "支出："+ this.report.monEmpExp;
+								this.reportValue = `支出：${this.report.monEmpExp}`;
 		    				}
 		    			}else{
-		    				this.reportValue = "收入："+ this.report.monIncome+ "，支出："+ this.report.monEmpExp;
+		    				this.reportValue = `收入：${this.report.monIncome}，支出：${this.report.monEmpExp}`;
 		    			}
 		    	}).catch(error => {
 		    		console.error(error);

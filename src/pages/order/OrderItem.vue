@@ -3,7 +3,7 @@
   <div class="order-item">
        <section class="order-item-section">
            <p>{{item.createDate | formatDate }}</p>
-           <Tag type="primary" class="tag">{{item.seriUserNum}}</Tag>
+           <Tag type="primary" plain class="tag">{{item.seriUserNum}}</Tag>
        </section>
        <section class="order-item-section item-section-title">
          <h6>{{item.addrInfo.fullAddr}}</h6>
@@ -18,7 +18,7 @@
            <span> ￥{{orderItem.amount | firmatPrice}}</span>
        </section>
        <section class="order-item-section section-flex">
-         <span  class="tag-print" v-if="!isOther">未打印</span>
+         <span  class="tag-print" :style="printStyle" v-if="!isOther">{{printText}}</span>
          <p class="total-price">合计 : <span>￥{{item.amount | firmatPrice}}</span></p>
        </section>
        <section class="order-item-section" v-if="isProcessing">
@@ -110,7 +110,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["checkedOrders", "userId"]),
+    ...mapGetters(["checkedOrders", "userId", "orderList"]),
     isPending() {
       return this.state === "PENDING";
     },
@@ -133,6 +133,14 @@ export default {
     otherStatusText() {
       const { oStatus } = this.item;
       return OrderOtherStatus[oStatus] || "";
+    },
+    printText(){
+      const { printStatus } = this.item
+      return  printStatus === "COMPLETE" ? "已打印" : "未打印"
+    },
+    printStyle(){
+      const { printStatus } = this.item
+      return  printStatus !== "COMPLETE" ? {color: "red"} : {}
     }
   },
   watch: {
@@ -151,6 +159,11 @@ export default {
           this.setCheckedOrders(lists);
         }
       }
+    },
+    editable(val){
+      if(!val){
+        this.checked = false
+      }
     }
   },
   methods: {
@@ -158,7 +171,8 @@ export default {
       "setCheckedOrders",
       "callSomeone",
       "setCallActions",
-      "assignAction"
+      "assignAction",
+      "reserveOrderList"
     ]),
     onSwipeClose(clickPosition, instance) {
       switch (clickPosition) {
@@ -185,16 +199,11 @@ export default {
       this.setCallActions(callActions);
     },
     printOrder() {
-      Dialog.alert({
-        title: "订单打印",
-        message: "打印指令已发出，请等待..."
-      }).then(() => {
-        // on close
-      });
+      const { id } = this.item
+      this.$eventBus.$emit('order:print',{entityIds:[id]})
     },
     toAssign() {
       //指派
-      console.log("指派");
       const { id } = this.item
       const action = {
         ids: [id],
@@ -204,7 +213,6 @@ export default {
     },
     toReassignment(){
       //改派
-      console.log("指派直接完成");
       const { id } = this.item
       const action = {
         ids: [id],
@@ -214,7 +222,6 @@ export default {
     },
     toFinish() {
       //指派时直接完成
-      console.log("指派直接完成");
       const { id } = this.item
       const action = {
         ids: [id],
@@ -223,7 +230,7 @@ export default {
       this.assignAction(action)
     },
     toService(){
-      console.log("完成")
+      //对配送中的订单 执行送达
       const { id } = this.item
       const action = {
         ids: [id],
@@ -245,12 +252,16 @@ export default {
           oprStatus: "UNDELIVER",
           userId: Number(this.userId)
         };
-        //this.oprSO(params);
-        console.log({params})
+        this.oprSO(params, ()=>{
+          const { orderList } = this
+            const tempList = orderList.filter(orderItem=>{
+              return id !== orderItem.id
+            })
+            this.reserveOrderList(tempList)
+        });
       });
     },
     refuse() {
-      console.log("refuse");
       Dialog.confirm({
         title: "拒绝订单",
         message: `确定要拒绝[${this.item.addrInfo.contactPhone}]的订单吗?`
@@ -262,13 +273,29 @@ export default {
             oprStatus: "REJECT",
             userId: Number(this.userId)
           };
-          //this.oprSO(params);
-          console.log({params})
+          this.oprSO(params, ()=>{
+            const { orderList } = this
+            const tempList = orderList.filter(orderItem=>{
+              return id !== orderItem.id
+            })
+            this.reserveOrderList(tempList)
+          });
         })
         .catch(() => {
           // on cancel
         });
     },
+    oprSO(params, callback) {
+      if (params) {
+        this.$api.order.oprSO(params).then(r => {
+          Toast.success("操作成功");
+          if(callback){
+            callback()
+          }
+        });
+        
+      }
+    }
   },
   filters: {
     formatDate(time) {
@@ -294,7 +321,7 @@ export default {
   .order-item-section {
     display: flex;
     position: relative;
-    font-size: 14px;
+    font-size: 12px;
     padding: 3px 0;
     font-weight: 200;
     h6 {
@@ -302,7 +329,7 @@ export default {
       font-size: 14px;
     }
     p {
-      font-size: 14px;
+      font-size: 12px;
       flex: 1;
       span {
         margin-left: 20px;
@@ -329,7 +356,6 @@ export default {
       margin-left: 0px;
     }
     .tag-print {
-      font-size: 14px;
       position: relative;
       flex: 0 0 auto;
       right: 0;

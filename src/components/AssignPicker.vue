@@ -78,18 +78,16 @@ export default {
       const emp = this.listSrc[index];
       const ids = this.orderIds4Assign.concat();
       const { actionType } = this;
-      if(actionType === CommonActionTypeEnum.FINISH){
+      if (actionType === CommonActionTypeEnum.FINISH) {
         //直接关闭
-        const employee = Object.assign({},emp)
-        this.close({employee, ids, actionType});
-      }else{
-        this.assignOrder(emp, ids);
-        this.close();
+        const employee = Object.assign({}, emp);
+        this.close({ employee, ids, actionType });
+      } else {
+        this.assignOrder(emp, ids, this.close());
       }
-       
     },
     //指派 或 改派订单
-    assignOrder(emp, ids) {
+    assignOrder(emp, ids, callback) {
       const params = {
         entityIds: ids,
         oprStatus: "PROCESSING",
@@ -98,20 +96,37 @@ export default {
         empIncome: Number(this.empIncome)
       };
       const { actionType } = this;
-      console.log({ params, actionType });
-      /** 
       this.$api.order.oprSO(params).then(r => {
-        console.log({ r });
-        if (actionType === "assign") {
+        if (actionType === CommonActionTypeEnum.ASSIGN) {
           Toast.success("指派成功");
-        } else if(actionType === "reassignment") {
+          const { orderList } = this;
+          const tempList = orderList.filter(orderItem => {
+            return !ids.includes(orderItem.id);
+          });
+          this.reserveOrderList(tempList);
+          if (callback) {
+            callback();
+          }
+        } else if (actionType === CommonActionTypeEnum.REASSIGNMENT) {
           Toast.success("改派成功");
+          const { orderList } = this;
+          const tempList = orderList.map(orderItem => {
+            if( ids.includes(orderItem.id)){
+              const tempEmp = {
+                empAmout: this.empIncome,
+                empId: emp.id,
+                empName: emp.realName
+              }
+              Object.assign(orderItem, tempEmp)
+            }
+            return orderItem
+          });
+          this.reserveOrderList(tempList);
+          if (callback) {
+            callback();
+          }
         }
       });
-      */
-    },
-    oprSO() {
-      console.log("订单处理");
     }
   }
 };

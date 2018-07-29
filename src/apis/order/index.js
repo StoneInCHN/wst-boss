@@ -9,6 +9,10 @@ const order = {
   /**商家操作订单 */
   oprSO(params) {
     return lift(post("/sorder/oprSO", params));
+  },
+  /**商家操作订单 */
+  printSO(params) {
+    return lift(post("/sorder/printSO", params));
   }
 };
 
