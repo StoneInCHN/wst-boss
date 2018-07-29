@@ -1,9 +1,9 @@
 @charset "utf-8";
 
 html {
-  -webkit-text-size-adjust: none;
-  -ms-text-size-adjust: none;
-  font-family: "黑体";
+  font-family: 'PingFangSC', Helvetica, 'Microsoft YaHei', Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
   height: 100%;
 }
 
@@ -131,7 +131,6 @@ section {
 
 body {
   background: #fff;
-  font-family: "微软雅黑";
   height: 100%;
 }
 
@@ -159,7 +158,6 @@ strong {
 a {
   text-decoration: none;
   color: #333;
-  font-family: '黑体', Microsoft YaHei, Tahoma, Arial, sans-serif;
 }
 
 a:hover {
@@ -178,7 +176,6 @@ h4,
 h5,
 h6 {
   font-size: 100%;
-  font-family: Microsoft YaHei;
 }
 
 img {

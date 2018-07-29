@@ -8,12 +8,12 @@ module.exports = {
     assetsRoot: path.resolve(__dirname, "../dist"),
     assetsSubDirectory: "./static",
     assetsPublicPath: "./",
-    productionSourceMap: true,
+    productionSourceMap: false,
     // Gzip off by default as many popular static hosts such as
     // Surge or Netlify already gzip all static assets for you.
     // Before setting to `true`, make sure to:
     // npm install --save-dev compression-webpack-plugin
-    productionGzip: false,
+    productionGzip: true,
     productionGzipExtensions: ["js", "css"],
     // Run the build command with an extra argument to
     // View the bundle analyzer report after build finishes:
@@ -25,21 +25,9 @@ module.exports = {
     env: require("./dev.env"),
     port: 8082,
     autoOpenBrowser: true,
-    assetsSubDirectory: "static",
-    assetsPublicPath: "/",
+    assetsSubDirectory: "./static",
+    assetsPublicPath: "./",
     proxyTable:{},
-    /** 
-    proxyTable: {
-      "/wst-boss": {
-        // 测试环境
-        target: "http://47.106.96.230:10002/wst-boss", // 接口域名
-        changeOrigin: true, //是否跨域
-        pathRewrite: {
-          "^/wst-boss": "" //需要rewrite重写的,
-        }
-      }
-    },
-    */
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
     // (https://github.com/webpack/css-loader#sourcemaps)

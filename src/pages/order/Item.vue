@@ -1,6 +1,6 @@
 <template>
-<div>
-   <div  v-if="item" class="order-item">
+<li>
+   <div  class="order-item">
        <section class="order-item-section">
            <p>{{item.createDate | formatDate }}</p>
            <Tag type="primary" class="tag">{{item.seriUserNum}}</Tag>
@@ -53,9 +53,6 @@
        </div>
        <Checkbox class="order-item-checkbox" v-model="checked" v-if="editable"/>
    </div>
-   <p v-else>
-     暂无订单信息
-   </p>
    <AssignPicker v-if="openAssign" :close="toggleAssign" :isBatch="false"  :item="item"/>
    <AssignPicker v-if="openReassignment" :close="toggleReassignment" :isBatch="false" :item="item" type="PROCESSING"/>
    <AssignPicker v-if="openAssign2Finish" :close="toggleAssign2Finish" :isBatch="false" :item="item" type="assign2Finish"/>
@@ -77,7 +74,7 @@
       />
       <Button size="large" :loading="commissionLoading" @click="onCommissionConfirm">确定</Button>
    </Popup>
-  </div>
+  </li>
 </template>
 <script>
 import {

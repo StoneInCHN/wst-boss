@@ -2,10 +2,9 @@ import Vue from "vue";
 import axios from "axios";
 import store from "../store/index";
 import { Toast } from "vant";
-import qs from "qs";
 
 // 超时时间
-axios.defaults.timeout = 5000;
+axios.defaults.timeout = 6000;
 
 axios.defaults.baseURL = process.env.BASE_URL;
 
@@ -15,11 +14,10 @@ axios.defaults.headers.post["Content-Type"] = "application/json;charset=UTF-8";
 axios.interceptors.request.use(
   config => {
     const { token } = store.state.common;
-    //console.log({ store });
     Toast.loading({
-      mask: true,
+      mask: false,
       message: "加载中...",
-      duration: 10000
+      duration: 6000
     });
     if (token) {
       config.headers.post["X-Auth-Token"] = `${token}`;
@@ -76,7 +74,6 @@ export const post = (url, params = {}) => {
   return new Promise((resolve, reject) => {
     axios.post(url, params).then(
       data => {
-        console.info("post", url, params, data);
         return resolve(data);
       },
       err => {
@@ -88,20 +85,17 @@ export const post = (url, params = {}) => {
 
 export const postByForm = (url, params) => {
   let config = {
-    headers: {'Content-Type': 'multipart/form-data'}
-  }
+    headers: { "Content-Type": "multipart/form-data" }
+  };
   return new Promise((resolve, reject) => {
-    axios
-      .post(url, params, config)
-      .then(
-        data => {
-          console.info("get", url, params, data);
-          return resolve(data);
-        },
-        err => {
-          return reject(err);
-        }
-      );
+    axios.post(url, params, config).then(
+      data => {
+        return resolve(data);
+      },
+      err => {
+        return reject(err);
+      }
+    );
   });
 };
 

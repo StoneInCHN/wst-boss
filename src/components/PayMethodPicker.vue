@@ -2,7 +2,7 @@
   <WstPicker
     :title="title"
     :columns="payMethodColumns"
-    :confirm="confirm2"
+    :confirm="confirm"
     :close="close"
   />
 </template>
@@ -10,7 +10,7 @@
 import { Toast } from "vant";
 import WstPicker from "./WstPicker";
 import { mapActions, mapGetters } from "vuex";
-import { CobPayTypeText } from "@/shared/consts";
+import { CobPayTypeText, PayMethodActionTypeEnum } from "@/shared/consts";
 export default {
   name: "PayMethodPicker",
   components: {
@@ -18,7 +18,11 @@ export default {
     WstPicker
   },
   props: {
-    item: {
+    ids: {
+      type: Array,
+      require: true
+    },
+    employee: {
       type: Object,
       require: true
     },
@@ -27,14 +31,9 @@ export default {
     },
     type: {
       type: String,
-      default: "processing2Finish"
-    },
-    isBatch: {
-      type: Boolean,
-      default: false
+      default: PayMethodActionTypeEnum.DIRECT_FINISH
     }
   },
-  mounted() {},
   data() {
     return {
       title: "请选择支付方式",
@@ -42,18 +41,9 @@ export default {
     };
   },
   computed: {
-    ...mapGetters([
-      "checkedOrders",
-      "userId",
-      "cobType",
-      "processingList",
-      "pendingList",
-      "empIncome",
-      "empId"
-    ]),
+    ...mapGetters(["userId", "cobType", "orderList"]),
     payMethodColumns() {
       const types = this.cobType || [];
-      console.log({ types });
       let lists = [];
       if (types && types.length > 0) {
         lists = types.map(item => CobPayTypeText[item]);
@@ -62,118 +52,43 @@ export default {
     }
   },
   methods: {
-    ...mapActions([
-      "setProcessingList",
-      "setPendingList",
-      "setEmpIncome",
-      "setEmpId",
-      "setEditable"
-    ]),
+    ...mapActions(["setEditable", "reserveOrderList"]),
     confirm(value, index) {
-      const params = this.getParams(index);
-      console.log({ params });
-      this.orderOperation(params)
-    },
-    getParams(index) {
-      const payType = this.cobType[index];
-      const ids = this.isBatch ? this.checkedOrders : [this.item.id];
-      let params = {
-        entityIds: ids,
+      const cobType = this.cobType[index];
+      const { type, userId } = this
+      const entityIds = this.ids.concat() || []
+      const  params = {
+        entityIds,
         oprStatus: "FINISH",
-        cobType: payType,
-        userId: this.userId
+        cobType,
+        userId: Number(userId)
       };
-      if (!this.isBatch || this.type !== "processing2Finish") {
-        const { empId } =
-          !this.isBatch && this.item && this.item.oStatus === "PROCESSING"
-            ? this.item
-            : this;
-        const empIncome =
-          !this.isBatch && this.item && this.item.oStatus === "PROCESSING"
-            ? this.item.empAmout
-            : this.empIncome;
-        params = {
-          entityIds: ids,
-          oprStatus: "FINISH",
-          cobType: payType,
-          userId: this.userId,
-          empIncome,
-          empId
-        };
+      if( type === PayMethodActionTypeEnum.ASSIGN_2_FINISH ){
+        this.assign2Finish(params)
+      }else if(type === PayMethodActionTypeEnum.DIRECT_FINISH ){
+        this.directFinish(params)
+      }else{
+        console.log("未知操作...")
       }
-      return params;
     },
-    orderOperation(params) {
-      //非已指派 在完成
-      const ids = params.entityIds;
+    assign2Finish(params){
+      Object.assign(params, this.employee) 
+      this.oprSO(params)
+    },
+    directFinish(params){
+      this.oprSO(params)
+    },
+    oprSO(params){
       this.$api.order.oprSO(params).then(r => {
         Toast.success("操作成功", 1.5);
-        if (this.type === "assign2Finish") {
-          const lists = this.pendingList.filter(item => {
-            return !ids.includes(item.id);
-          });
-          this.setPendingList(lists);
-        } else {
-          const lists = this.processingList.filter(item => {
-            return !ids.includes(item.id);
-          });
-          this.setProcessingList(lists);
-        }
-        this.setEmpIncome(0);
-        this.setEmpId(-1);
+        const { orderList } = this;
+        const { entityIds } = params
+        const tempList = orderList.filter(orderItem => {
+            return !entityIds.includes(orderItem.id);
+        });
+        this.reserveOrderList(tempList);
         this.close();
       });
-    },
-    confirm2(value, index) {
-      const { isBatch, type, userId } = this
-      const ids = isBatch ? this.checkedOrders : [this.item.id];
-      const desc = isBatch ? `批量送达` : "单个送达";
-      const payType = this.cobType[index];
-      console.log({value, index, ids, desc, payType})
-      if (!ids || ids.length === 0) {
-        Toast("请先选择订单")
-        return false;
-      } 
-      const params = {
-          entityIds: ids,
-          oprStatus: "FINISH",
-          cobType: payType,
-          userId,
-        }
-      if(type === "assign2Finish"){
-        //直接完成 单个 批量
-        const { empId ,empIncome } = this 
-        Object.assign(params, {empId ,empIncome})
-        console.log({params})
-        this.$api.order.oprSO(params).then(r => {
-          Toast.success("操作成功", 1.5);
-          const lists = this.pendingList.filter(item => {
-            return !ids.includes(item.id);
-          });
-          this.setPendingList(lists);
-          this.setEmpIncome(0);
-          this.setEmpId(-1);
-          this.close();
-          if(isBatch){
-            this.setEditable(false);
-          }
-        })
-      }else if(type === "processing2Finish"){
-        this.$api.order.oprSO(params).then(r => {
-          Toast.success("操作成功", 1.5);
-          const lists = this.processingList.filter(item => {
-            return !ids.includes(item.id);
-          });
-          this.setProcessingList(lists);
-          this.setEmpIncome(0);
-          this.setEmpId(-1);
-          this.close();
-          if(isBatch){
-            this.setEditable(false);
-          }
-        })
-      }
-
     }
   }
 };

@@ -45,6 +45,10 @@ const Order = () => import("@/pages/order/Index");
 const Register = () => import("@/pages/register/Boss");
 const RegisterSuccess = () => import("@/pages/register/RegisterSuccess");
 
+
+//商品
+const Goods = () => import("@/pages/goods/Index");
+
 Vue.use(Router);
 
 export default new Router({
@@ -209,6 +213,11 @@ export default new Router({
       path: "/registerSuccess",
       name: "RegisterSuccess",
       component: RegisterSuccess
+    },
+    {
+      path: "/goods",
+      name: "Goods",
+      component: Goods
     }
   ]
 });
