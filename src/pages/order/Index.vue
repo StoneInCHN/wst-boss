@@ -97,6 +97,9 @@ export default {
     this.getListByStatus(["PENDING"], "PENDING");
     this.$eventBus.$on("order:print", this.printSO);
   },
+  beforeDestroy () {
+    this.$eventBus.$off('order:print')
+  },
   computed: {
     ...mapGetters(["checkedOrders", "userId", "orderList", "editable"]),
     settingText() {
