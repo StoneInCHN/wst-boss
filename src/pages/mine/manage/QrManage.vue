@@ -10,12 +10,13 @@
 		    @click-icon='genQrPdf'  @focus='numKeyboard'>
 		    <Button slot="icon" size="small" type="primary">批量生成</Button>
 		  </Field>
+		  <input id="qrUrlValue" :value="qrUrl" style="display:none">
 		  <Field v-if="qrUrl" disabled
 		    v-model="qrUrl"
 		    label="二维码链接"
 		    @click-icon='copyQrPdf'>
 		    <Button slot="icon" size="small" type="primary" 
-		    	class="copyBtn" :data-clipboard-text = "qrUrl">复制链接</Button>
+		    	class="copyBtn" data-clipboard-target = "#qrUrlValue">复制链接</Button>
 		  </Field>
 		</CellGroup>
 		<Footer/>
