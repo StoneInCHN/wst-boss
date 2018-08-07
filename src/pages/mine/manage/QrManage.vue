@@ -10,8 +10,7 @@
 		    @click-icon='genQrPdf'  @focus='numKeyboard'>
 		    <Button slot="icon" size="small" type="primary">批量生成</Button>
 		  </Field>
-		  <input id="qrUrlValue" :value="qrUrl" style="display:none">
-		  <Field v-if="qrUrl" disabled
+		  <Field id="qrUrlValue" v-if="qrUrl"
 		    v-model="qrUrl"
 		    label="二维码链接"
 		    @click-icon='copyQrPdf'>
