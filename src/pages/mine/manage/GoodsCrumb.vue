@@ -5,7 +5,7 @@
 		  			<Checkbox class="order-item-checkbox" v-model="checked" @change="editGoods"/>
 		  		</div>		  		
 		  		<div class="goods_thumb">
-		  			<img :src="'/wst-boss/'+goods.picUrl" width="65" height="65">
+		  			<img :src="goodsUrl" width="65" height="65">
 		  			<div class="goods_status">
 		  				<span v-if="goods.gStatus == 'OFF'" class="invalid">下架</span>
 		  				<span v-if="goods.gStatus == 'ON'" class="valid">上架</span>
@@ -35,6 +35,7 @@
 
 <script>
 import { Icon, Toast, Checkbox } from 'vant'
+import { getAbsoluteUrl } from "@/utils"
 export default{
 	name: "Mine",
 	components: { Icon, Toast, Checkbox },
@@ -46,6 +47,12 @@ export default{
     data () {
 		return {			
 			checked: false
+		}
+	},
+	computed: {
+		goodsUrl(){
+			const { picUrl } = this.goods
+			return getAbsoluteUrl(picUrl)
 		}
 	},
 	methods: {

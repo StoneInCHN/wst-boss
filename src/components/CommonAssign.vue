@@ -72,6 +72,8 @@ export default {
   },
   watch: {
     orderIds4Assign(ids) {
+      const { actionType } = this
+      console.log({ids, actionType})
       if(this.actionType !== CommonActionTypeEnum.SERVICE){
           this.showCommissionModel = true;
       }else{

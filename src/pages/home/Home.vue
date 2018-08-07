@@ -69,7 +69,7 @@ export default {
       }
     },
     initTest() {
-      let userId = 1;
+      let userId = 12;
       this.$api.common
         .auth({
           userId: userId

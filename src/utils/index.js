@@ -137,7 +137,7 @@ export const getIntItem = key => {
 
 export function checkTel(tel)
 {
-   var mobile = /^1[3|5|8]\d{9}$/ , phone = /^0\d{2,3}-?\d{7,8}$/;
+   var mobile = /^1[3-9]\d{9}$/ , phone = /^0\d{2,3}-?\d{7,8}$/;
    return mobile.test(tel) || phone.test(tel);
 }
 

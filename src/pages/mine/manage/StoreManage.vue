@@ -190,7 +190,7 @@ export default {
         Object.assign(store, { userId: Number(userId), alipayCodeUrl: aliPayCodeUrl });
         this.$api.mine.updateInfo(store).then(res => {
           Toast.success("操作成功");
-          this.$router.push("/manage");
+          this.$router.push("/mine");
         });
       }
     },

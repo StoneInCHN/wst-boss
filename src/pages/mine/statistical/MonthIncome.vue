@@ -229,8 +229,8 @@ export default {
       } = this;
       const req = {
         userId,
-        startDate,
-        endDate,
+        startTime: startDate,
+        endTime: endDate,
         pageSize,
         pageNumber,
         bType,
