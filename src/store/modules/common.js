@@ -1,6 +1,6 @@
 import * as types from "../types";
 import apis from "../../apis";
-import { getItem , getBooleanItem} from '../../utils'
+import { getItem , getBooleanItem, getIntItem} from '../../utils'
 
 /**
  * 通用配置
@@ -11,7 +11,8 @@ const state = {
   userId: sessionStorage.getItem("userId"),
   openId: sessionStorage.getItem("openId"),
   cobType: getItem("cobType") || [] ,
-  editable: false
+  editable: false,
+  active: getIntItem("active") || 0
 };
 
 const actions = {
@@ -33,6 +34,9 @@ const actions = {
   setEditable({ commit }, editable) {
     commit(types.COM_SET_EDITABLE, editable);
   },
+  setActive({ commit }, active) {
+    commit(types.COM_SET_ACTIVE, active);
+  }
 };
 
 const getters = {
@@ -41,7 +45,8 @@ const getters = {
   userId: state => state.userId,
   cobType: state => state.cobType ,
   editable: state => state.editable,
-  openId: state => state.openId
+  openId: state => state.openId,
+  active: state => state.active
 };
 
 const mutations = {
@@ -67,6 +72,10 @@ const mutations = {
   },
   [types.COM_SET_EDITABLE](state, editable) {
     state.editable = editable;
+  },
+  [types.COM_SET_ACTIVE](state, active) {
+    state.active = active;
+    sessionStorage.setItem("active", active);
   }
 };
 

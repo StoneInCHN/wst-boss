@@ -5,6 +5,7 @@ const state = {
   pendingList: [],
   processingList: [],
   otherList: [],
+  orderList: getItem("orderList") || [],
   checkedOrders: [],
   empIncome: 0,
   empId: -1
@@ -28,6 +29,9 @@ const actions = {
   },
   setEmpId({ commit }, empId) {
     commit(types.ORDER_EMP_ID, empId);
+  },
+  reserveOrderList({ commit }, orderList) {
+    commit(types.ORDER_RESERVE_ORDER_LIST, orderList);
   }
 };
 
@@ -71,7 +75,8 @@ const getters = {
   //选中的订单
   checkedOrders: state => state.checkedOrders ,
   empIncome: state => state.empIncome,
-  empId: state => state.empId
+  empId: state => state.empId,
+  orderList: state => state.orderList
 };
 
 const mutations = {
@@ -96,6 +101,10 @@ const mutations = {
   },
   [types.ORDER_EMP_ID](state, empId) {
     state.empId = empId;
+  },
+  [types.ORDER_RESERVE_ORDER_LIST](state, orderList) {
+    state.orderList = orderList;
+    sessionStorage.setItem("orderList", JSON.stringify(orderList));
   }
 };
 

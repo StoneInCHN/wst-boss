@@ -87,7 +87,7 @@ export function numDiv(arg1, arg2) {
   return r1 / r2 * Math.pow(10, t2 - t1);
 }
 
-export function formatDateTime(date, fmt) {
+export function formatDateTime(date, fmt = "yyyy-MM-dd") {
   if (/(y+)/.test(fmt)) {
     fmt = fmt.replace(
       RegExp.$1,
@@ -129,9 +129,15 @@ export const getBooleanItem = key => {
   return value && value !== "false";
 };
 
+export const getIntItem = key => {
+  const value = sessionStorage.getItem(key)
+  if(!value) return 0
+  return parseInt(JSON.parse(value))
+};
+
 export function checkTel(tel)
 {
-   var mobile = /^1[3|5|8]\d{9}$/ , phone = /^0\d{2,3}-?\d{7,8}$/;
+   var mobile = /^1[3-9]\d{9}$/ , phone = /^0\d{2,3}-?\d{7,8}$/;
    return mobile.test(tel) || phone.test(tel);
 }
 
@@ -151,4 +157,8 @@ export function toDecimal2(x) {
   s += '0'; 
   } 
   return s; 
+ }
+
+ export function getAbsoluteUrl(url){
+   return process.env.BASE_URL + url;
  }

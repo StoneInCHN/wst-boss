@@ -1,13 +1,13 @@
 <template>
-	<div>
+	<div class="user-manage">
 		<Header backUrl="/"/>
 		<h2 class="sub_title">用户管理</h2>
 		<div class="search_div">
 			<Row>
 				<Col span="5">
 					<select class="selectText" v-model="type" @change="searchType">
-						<option value=0>用户编号</option>
-						<option value=1>用户手机</option>
+						<option :value="0">用户编号</option>
+						<option :value="1">用户手机</option>
 					</select>
 				</Col>
 				<Col span="19">
@@ -55,179 +55,195 @@
 </template>
 
 <script>
-import { Search, Row, Col, Button  } from 'vant'
-import Header from "../wechat/Header"
-import Footer from "../wechat/Footer"
-import UserCard from "./UserCard"
-import MemberInfo from "./MemberInfo"
-import NumInput from "../../components/NumInput"
-import {mapGetters} from 'vuex'
-export default{
-	computed: { ...mapGetters([ "userId"]) },
-	name: "UserManage",
-	components: { Header, Footer, Search, Row, Col, Button, UserCard, MemberInfo,NumInput  },
-	data () {
-		return {
-			summar:{},
-			userCards:[],
-			type:0,
-			searchTips:"请输入用户编号",
-			show:false,
-			keyWords:"",
-
-		}
-	},
-	methods: {
-		inputKey(value){
-			this.keyWords = value;
-		},
-		hideNumInput(){
-			this.show = false;
-		},
-		numKeyboard(){
-			document.activeElement.blur();
-			this.show = true;
-		},
-	    onSearch () {
-	    	if(this.keyWords){
-	    		if(this.keyWords == 'null'){//只供显示用test
-	    			this.userCards = [];
-	    		}else{	    			
-	 				this.searchUser();
-	    		}
-	    	}else{
-	    		this.userCards=[];
-	    	}
-	    },
-	    searchUser(){
-			    	var req = {};
-				    req.userId = this.userId;
-				    req.pageNumber = 1;
-				    req.pageSize = 10;
-				    if(this.type==0){
-				    	req.userNum=this.keyWords;
-				    }else if(this.type==1){
-						req.cellPhoneNum=this.keyWords;
-				    }
-					this.$api.user.pageSeriUsers(req)
-					.then(res => {
-					    //if(res.code = "0000"){
-					    	this.userCards = res;
-					    //}	        
-					})
-					.catch(error => {
-					    console.log(error);
-					});	
-	    },
-	    searchType(){
-	    	if(this.type == 0){
-	    		this.searchTips = "请输入编号";
-	    		this.keyWords = "";
-	    		this.userCards=[];
-	    	}else if(this.type == 1){
-				this.searchTips = "请输入手机号";
-				this.keyWords = "";
-				this.userCards=[];
-	    	}
-	    },
-	    newCode(){
-	    	this.$router.push('/user/newCode');
-	    },
-	    totalOrderUsers(){
-	    	this.$router.push('/user/totalOrderUsers');
-	    },
-	    totalCodeUsers(){
-	    	this.$router.push('/user/totalCodeUsers');
-	    },
-	    getSummar(){
-	    	var req = {};
-		    req.userId = this.userId;
-		    //alert("userId:"+this.userId);
-			this.$api.user.summary(req)
-			.then(res => {
-				this.summar = res;        
-			})
-			.catch(error => {
-			        console.log(error);
-			});
-	    }
-	    	    
+import { Search, Row, Col, Button } from "vant";
+import Header from "../wechat/Header";
+import Footer from "../wechat/Footer";
+import UserCard from "./UserCard";
+import MemberInfo from "./MemberInfo";
+import NumInput from "../../components/NumInput";
+import { mapGetters } from "vuex";
+export default {
+  computed: { ...mapGetters(["userId"]) },
+  name: "UserManage",
+  components: {
+    Header,
+    Footer,
+    Search,
+    Row,
+    Col,
+    Button,
+    UserCard,
+    MemberInfo,
+    NumInput
+  },
+  data() {
+    return {
+      summar: {},
+      userCards: [],
+      type: 0,
+      searchTips: "请输入用户编号",
+      show: false,
+      keyWords: ""
+    };
+  },
+  methods: {
+    inputKey(value) {
+      this.keyWords = value;
     },
-    mounted(){
-    	this.getSummar();
-    	this.$store.state.couponGoods = {};
-    	this.$store.state.couponGoodsList = [];
+    hideNumInput() {
+      this.show = false;
+    },
+    numKeyboard() {
+      document.activeElement.blur();
+      this.show = true;
+    },
+    onSearch() {
+      if (this.keyWords) {
+        if (this.keyWords == "null") {
+          //只供显示用test
+          this.userCards = [];
+        } else {
+          this.searchUser();
+        }
+      } else {
+        this.userCards = [];
+      }
+    },
+    searchUser() {
+      var req = {};
+      req.userId = this.userId;
+      req.pageNumber = 1;
+      req.pageSize = 10;
+      if (this.type == 0) {
+        req.userNum = this.keyWords;
+      } else if (this.type == 1) {
+        req.cellPhoneNum = this.keyWords;
+      }
+      this.$api.user
+        .pageSeriUsers(req)
+        .then(res => {
+          //if(res.code = "0000"){
+          this.userCards = res;
+          //}
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    searchType() {
+      if (this.type == 0) {
+        this.searchTips = "请输入编号";
+        this.keyWords = "";
+        this.userCards = [];
+      } else if (this.type == 1) {
+        this.searchTips = "请输入手机号";
+        this.keyWords = "";
+        this.userCards = [];
+      }
+    },
+    newCode() {
+      this.$router.push("/user/newCode");
+    },
+    totalOrderUsers() {
+      this.$router.push("/user/totalOrderUsers");
+    },
+    totalCodeUsers() {
+      this.$router.push("/user/totalCodeUsers");
+    },
+    getSummar() {
+      var req = {};
+      req.userId = this.userId;
+      //alert("userId:"+this.userId);
+      this.$api.user
+        .summary(req)
+        .then(res => {
+          this.summar = res;
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
-}
+  },
+  mounted() {
+    this.getSummar();
+    this.$store.state.couponGoods = {};
+    this.$store.state.couponGoodsList = [];
+  }
+};
 </script>
 
-<style scoped>
-	.main-content{
-		padding-bottom:80px
+<style lang="less">
+.user-manage {
+  .main-content {
+    padding-bottom: 80px;
+  }
+  .selectText {
+	padding: 3px 0;
+    font-size: 12px;
+    color: #999;
+  }
+  .searchBtn {
+    margin-left: 10px;
+  }
+  .search_div {
+	margin: 0 15px;
+	.van-col{
+		height: 46px;
+    line-height: 46px;
 	}
-	.selectText{
-		text-align: right;
-	    font-size: 14px;
-	    color: green;
-	    margin-top: 8px;
-	    margin-left: 10px;
+	.van-field--has-icon .van-field__control{
+		padding: 0;
 	}
-	.searchBtn{
-		margin-left: 10px;
-	}
-	.search_div{
-		margin: 0 15px;
-	}
-	.sub_title {
-	    margin: 0;
-	    font-weight: 400;
-	    font-size: 14px;
-	    color: green;
-	    padding: 15px 15px 10px;
-	}
-	.container{
-		display: flex;
-		align-content: center;
-		justify-content: space-around;
-		color: #6B8C43;
-	}
-	.item{
-		flex: 1;
-		height: 40px;
-		border: 1px solid #bbb;		
-		position: relative;
-		padding:20px;
-		font-size:14px;
-		vertical-align: middle;
-		text-align: center;
-		border-radius: 3px;
-	}
-	.item-left{
-		margin:10px 5px 10px 10px;
-	}
-	.item-right{
-		margin:10px 10px 10px 5px;
-	}
-	.empty{
-		flex: 1;
-		height: 40px;
-		margin:10px;
-		position: relative;
-		padding:20px;
-		font-size:14px;
-		vertical-align: middle;
-		text-align: center;
-	}
-	.tel_title{
-		font-size:14px;
-		color:#aaa;
-		margin-left:15px;
-	}
-	.new_code{
-		text-align: right;		
-		font-size: 14px;
-		color:#4CC78D;
-		margin:10px 15px 0 0;
-
-	}
+  }
+  .sub_title {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+    padding: 15px 15px 10px;
+  }
+  .container {
+    display: flex;
+    align-content: center;
+    justify-content: space-around;
+    color: #6b8c43;
+  }
+  .item {
+    flex: 1;
+    height: 40px;
+    border: 1px solid #bbb;
+    position: relative;
+    padding: 20px;
+    font-size: 14px;
+    vertical-align: middle;
+    text-align: center;
+    border-radius: 3px;
+  }
+  .item-left {
+    margin: 10px 5px 10px 10px;
+  }
+  .item-right {
+    margin: 10px 10px 10px 5px;
+  }
+  .empty {
+    flex: 1;
+    height: 40px;
+    margin: 10px;
+    position: relative;
+    padding: 20px;
+    font-size: 14px;
+    vertical-align: middle;
+    text-align: center;
+  }
+  .tel_title {
+    font-size: 14px;
+    color: #aaa;
+    margin-left: 15px;
+  }
+  .new_code {
+    text-align: right;
+    font-size: 14px;
+    color: #4db1e5;
+    margin: 10px 15px 0 0;
+  }
+}
 </style>

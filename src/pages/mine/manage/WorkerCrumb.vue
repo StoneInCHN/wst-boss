@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="worker-crumb">
 			<Row  gutter="10">
 				<Col class="col" span="3">
 					<span v-if="editable">
@@ -27,45 +27,48 @@
 </template>
 
 <script>
-import { Icon, Toast, Checkbox, Row, Col } from 'vant'
-export default{
-	name: "Mine",
-	components: { Icon, Toast, Checkbox, Row, Col },
-	props: {
-        worker: Object,
-        editable: Boolean,
-        editIds: Array,
+import { Icon, Toast, Checkbox, Row, Col } from "vant";
+export default {
+  name: "Mine",
+  components: { Icon, Toast, Checkbox, Row, Col },
+  props: {
+    worker: Object,
+    editable: Boolean,
+    editIds: Array
+  },
+  data() {
+    return {
+      checked: false
+    };
+  },
+  methods: {
+    editWorker() {
+      var emp = {};
+      emp.cellPhoneNum = this.worker.cellPhoneNum;
+      emp.userName = this.worker.realName;
+      emp.wxAcct = this.worker.wechatAcct;
+      emp.entityId = this.worker.id;
+      this.$store.state.worker = emp;
+      this.$router.push("/manage/workerAdd");
     },
-    data () {
-		return {			
-			checked: false
-		}
-	},
-	methods: {
-	    editWorker () {
-        	var emp = {};
-			emp.cellPhoneNum = this.worker.cellPhoneNum;
-			emp.userName = this.worker.realName;
-			emp.wxAcct = this.worker.wechatAcct;
-			emp.entityId = this.worker.id;
-			this.$store.state.worker = emp;
-			this.$router.push('/manage/workerAdd');
-        },
-	    selecteWorker(item){
-	    	if(item == true){
-	    		this.editIds.push(this.worker.id);
-	    	}else{
-	    		this.editIds.pop(this.worker.id);
-	    	}
-	    	console.info(this.editIds);
-	    }
-
+    selecteWorker(item) {
+      if (item == true) {
+        this.editIds.push(this.worker.id);
+      } else {
+        this.editIds.pop(this.worker.id);
+      }
+      console.info(this.editIds);
     }
-}
+  }
+};
 </script>
-<style scoped>
-	.col {
-	    line-height: 35px;
-	    text-align: center;
-	}
+<style lang="less">
+.worker-crumb {
+  .col {
+    line-height: 35px;
+    text-align: center;
+    color: #333;
+    font-size: 14px;
+  }
+}
 </style>
