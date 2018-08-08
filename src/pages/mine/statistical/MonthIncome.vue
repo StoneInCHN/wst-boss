@@ -77,7 +77,7 @@ import {
 import Header from "../../wechat/Header";
 import Footer from "../../wechat/Footer";
 import * as utils from "../../../utils";
-import { CobPayTypeText } from '@/shared/consts'
+import { CobPayTypeText } from "@/shared/consts";
 import { mapGetters } from "vuex";
 export default {
   name: "AddAccount",
@@ -158,53 +158,59 @@ export default {
       payType: null,
       empId: null,
       report: {},
-	  detailList: [],
-	  empList: []
+      detailList: [],
+      empList: []
     };
   },
   computed: {
     ...mapGetters(["userId"]),
     searchInfoText() {
-	  const { startDate, endDate, payType, empId, emps } = this;
-	  //console.log({startDate, endDate, payType, empId, emps})
-	  let text = ""
-	  if((!startDate || !endDate) && !payType && !empId){
-		  return "全部"
-	  }
+      const { startDate, endDate, payType, empId, emps } = this;
+      //console.log({startDate, endDate, payType, empId, emps})
+      let text = "";
+      if ((!startDate || !endDate) && !payType && !empId) {
+        return "全部";
+      }
       if (startDate && endDate) {
-		const start = utils.formatDateTime(startDate)
-		const end = utils.formatDateTime(endDate)
+        const start = utils.formatDateTime(startDate);
+        const end = utils.formatDateTime(endDate);
         text = `${start} -- ${end}`;
-	  } 
-	  if(payType) {
-		text += ` ${CobPayTypeText[payType]}` 
-	  }
-	  if(empId) {
-		let empName = ""
-		emps.forEach(emp=>{
-			if(emp.key === empId){
-				empName = emp.name
-			}
-		})
-		text += ` ${empName}` 
-	  }
-	  return text
+      }
+      if (payType) {
+        text += ` ${CobPayTypeText[payType]}`;
+      }
+      if (empId) {
+        let empName = "";
+        emps.forEach(emp => {
+          if (emp.key === empId) {
+            empName = emp.name;
+          }
+        });
+        text += ` ${empName}`;
+      }
+      return text;
     },
     reportValue() {
-	  const { bType } = this;
-	  let value = ""
+      const { bType } = this;
+      let value = "";
       if (bType) {
         if (bType == "INCOME") {
-          value =  `收入：${this.report.monIncome}`;
+          value = `收入：${this.totalIncome}`;
         } else if (bType == "OUTCOME") {
-          value = `支出：${this.report.monEmpExp}`;
+          value = `支出：${this.totalEmpExp}`;
         }
       } else {
-        value = `收入：${this.report.monIncome}，支出：${
-          this.report.monEmpExp
+        value = `收入：${this.totalIncome}，支出：${
+          this.totalEmpExp
         }`;
-	  }
-	  return value;
+      }
+      return value;
+    },
+    totalIncome(){
+      return this.calcPrice("INCOME")
+    },
+    totalEmpExp(){
+      return this.calcPrice("OUTCOME")
     }
   },
   methods: {
@@ -214,6 +220,19 @@ export default {
       } else {
         return 0;
       }
+    },
+    calcPrice(t){
+      let price = 0
+      const { detailList } = this
+      if(detailList && detailList.length >0){
+        detailList.forEach(item=>{
+          const { amount, type } = item
+          if( t === type ){
+            price = utils.numAdd(price, amount)
+          }
+        })
+      }
+      return price
     },
     allDetail() {
       const {
@@ -282,19 +301,19 @@ export default {
         this.payType = null;
         this.empId = null;
       } else if (index == 1) {
-		this.bType = "INCOME";
-		this.empId = null;
-		this.payType = null;
+        this.bType = "INCOME";
+        this.empId = null;
+        this.payType = null;
       } else if (index == 2) {
-		this.bType = "OUTCOME";
-		this.payType = null;
-		this.empId = null;
+        this.bType = "OUTCOME";
+        this.payType = null;
+        this.empId = null;
       }
       this.allDetail();
     },
     cancelSelect() {
-	  this.startDate = null
-	  this.endDate = null
+      this.startDate = null;
+      this.endDate = null;
     },
     confirmStartDate(value) {
       this.startDate = value;
@@ -337,7 +356,7 @@ export default {
     },
     listShopEmp() {
       this.$api.mine
-        .listShopEmp({userId: Number(this.userId)})
+        .listShopEmp({ userId: Number(this.userId) })
         .then(res => {
           this.emps = [];
           this.emps.push(this.empAll);
@@ -363,8 +382,8 @@ export default {
   },
   mounted() {
     var now = new Date();
-	this.ym = now.getFullYear() + "-" + (now.getMonth() + 1);
-	this.finReport()
+    this.ym = now.getFullYear() + "-" + (now.getMonth() + 1);
+    this.finReport();
     this.allDetail();
     this.listShopEmp();
   }
