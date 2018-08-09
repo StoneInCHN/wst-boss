@@ -71,8 +71,7 @@ export default {
   data() {
     return {
       config: {},
-			urlPre: "http://test.yeager.vip",
-			//tempQrCode:""
+			urlPre: process.env.BASE_URL
     };
   },
   methods: {
