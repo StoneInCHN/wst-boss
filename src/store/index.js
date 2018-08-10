@@ -7,9 +7,9 @@ Vue.use(Vuex);
 
 //引入actions、mutations、getters
 //不推荐使用了
-import actions from "./actions.js";
-import mutations from "./mutations.js";
-import getters from "./getters.js";
+//import actions from "./actions.js";
+//import mutations from "./mutations.js";
+//import getters from "./getters.js";
 import state from "./state.js";
 
 //以modules的方式引入更好
@@ -22,9 +22,9 @@ import commonAssign from "./modules/commonAssign";
 
 const store = new Vuex.Store({
   state,
-  mutations,
-  actions,
-  getters,
+  //mutations,
+  //actions,
+  //getters,
   modules: {
     user,
     mine,

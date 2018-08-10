@@ -1,3 +1,7 @@
 .van-dialog__confirm {
   color: #4db1e5 !important;
 }
+.van-button--primary {
+  background-color: #4db1e5;
+  border: 1px solid #4db1e5;
+}

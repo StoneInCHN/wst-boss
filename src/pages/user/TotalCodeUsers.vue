@@ -32,7 +32,7 @@
 import { Search, Row, Col, Button, Toast} from 'vant'
 import Header from "../wechat/Header"
 import MemberInfo1 from "./MemberInfo1"
-import {mapGetters} from 'vuex'
+import {mapGetters, mapActions} from 'vuex'
 import NumInput from "../../components/NumInput"
 export default{
 	name: "UserManage",
@@ -78,7 +78,7 @@ export default{
 			this.$api.user.pageSeriUsers(req)
 			.then(res => {
 			        this.memberInfoList = res;
-				    Toast.success("操作成功");        
+				    //Toast.success("操作成功");        
 			})
 			.catch(error => {
 			        console.log(error);

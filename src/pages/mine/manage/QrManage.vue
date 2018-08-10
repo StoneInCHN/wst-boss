@@ -85,6 +85,7 @@ export default{
 					console.info(res);
 					if(res.code = "0000"){
 						this.qrUrl = process.env.BASE_URL+res.desc;
+						console.log(this.qrUrl)
 			    	}	        
 				})
 				.catch(error => {

@@ -3,7 +3,7 @@
 				<Row>
 					<Col span="6">
 						<div style="margin:10px 15px">
-							<img :src="'/wst-boss/'+coupon.picUrl" width="50" height="50"/>
+							<img :src="imgUrl" width="50" height="50"/>
 						</div>
 					</Col>
 					<Col span="16" class="coupon">	
@@ -30,27 +30,31 @@
 
 <script>
 import {  CellGroup, Field, Row, Col, Icon } from 'vant'
+import { getAbsoluteUrl } from '@/utils'
+import {mapGetters, mapActions} from 'vuex'
+
 export default{
 	name: "CouponGoods",
 	components: { CellGroup, Field, Row, Col, Icon },
 	props: {
         coupon: Object,
-        num:Number,
-        list:Array
-    },
-	data () {
-		return {
-
+        num:Number
+	},
+	computed:{
+		...mapGetters(["couponGoodsList"]),
+		imgUrl () {
+			return getAbsoluteUrl(this.coupon.picUrl)
 		}
 	},
 	methods: {
+		...mapActions(["setCouponGoodsList"]),
 		deleteCoupon(){
-			for (var i = 0; i < this.list.length; i++) {
-				if (this.coupon.id == this.list[i].id) {
-					this.list.splice(i, 1);
-					break;
-				}
-			}
+			const { coupon, couponGoodsList } = this
+			const { id } = coupon
+            const tempList = couponGoodsList.filter(item=>{
+              return id !== item.id
+            })
+            this.setCouponGoodsList(tempList)
         },
         formatPrice(num){
 	    	if(num){

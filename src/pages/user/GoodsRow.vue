@@ -2,7 +2,7 @@
 	<div>
 			<div class="goodsDiv">
 				<Row>
-					<Col span="4" class="row"><img :src="'/wst-boss/'+goods.gPic" width="45" height="45"/></Col>
+					<Col span="4" class="row"><img :src="imgUrl" width="45" height="45"/></Col>
 					<Col span="15" class="green row">
 						<span>{{goods.gName}}
 							(<span :class="goods.distPrice?'line':''">{{formatPrice(goods.gAmount)}}</span>
@@ -19,26 +19,28 @@
 
 <script>
 import {  Row, Col, Icon } from 'vant'
+import { getAbsoluteUrl } from '@/utils'
+import { mapGetters, mapActions } from "vuex";
 export default{
 	name: "GoodsRow",
 	components: { Row, Col, Icon },
 	props: {
-        goods: Object,
-        list:Array
+        goods: Object
     },
-	data () {
-		return {
-
+	computed:{
+		...mapGetters(["userOrderGoodsList"]),
+		imgUrl () {
+			return getAbsoluteUrl(this.goods.gPic)
 		}
 	},
 	methods: {
+		...mapActions(["setUserOrderGoodsList"]),
 		deleteGoods(){
-			for (var i = 0; i < this.list.length; i++) {
-				if (this.goods.gId == this.list[i].gId) {
-					this.list.splice(i, 1);
-					break;
-				}
-			}
+			const { gId } = this.goods
+			const list = this.userOrderGoodsList.filter(item=>{
+				return item.gId !== gId
+			})
+			this.setUserOrderGoodsList(list)
         },
         formatPrice(num){
 	    	if(num){

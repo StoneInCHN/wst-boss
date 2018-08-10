@@ -14,10 +14,12 @@ export default {
   components: { Header, Footer, Toast },
   data() {
     return {
-      active: 0
+      config: {},
+      urlPre: process.env.BASE_URL
     };
   },
   created() {
+    this.getWXConfig();
     if (process.env.NODE_ENV == "production") {
       this.initData();
     } else {
@@ -68,8 +70,35 @@ export default {
           });
       }
     },
+    getWXConfig() {
+      let params = {
+        userName: location.href.split("#")[0]
+      };
+      this.$api.common
+        .jsApiConfig(params)
+        .then(res => {
+          if (res && res.code === "0000" && res.msg) {
+            const { appId, timestamp, nonceStr, signature } = res.msg;
+            this.$wechat.config({
+              debug: false,
+              appId,
+              timestamp,
+              nonceStr,
+              signature,
+              jsApiList: ["scanQRCode", "closeWindow"]
+            });
+          }else{
+            this.$wechat.error(res => {
+              console.log("wx loading error");
+            });
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
     initTest() {
-      let userId = 13;
+      let userId = 12;
       this.$api.common
         .auth({
           userId: userId
@@ -92,7 +121,7 @@ export default {
 <style lang="less">
 .home-page {
   height: 100%;
-  background: #fff url("../../assets/images/order.png") ;
+  background: #fff url("../../assets/images/order.png");
   background-size: 100% 32vw;
   h3 {
     height: 100%;

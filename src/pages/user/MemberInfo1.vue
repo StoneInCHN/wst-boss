@@ -57,10 +57,9 @@
 
 <script>
 import { Row, Col, Dialog, Toast } from "vant";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import { formatDateTime } from "@/utils";
 export default {
-  computed: { ...mapGetters(["userId"]) },
   name: "UserCard",
   components: { Row, Col, Dialog, Toast },
   props: {
@@ -74,13 +73,18 @@ export default {
 			urlPre: process.env.BASE_URL
     };
   },
+  computed: { ...mapGetters(["userId", "seriUser"]) },
   methods: {
+    ...mapActions(["setSeriUser", "setCouponGoodsList", "setExistCouponIds", "setUserOrderGoodsList"]),
     addCoupon() {
-      this.$store.state.seriUser = this.memberInfo;
+      this.setSeriUser(this.memberInfo);
+      this.setCouponGoodsList([])
+      this.setExistCouponIds([])
       this.$router.push("/user/addCoupon");
     },
     addOrder() {
-      this.$store.state.seriUser = this.memberInfo;
+      this.setSeriUser(this.memberInfo);
+      this.setUserOrderGoodsList([]);
       this.$router.push("/user/addOrder");
     },
     deleteItem() {
@@ -111,7 +115,7 @@ export default {
     },
     editItem() {
       console.info(this.memberInfo);
-      this.$store.state.seriUser = this.memberInfo;
+      this.setSeriUser(this.memberInfo);
       this.$router.push("/user/editCodeUser");
     },
     addQr() {
@@ -126,7 +130,8 @@ export default {
           paramsArrays.forEach(item => {
             paramsObj[item.split("=")[0]] = item.split("=")[1];
           });
-          if (url && url.indexOf(this.urlPre) !== -1) {
+          const qrCodePrex = this.urlPre.split("/wst-boss")[0]
+          if (url && url.indexOf(qrCodePrex) !== -1) {
             //从url中获取qrCodeId
             if (paramsObj.id) {
     						Dialog.confirm({
@@ -176,9 +181,6 @@ export default {
 					// this.tempQrCode = ""
           this.$emit("refreshSeriUsers");
         })
-        .catch(error => {
-          console.log(error);
-        });
     },
     confirmClear() {
       Dialog.confirm({
@@ -203,40 +205,6 @@ export default {
         .catch(() => {
           // on cancel
         });
-    },
-    getConfig() {
-      let params = {
-        userName: location.href.split("#")[0]
-      };
-      this.$api.common
-        .jsApiConfig(params)
-        .then(res => {
-          if (res && res.code === "0000" && res.msg) {
-            this.config.jsapi_ticket = res.msg.jsapi_ticket;
-            this.config.signature = res.msg.signature;
-            this.config.nonceStr = res.msg.nonceStr;
-            this.config.timestamp = res.msg.timestamp;
-            this.config.url = res.msg.url;
-            this.config.appId = res.msg.appId;
-          }
-
-          if (this.config) {
-            this.$wechat.config({
-              debug: false,
-              appId: this.config.appId,
-              timestamp: this.config.timestamp,
-              nonceStr: this.config.nonceStr,
-              signature: this.config.signature,
-              jsApiList: ["scanQRCode", "closeWindow"]
-            });
-            this.$wechat.error(res => {
-              console.log("wx loading error");
-            });
-          }
-        })
-        .catch(error => {
-          console.log(error);
-        });
     }
   },
   filters: {
@@ -246,7 +214,8 @@ export default {
     }
   },
   mounted() {
-    this.getConfig();
+    //this.getConfig();
+
   }
 };
 </script>

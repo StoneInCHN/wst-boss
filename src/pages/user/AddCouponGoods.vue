@@ -1,6 +1,5 @@
 <template>
 	<div>
-		<Header backUrl="/userManage"/>
 		<Panel>
 			<div slot="header" class="header">
 				<Cell title="添加商品" class="cell">
@@ -15,112 +14,123 @@
 				</CellGroup>
 			</div>	
 		</Panel>
-		<Actionsheet  v-model="dGoods" :actions="allDGoods" cancel-text="取消"/>
+		<Actionsheet  v-model="showdGoodsList" :actions="allDGoods" cancel-text="取消"/>
 		<NumInput :show="show" :input="keyWords" extraKey="."  @hide="hideNumInput" @input="inputKey"/>
 	</div>
 </template>
 
 <script>
-import { Panel, CellGroup, Field, Button, Cell, Actionsheet,Toast } from 'vant'
-import Header from "../wechat/Header"
-import {mapGetters} from 'vuex'
-import NumInput from "../../components/NumInput"
-export default{
-	computed: { ...mapGetters([ "userId"]) },
-	name: "StoreManage",
-	components: { Header, Panel, CellGroup, Field, Button, Cell, Actionsheet,NumInput,Toast},
-	data () {
-		return {
-			goods: {},
-			distAmount:null,
-			dGoods:false,
-			allDGoods:[],
-			tips:null,
-			show:false,
-			keyWords:"",
-			type:"",
-		}
-	},
-	methods: {
-		inputKey(value){
-			this.distAmount = value;
-		},
-		hideNumInput(){
-			this.show = false;
-		},
-		numKeyboard(type){
-			this.keyWords = this.distAmount;
-			this.hideKeyboard();
-			this.show = true;
-		},
-		hideKeyboard(){
-			document.activeElement.blur();
-		},
-        save () {
-        	if(!this.goods.gNameSpec){
-        		Toast.fail("请选择优惠商品");
-        		return;
-        	}
-        	if(!this.distAmount){
-        		this.tips = "请输入优惠价";
-        		return;
-        	}
-        	if(this.distAmount>=this.goods.distPrice){
-        		this.tips = "优惠价必须小于原价";
-        		return;
-        	}
-        	this.goods.distAmount=this.distAmount;     
-        	this.$store.state.couponGoods = this.goods;
-			this.$router.push('/user/addCoupon');
-        },
-        showAllBrand(){
-	    	this.dGoods = true;
-	    },
-       	setGNameSpec(item) {
-	      	this.goods.gNameSpec = item.name;
-	      	this.goods.id = item.id;
-	      	this.goods.picUrl = item.picUrl;
-	      	this.goods.distPrice = item.distPrice;     
-	      	this.distAmount  = item.distAmount;     	
-	      	this.dGoods = false;
-	    },
-	    getGsDdList(){
-	    	var req = {};
-		    req.userId = this.userId;
-		    req.entityIds = this.$store.state.couponIds;
-	    	this.$api.user.getGsDdList(req)
-			.then(res => {
-			    //if(res.code = "0000"){
-			    	this.allDGoods = [];
-			    	for (var i = 0; i < res.length; i++) {
-			    		var cGoods = {};
-			    		cGoods.distPrice = res[i].distPrice;
-			    		cGoods.picUrl = res[i].picUrl;
-			    		cGoods.id = res[i].id;
-			    		cGoods.name = res[i].gNameSpec;
-			    		cGoods.callback = this.setGNameSpec;
-			    		this.allDGoods.push(cGoods);
-			    	}
-			    //}	        
-			})
-			.catch(error => {
-			        console.log(error);
+import {
+  Panel,
+  CellGroup,
+  Field,
+  Button,
+  Cell,
+  Actionsheet,
+  Toast
+} from "vant";
+import { mapGetters, mapActions } from "vuex";
+import NumInput from "../../components/NumInput";
+export default {
+  name: "AddCouponGoods",
+  components: {
+    Panel,
+    CellGroup,
+    Field,
+    Button,
+    Cell,
+    Actionsheet,
+    NumInput,
+    Toast
+  },
+  data() {
+    return {
+      goods: {},
+      distAmount: null,
+      showdGoodsList: false,
+      allDGoods: [],
+      tips: null,
+      show: false,
+      keyWords: "",
+      type: ""
+    };
+  },
+  computed: { 
+	...mapGetters(["userId", "couponGoodsList" ]),
+	couponIds(){
+		let ids = []
+		if(this.couponGoodsList && this.couponGoodsList.length >0){
+			this.couponGoodsList.forEach(item => {
+				ids.push(item.id)
 			});
-	    	 
-	    }
+		}
+	  	return ids
+  	} 
+  },
+  methods: {
+    ...mapActions(["setCouponGoodsList"]),
+    inputKey(value) {
+      this.distAmount = value;
     },
-    mounted(){
-    	this.getGsDdList();
+    hideNumInput() {
+      this.show = false;
+    },
+    numKeyboard(type) {
+      this.keyWords = this.distAmount;
+      this.hideKeyboard();
+      this.show = true;
+    },
+    hideKeyboard() {
+      document.activeElement.blur();
+    },
+    save() {
+      if (!this.goods.gNameSpec) {
+        Toast.fail("请选择优惠商品");
+        return;
+      }
+      if (!this.distAmount) {
+        this.tips = "请输入优惠价";
+        return;
+      }
+      if (this.distAmount >= this.goods.distPrice) {
+        this.tips = "优惠价必须小于原价";
+        return;
+      }
+	  this.goods.distAmount = this.distAmount;
+      let templist = this.couponGoodsList;
+	  templist.push(this.goods);
+      this.setCouponGoodsList(templist);
+      this.$router.go(-1);
+    },
+    showAllBrand() {
+      this.showdGoodsList = true;
+    },
+    getGsDdList() {
+      const req = {
+        entityIds: this.couponIds,
+        userId: this.userId
+      };
+      this.$api.user.getGsDdList(req).then(res => {
+        this.allDGoods = [];
+        for (let i = 0; i < res.length; i++) {
+          let dGoods = res[i];
+          Object.assign(dGoods, {
+            name: dGoods.gNameSpec,
+            callback: item => {
+              this.goods = item;
+              this.showdGoodsList = false;
+            }
+          });
+          this.allDGoods.push(dGoods);
+        }
+      });
     }
-}
+  },
+  mounted() {
+    this.getGsDdList();
+  }
+};
 </script>
 
 <style scoped>
-	.header{
-		margin:15px 15px 0 15px;
-		padding:10px 0;
-	}
-	.cell{
-		padding: 0;
-	}	
 </style>
