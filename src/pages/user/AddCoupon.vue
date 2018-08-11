@@ -81,11 +81,14 @@ export default {
       "setExistCouponIds"
     ]),
     validate() {
+      /** 
       if (this.couponGoodsList.length === 0) {
         Toast.fail("至少添加一件优惠商品");
       } else {
-        this.save();
+        
       }
+      */
+      this.save();
     },
     initCouponInfo() {
       const params = {
