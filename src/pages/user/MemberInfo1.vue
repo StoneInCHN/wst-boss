@@ -114,7 +114,6 @@ export default {
         });
     },
     editItem() {
-      console.info(this.memberInfo);
       this.setSeriUser(this.memberInfo);
       this.$router.push("/user/editCodeUser");
     },
@@ -212,10 +211,6 @@ export default {
       var date = new Date(time);
       return formatDateTime(date, "yyyy-MM-dd hh:mm");
     }
-  },
-  mounted() {
-    //this.getConfig();
-
   }
 };
 </script>
