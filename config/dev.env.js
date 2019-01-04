@@ -6,5 +6,5 @@ var prodEnv = require('./prod.env')
 
 module.exports = merge(prodEnv, {
   NODE_ENV: '"development"',
-  BASE_URL:'"http://stone.yeager.vip/wst-boss"'//测试环境
+  BASE_URL:'"http://www.yunshuizhan.cn:20002/wst-boss"'//测试环境
 })
