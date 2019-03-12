@@ -1,8 +1,6 @@
 
 import {fetch, post, patch, put, lift} from '../config'
 
-const baseUrl = "/"
-
 const  mine = {
 
   listShopEmp (params) {

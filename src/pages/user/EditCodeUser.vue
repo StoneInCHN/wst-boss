@@ -181,7 +181,8 @@ export default {
           paramsArrays.forEach(item => {
             paramsObj[item.split("=")[0]] = item.split("=")[1];
 					});
-					const qrCodePrex = this.urlPre.split("/wst-boss")[0]
+          //const qrCodePrex = this.urlPre.split("/wst-boss")[0]
+          const qrCodePrex = location.host
           if (url && url.indexOf(qrCodePrex) !== -1) {
             //从url中获取qrCodeId
             if (paramsObj.id) {

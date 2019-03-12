@@ -34,265 +34,298 @@
 </template>
 
 <script>
-import { Panel, CellGroup, Field, Button, Cell, Icon, Dialog, Toast } from 'vant'
-import Header from "../wechat/Header"
-import {mapGetters} from 'vuex'
-import NumInput from "@/components/NumInput"
+import {
+  Panel,
+  CellGroup,
+  Field,
+  Button,
+  Cell,
+  Icon,
+  Dialog,
+  Toast
+} from "vant";
+import Header from "../wechat/Header";
+import { mapGetters } from "vuex";
+import NumInput from "@/components/NumInput";
 import { checkTel } from "@/utils";
 
-export default{
-	computed: { ...mapGetters([ "userId"]) },
-	name: "NewCode",
-	components: { Header, Panel, CellGroup, Field, Button, Cell, Icon, Dialog, Toast,NumInput },
-	data () {
-		return {
-			phoneList:null,
-			telList:null,
-			tipsPhone:null,
-			tipsTel:null,
-			userCard: {
-				userNum:null,
-				realName:null,
-				addrInfo:null,
-				doorNum:null,
-				qrCodeId:null,
-				remark:null
-			},
-			lastNo:null,
-			config: {},
-			urlPre: 'http://test.yeager.vip',
-			show:false,
-			keyWords:"",
-			type:"",
-		}
-	},
-	methods: {
-		checkPhone(){
-			        this.tipsPhone = null;
-					this.tipsTel = null;
-					if(this.phoneList){
-						var contactPhoneList = this.phoneList.split(",");
-						for (var i = 0; i < contactPhoneList.length; i++) {
-							if(!checkTel(contactPhoneList[i])){
-								this.tipsPhone = "手机号格式错误";
-							}
-						}
-					}
-					if(this.telList){
-						var fixPhoneList = this.telList.split(",");
-						for (var i = 0; i < fixPhoneList.length; i++) {
-							if(!checkTel(fixPhoneList[i])){
-								this.tipsTel = "座机号号格式错误";
-							}
-						}	
-					}
-		},
-		inputKey(value){
-			//console.info("inputKey:"+this.type);
-			if(this.type== "phoneList"){
-				this.phoneList=value;
-			}else if(this.type== "telList"){
-				this.telList=value;
-			}
-		},
-		hideNumInput(){
-			this.show = false;
-		},
-		numKeyboard(type){
-			//console.info("numKeyboard:"+this.type);
-			this.type = type;
-			if(type== "phoneList"){
-				this.keyWords = this.phoneList;
-			}else if(type== "telList"){
-				this.keyWords = this.telList;
-			}
-			document.activeElement.blur();
-			this.show = true;
-		},
-		validateInput(){
-				if(this.userCard.userNum && this.phoneList && this.userCard.realName && this.userCard.addrInfo && this.userCard.doorNum){
-					this.tipsPhone = null;
-					this.tipsTel = null;
-					var contactPhoneList = this.phoneList.split(",");
-					for (var i = 0; i < contactPhoneList.length; i++) {
-						if(!checkTel(contactPhoneList[i])){
-							this.tipsPhone = "手机号格式错误";
-							return;
-						}
-					}
-					if(this.telList){
-						var fixPhoneList = this.telList.split(",");
-						for (var i = 0; i < fixPhoneList.length; i++) {
-							if(!checkTel(fixPhoneList[i])){
-								this.tipsTel = "座机号号格式错误";
-								return;
-							}
-						}	
-					}				
-					this.createSeriUser();
-				}else{
-					Toast.fail("请输入必填信息");
-				}
-		},
-        createSeriUser () {
-        	var seriUser = {};
-		    seriUser.userId = this.userId;
-		    seriUser.userNum = this.userCard.userNum;
-		    seriUser.realName = this.userCard.realName;
-		    seriUser.addrInfo = this.userCard.addrInfo;
-		    seriUser.doorNum = this.userCard.doorNum;
-		    seriUser.qrCodeId = this.userCard.qrCodeId;
-		    seriUser.remark = this.userCard.remark;
-		    var contactPhoneList = this.phoneList.split(",");
-		    seriUser.contactPhone = contactPhoneList[0];
-		    if(contactPhoneList.length>1){
-				seriUser.contactPhone2 = contactPhoneList[1];
-		    }
-		    if(contactPhoneList.length>2){
-				seriUser.contactPhone3 = contactPhoneList[2];
-		    }
-		    if(this.telList){
-			    var fixPhoneList = this.telList.split(",");
-			    seriUser.fixPhone = fixPhoneList[0];
-			    if(fixPhoneList.length>1){
-					seriUser.fixPhone2 = fixPhoneList[1];
-			    }
-			    if(fixPhoneList.length>2){
-					seriUser.fixPhone3 = fixPhoneList[2];
-			    }
-		    }
-
-		    // console.info(seriUser);
-			this.$api.user.createSeriUser(seriUser)
-			.then(res => {
-			    	Toast.success("操作成功");
-			    	
-			    	//this.$router.push('/user/totalCodeUsers');  
-			    	window.history.go(-1);
-			})
-			.catch(error => {
-			        console.log(error);
-			});
-			
-        },
-        confirmClear(){
-			Dialog.confirm({
-			  title: '提示',
-			  message: '确认要解除编号和二维码的关联吗？'
-			}).then(() => {
-			  this.userCard.qrCodeId = null;
-			}).catch(() => {
-			  // on cancel
-			});
-        },
-        addQr(){
-	        this.$wechat.scanQRCode({
-	          needResult: 1,
-	          scanType: [ 'qrCode' ],
-	          desc: 'scanQRCode desc',
-	          success: (res) => {
-	            let url = res.resultStr;
-	            let paramsObj = {};
-			    const paramsArrays = url.split("?")[1].split("&");	
-			    paramsArrays.forEach(item => {
-			      paramsObj[item.split("=")[0]] = item.split("=")[1];
-			    });
-	            if (url && url.indexOf(this.urlPre) !== -1) {
-	            	//从url中获取qrCodeId	  
-	            	if (paramsObj.id) {
-	            		Dialog.confirm({
-						  title: '提示',
-						  message: '确认要将编号关联此二维码？'
-						}).then(() => {
-						  	this.userCard.qrCodeId = paramsObj.id;
-						}).catch(() => {
-						  // on cancel
-						});
-	            	}
-	            } else {
-	              Toast.fail("请扫描正确的二维码");
-	            }
-	          },
-	          cancel: (res) => {
-	          	console.inf(res);
-	            this.$wechat.closeWindow();
-	          }
-	        })
-        	
-        },
-        getLastSerialNo(){
-        	var req = {};
-		    req.userId = this.userId;
-			this.$api.user.getLastSerialNo(req)
-			.then(res => {
-			    	this.lastNo = res.lastNo;
-			})
-			.catch(error => {
-			        console.log(error);
-			});
-        },
-        getConfig () {
-		      let params = {
-		        userName: location.href.split('#')[0]
-		      }
-		      this.$api.common.jsApiConfig(params).then(res => {
-
-		        if (res && res.code === '0000' && res.msg) {
-		          this.config.jsapi_ticket = res.msg.jsapi_ticket
-		          this.config.signature = res.msg.signature
-		          this.config.nonceStr = res.msg.nonceStr
-		          this.config.timestamp = res.msg.timestamp
-		          this.config.url = res.msg.url
-		          this.config.appId = res.msg.appId
-		        }
-				
-		        if (this.config) {		        	
-		          this.$wechat.config({
-		            debug: false,
-		            appId: this.config.appId,
-		            timestamp: this.config.timestamp,
-		            nonceStr: this.config.nonceStr,
-		            signature: this.config.signature,
-		            jsApiList: [
-		              'scanQRCode',
-		              // 'hideAllNonBaseMenuItem',
-		              'closeWindow'
-		            ]
-		          });
-		          this.$wechat.error((res) => {
-		            console.log('wx loading error')
-		          })
-		        }
-		      }).catch(error => {
-		        console.log(error)
-		      })
-    	},
+export default {
+  computed: { ...mapGetters(["userId"]) },
+  name: "NewCode",
+  components: {
+    Header,
+    Panel,
+    CellGroup,
+    Field,
+    Button,
+    Cell,
+    Icon,
+    Dialog,
+    Toast,
+    NumInput
+  },
+  data() {
+    return {
+      phoneList: null,
+      telList: null,
+      tipsPhone: null,
+      tipsTel: null,
+      userCard: {
+        userNum: null,
+        realName: null,
+        addrInfo: null,
+        doorNum: null,
+        qrCodeId: null,
+        remark: null
+      },
+      lastNo: null,
+      config: {},
+      urlPre: "http://test.yeager.vip",
+      show: false,
+      keyWords: "",
+      type: ""
+    };
+  },
+  methods: {
+    checkPhone() {
+      this.tipsPhone = null;
+      this.tipsTel = null;
+      if (this.phoneList) {
+        var contactPhoneList = this.phoneList.split(",");
+        for (var i = 0; i < contactPhoneList.length; i++) {
+          if (!checkTel(contactPhoneList[i])) {
+            this.tipsPhone = "手机号格式错误";
+          }
+        }
+      }
+      if (this.telList) {
+        var fixPhoneList = this.telList.split(",");
+        for (var i = 0; i < fixPhoneList.length; i++) {
+          if (!checkTel(fixPhoneList[i])) {
+            this.tipsTel = "座机号号格式错误";
+          }
+        }
+      }
     },
-    mounted(){
-    	this.getLastSerialNo();
-    	this.getConfig();
+    inputKey(value) {
+      //console.info("inputKey:"+this.type);
+      if (this.type == "phoneList") {
+        this.phoneList = value;
+      } else if (this.type == "telList") {
+        this.telList = value;
+      }
+    },
+    hideNumInput() {
+      this.show = false;
+    },
+    numKeyboard(type) {
+      //console.info("numKeyboard:"+this.type);
+      this.type = type;
+      if (type == "phoneList") {
+        this.keyWords = this.phoneList;
+      } else if (type == "telList") {
+        this.keyWords = this.telList;
+      }
+      document.activeElement.blur();
+      this.show = true;
+    },
+    validateInput() {
+      if (
+        this.userCard.userNum &&
+        this.phoneList &&
+        this.userCard.realName &&
+        this.userCard.addrInfo &&
+        this.userCard.doorNum
+      ) {
+        this.tipsPhone = null;
+        this.tipsTel = null;
+        var contactPhoneList = this.phoneList.split(",");
+        for (var i = 0; i < contactPhoneList.length; i++) {
+          if (!checkTel(contactPhoneList[i])) {
+            this.tipsPhone = "手机号格式错误";
+            return;
+          }
+        }
+        if (this.telList) {
+          var fixPhoneList = this.telList.split(",");
+          for (var i = 0; i < fixPhoneList.length; i++) {
+            if (!checkTel(fixPhoneList[i])) {
+              this.tipsTel = "座机号号格式错误";
+              return;
+            }
+          }
+        }
+        this.createSeriUser();
+      } else {
+        Toast.fail("请输入必填信息");
+      }
+    },
+    createSeriUser() {
+      var seriUser = {};
+      seriUser.userId = this.userId;
+      seriUser.userNum = this.userCard.userNum;
+      seriUser.realName = this.userCard.realName;
+      seriUser.addrInfo = this.userCard.addrInfo;
+      seriUser.doorNum = this.userCard.doorNum;
+      seriUser.qrCodeId = this.userCard.qrCodeId;
+      seriUser.remark = this.userCard.remark;
+      var contactPhoneList = this.phoneList.split(",");
+      seriUser.contactPhone = contactPhoneList[0];
+      if (contactPhoneList.length > 1) {
+        seriUser.contactPhone2 = contactPhoneList[1];
+      }
+      if (contactPhoneList.length > 2) {
+        seriUser.contactPhone3 = contactPhoneList[2];
+      }
+      if (this.telList) {
+        var fixPhoneList = this.telList.split(",");
+        seriUser.fixPhone = fixPhoneList[0];
+        if (fixPhoneList.length > 1) {
+          seriUser.fixPhone2 = fixPhoneList[1];
+        }
+        if (fixPhoneList.length > 2) {
+          seriUser.fixPhone3 = fixPhoneList[2];
+        }
+      }
+
+      // console.info(seriUser);
+      this.$api.user
+        .createSeriUser(seriUser)
+        .then(res => {
+          Toast.success("操作成功");
+
+          //this.$router.push('/user/totalCodeUsers');
+          window.history.go(-1);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    confirmClear() {
+      Dialog.confirm({
+        title: "提示",
+        message: "确认要解除编号和二维码的关联吗？"
+      })
+        .then(() => {
+          this.userCard.qrCodeId = null;
+        })
+        .catch(() => {
+          // on cancel
+        });
+    },
+    addQr() {
+      this.$wechat.scanQRCode({
+        needResult: 1,
+        scanType: ["qrCode"],
+        desc: "scanQRCode desc",
+        success: res => {
+          let url = res.resultStr;
+          let paramsObj = {};
+          const paramsArrays = url.split("?")[1].split("&");
+          paramsArrays.forEach(item => {
+            paramsObj[item.split("=")[0]] = item.split("=")[1];
+          });
+          const qrCodePrex = location.host;
+          if (url && url.indexOf(qrCodePrex) !== -1) {
+            //从url中获取qrCodeId
+            if (paramsObj.id) {
+              Dialog.confirm({
+                title: "提示",
+                message: "确认要将编号关联此二维码？"
+              })
+                .then(() => {
+                  this.userCard.qrCodeId = paramsObj.id;
+                })
+                .catch(() => {
+                  // on cancel
+                });
+            }
+          } else {
+            Toast.fail("请扫描正确的二维码");
+          }
+        },
+        cancel: res => {
+          console.inf(res);
+          this.$wechat.closeWindow();
+        }
+      });
+    },
+    getLastSerialNo() {
+      var req = {};
+      req.userId = this.userId;
+      this.$api.user
+        .getLastSerialNo(req)
+        .then(res => {
+          this.lastNo = res.lastNo;
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    getConfig() {
+      let params = {
+        userName: location.href.split("#")[0]
+      };
+      this.$api.common
+        .jsApiConfig(params)
+        .then(res => {
+          if (res && res.code === "0000" && res.msg) {
+            this.config.jsapi_ticket = res.msg.jsapi_ticket;
+            this.config.signature = res.msg.signature;
+            this.config.nonceStr = res.msg.nonceStr;
+            this.config.timestamp = res.msg.timestamp;
+            this.config.url = res.msg.url;
+            this.config.appId = res.msg.appId;
+          }
+
+          if (this.config) {
+            this.$wechat.config({
+              debug: false,
+              appId: this.config.appId,
+              timestamp: this.config.timestamp,
+              nonceStr: this.config.nonceStr,
+              signature: this.config.signature,
+              jsApiList: [
+                "scanQRCode",
+                // 'hideAllNonBaseMenuItem',
+                "closeWindow"
+              ]
+            });
+            this.$wechat.error(res => {
+              console.log("wx loading error");
+            });
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
-}
+  },
+  mounted() {
+    this.getLastSerialNo();
+    this.getConfig();
+  }
+};
 </script>
 
 <style scoped>
-	.header{
-		margin:15px 15px 0 15px;
-		padding:10px 0;
-	}
-	.last-no{
-		font-size:14px;
-		color:#0a0;
-	}
-	.cell{
-		padding: 0;
-	}	
-	.addQr{
-		color:#0a0;
-		font-size:18px;
-	}
-	.clearQr{
-		color:red;
-		font-size:18px;
-	}
+.header {
+  margin: 15px 15px 0 15px;
+  padding: 10px 0;
+}
+.last-no {
+  font-size: 14px;
+  color: #0a0;
+}
+.cell {
+  padding: 0;
+}
+.addQr {
+  color: #0a0;
+  font-size: 18px;
+}
+.clearQr {
+  color: red;
+  font-size: 18px;
+}
 </style>

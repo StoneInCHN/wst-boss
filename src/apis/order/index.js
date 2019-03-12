@@ -1,6 +1,5 @@
 import { fetch, post, patch, put, lift } from "../config";
 
-const baseUrl = "/";
 
 const order = {
   pageShopOrders(params) {
