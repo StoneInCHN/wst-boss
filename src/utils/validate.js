@@ -51,7 +51,14 @@ const validate = (() => {
       if (!reg.test(val)) {
         return msg;
       }
+    },
+    specialPhoneNo(val, msg){
+      const reg = /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))(,((0\d{2,3}-\d{7,8})|(1[3584]\d{9})))*$/;
+      if (!reg.test(val)) {
+        return msg;
+      }
     }
+    
   };
   return {
     /**
@@ -59,7 +66,7 @@ const validate = (() => {
      * @param arr
      * @return {*}
      */
-    check: function(arr) {
+    check: function(arr, equal) {
       let ruleMsg, checkRule, _rule;
       for (let i = 0, len = arr.length; i < len; i++) {
         //如果字段找不到

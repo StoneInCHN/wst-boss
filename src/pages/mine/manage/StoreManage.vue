@@ -10,11 +10,13 @@
 			<div>
 				<CellGroup>
 				  <Field label="店铺名称" v-model="store.shopName" required placeholder="请输入店铺名称" :error-message="errorMessage.shopName" @blur="validateCheck('shopName')"/>
-				  <Field label="店家座机号" v-model="store.telphoneNum" placeholder="请输入区号 请输入电话号码" type="tel"/>
-				  <Field label="店家手机号" v-model="store.mobilePhoneNum" required  placeholder="请输入11位手机号码" type="tel" :error-message="errorMessage.mobilePhoneNum" @blur="validateCheck('mobilePhoneNum')"/>
-				  <Field label="营业时间"  v-model="store.bussBeginTime" required placeholder="请选择开始时间" type="datetime" :error-message="errorMessage.beginTime" @click="selectTime(0)"/>
+				  <Cell title=" 店铺账号" class="account">
+            <p>{{store.userName}}</p>
+            <a @click="changePwd">修改密码</a>
+          </Cell>
+				  <Field label="送水电话" v-model="store.mobilePhoneNum" required  placeholder="请输入11位手机号码" type="tel" :error-message="errorMessage.mobilePhoneNum" @blur="validateCheck('mobilePhoneNum')"/>
+				  <Field label="送水时间"  v-model="store.bussBeginTime" required placeholder="请选择开始时间" type="datetime" :error-message="errorMessage.beginTime" @click="selectTime(0)"/>
 				  <Field label=" "  v-model="store.bussEndTime" required placeholder="请选择结束时间"  type="datetime" :error-message="errorMessage.endTime" @click="selectTime(1)"/>
-				  <Field label="店铺公告" v-model="store.notice" placeholder="100字以内，例如本店保证下单后，2小时之内送到" type="textarea"/>
 				</CellGroup>
 				<div class="qr-uploader">
 					<label class="required">微信收款码:</label>
@@ -32,6 +34,9 @@
 						<Icon name="add"/>
 					</Uploader>
 				</div>
+        <CellGroup>
+          <Field label="店铺公告" v-model="store.notice" placeholder="100字以内，例如本店保证下单后，2小时之内送到" type="textarea" autosize/>
+        </CellGroup>
 			</div>	
 		</Panel>
 		<Actionsheet v-model="show" :title="tips" subname="营业时间">
@@ -84,6 +89,7 @@ export default {
     return {
       currentType: 0,
       store: {
+        userName:"",
         shopName: "",
         telphoneNum: "",
         mobilePhoneNum: "",
@@ -144,8 +150,13 @@ export default {
           el: this.store.mobilePhoneNum,
           alias: "mobilePhoneNum",
           rules: [
-            { rule: "isNoNull", msg: "店家手机号不能为空" },
-            { rule: "isMobile", msg: "店家手机号只能为手机号" }
+            // { rule: "isNoNull", msg: "店家手机号不能为空" },
+            // { rule: "isNoNull", msg: "店家手机号不能为空" },
+            { rule: "isNoNull", msg: "送水电话不能为空" },
+            {
+              rule: "specialPhoneNo",
+              msg: "送水电话不正确，只能为手机号获取座机号"
+            }
           ]
         },
         {
@@ -187,7 +198,10 @@ export default {
           Toast("支付宝收款码不能为空", 1.5);
           return;
         }
-        Object.assign(store, { userId: Number(userId), alipayCodeUrl: aliPayCodeUrl });
+        Object.assign(store, {
+          userId: Number(userId),
+          alipayCodeUrl: aliPayCodeUrl
+        });
         this.$api.mine.updateInfo(store).then(res => {
           Toast.success("操作成功");
           this.$router.push("/mine");
@@ -280,6 +294,9 @@ export default {
     },
     previewHandel(type) {
       ImagePreview([this.previewUrl[type]]);
+    },
+    changePwd(){
+      this.$router.push("/manage/updatePwd");
     }
   }
 };
@@ -292,6 +309,20 @@ export default {
   }
   .cell {
     padding: 0;
+  }
+  .account {
+    .van-cell__title{
+      max-width: 90px;
+    }
+    .van-cell__value {
+      flex: 1;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      a {
+        color: #4db1e5;
+      }
+    }
   }
   .qr-uploader {
     width: 100%;

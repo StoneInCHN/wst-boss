@@ -33,9 +33,11 @@
 			</div>
 		</div>
 		<CellGroup>
-			<Cell title="店铺管理" icon="shop" is-link to="/manage/storeManage" />
-			<Cell title="员工管理" icon="shop" is-link to="/manage/workerManage" />
-			<Cell title="二维码管理" icon="shop" is-link to="/manage/qrManage" />
+			<Cell title="我的水站" icon="shop" :label="userName" is-link to="/manage/storeManage" />
+			<Cell title="员工管理" icon="contact" is-link to="/manage/workerManage" />
+			<Cell title="二维码管理" icon="qr" is-link to="/manage/qrManage" />
+      <Cell title="通知消息" icon="chat" is-link to="/manage/notify" />
+      <Cell title="关于我们" icon="location" is-link to="/manage/about" />
 		</CellGroup>
 		<Footer/>
 	</div>
@@ -57,12 +59,14 @@ export default {
         monEmpExp: "--",
         monIncome: "--",
         totalEmpExp: "--",
-        totalIncome: "--"
-      }
+        totalIncome: "--",
+      },
+      userName:""
     };
   },
   mounted() {
     this.init();
+    this.getStoreInfo()
   },
   computed: {
     ...mapGetters(["userId"])
@@ -72,6 +76,14 @@ export default {
       const { userId } = this;
       this.$api.mine.finReport({ userId }).then(res => {
         Object.assign(this.data, res);
+      });
+    },
+    getStoreInfo() {
+      const params = {
+        userId : this.userId
+      };
+      this.$api.mine.getInfo(params).then(res => {
+        this.userName = res.userName ? "账号: " + res.userName : ""
       });
     },
     viewStatisticalDetails() {

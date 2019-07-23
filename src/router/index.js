@@ -49,6 +49,14 @@ const RegisterSuccess = () => import("@/pages/register/RegisterSuccess");
 //商品
 const Goods = () => import("@/pages/goods/Index");
 
+//通知
+const Notify =() => import("@/pages/mine/notify")
+
+//关于云水站
+const About =() => import("@/pages/mine/about")
+
+const UpdatePwd =()=> import("@/pages/mine/updatePwd")
+
 Vue.use(Router);
 
 export default new Router({
@@ -218,6 +226,20 @@ export default new Router({
       path: "/goods",
       name: "Goods",
       component: Goods
+    },
+    {
+      path:"/manage/about",
+      name:"about",
+      component:About
+    },
+    {
+      path:"/manage/notify",
+      name:"notify",
+      component:Notify
+    },{
+      path:"/manage/updatePwd",
+      name:"updatePwd",
+      component:UpdatePwd
     }
   ]
 });

@@ -10,7 +10,7 @@
 			<div>
 				<CellGroup>
 				  <Field label="编号" v-model="userCard.userNum" placeholder="请输入用户编号"/>
-				  <Field label="手机号" v-model="phoneList" placeholder="可输入多个手机号，用逗号分隔" required   @focus='numKeyboard("phoneList")'/>
+				  <Field label="手机号" v-model="phoneList" placeholder="可输入多个手机号，用逗号分隔"  @focus='numKeyboard("phoneList")'/>
 				  <Field label="座机" v-model="telList" placeholder="例 028-6573158，多个用逗号分隔"  @focus='numKeyboard("telList")'/>
 				  <Field label="姓名" v-model="userCard.realName" placeholder="请填写用户姓名" required/>
 				  <Field label="地址" v-model="userCard.addrInfo" placeholder="请填写用户地址" required/>
@@ -95,7 +95,6 @@ export default {
     },
     validateInput() {
       if (
-        this.phoneList &&
         this.userCard.realName &&
         this.userCard.addrInfo &&
         this.userCard.doorNum
@@ -115,14 +114,17 @@ export default {
       seriUser.doorNum = this.userCard.doorNum;
       seriUser.qrCodeId = this.userCard.qrCodeId;
       seriUser.remark = this.userCard.remark;
-      var contactPhoneList = this.phoneList.split(",");
-      seriUser.contactPhone = contactPhoneList[0];
-      if (contactPhoneList.length > 1) {
-        seriUser.contactPhone2 = contactPhoneList[1];
+      if(this.phoneList){
+        var contactPhoneList = this.phoneList.split(",");
+        seriUser.contactPhone = contactPhoneList[0];
+        if (contactPhoneList.length > 1) {
+          seriUser.contactPhone2 = contactPhoneList[1];
+        }
+        if (contactPhoneList.length > 2) {
+          seriUser.contactPhone3 = contactPhoneList[2];
+        }
       }
-      if (contactPhoneList.length > 2) {
-        seriUser.contactPhone3 = contactPhoneList[2];
-      }
+      
       if (this.telList) {
         var fixPhoneList = this.telList.split(",");
         seriUser.fixPhone = fixPhoneList[0];
