@@ -15,6 +15,7 @@
             <a @click="changePwd">修改密码</a>
           </Cell>
 				  <Field label="送水电话" v-model="store.mobilePhoneNum" required  placeholder="请输入11位手机号码" type="tel" :error-message="errorMessage.mobilePhoneNum" @blur="validateCheck('mobilePhoneNum')"/>
+          <Field label="店铺地址" v-model="store.shopAddr" type="textarea" placeholder="请输入店铺地址"  autosize />
 				  <Field label="送水时间"  v-model="store.bussBeginTime" required placeholder="请选择开始时间" type="datetime" :error-message="errorMessage.beginTime" @click="selectTime(0)"/>
 				  <Field label=" "  v-model="store.bussEndTime" required placeholder="请选择结束时间"  type="datetime" :error-message="errorMessage.endTime" @click="selectTime(1)"/>
 				</CellGroup>
@@ -89,10 +90,11 @@ export default {
     return {
       currentType: 0,
       store: {
-        userName:"",
+        userName: "",
         shopName: "",
         telphoneNum: "",
         mobilePhoneNum: "",
+        shopAddr: "",
         bussBeginTime: "",
         bussEndTime: "",
         notice: "",
@@ -202,10 +204,17 @@ export default {
           userId: Number(userId),
           alipayCodeUrl: aliPayCodeUrl
         });
-        this.$api.mine.updateInfo(store).then(res => {
-          Toast.success("操作成功");
-          this.$router.push("/mine");
-        });
+        this.$api.mine
+          .updateInfo(store)
+          .then(res => {
+            Toast.success("保存成功");
+            setTimeout(() => {
+              this.$router.push("/mine");
+            }, 1000);
+          })
+          .catch(e => {
+            Toast(e.message);
+          });
       }
     },
     selectTime(type) {
@@ -295,7 +304,7 @@ export default {
     previewHandel(type) {
       ImagePreview([this.previewUrl[type]]);
     },
-    changePwd(){
+    changePwd() {
       this.$router.push("/manage/updatePwd");
     }
   }
@@ -305,13 +314,13 @@ export default {
 <style lang="less" >
 .store-manage {
   .header {
-    margin: 15px 15px 0 15px;
+    padding: 15px;
   }
   .cell {
     padding: 0;
   }
   .account {
-    .van-cell__title{
+    .van-cell__title {
       max-width: 90px;
     }
     .van-cell__value {

@@ -93,7 +93,7 @@ export default{
 }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 	.goods, .goods_thumb, .goods_checkbox, .goods_row {
 	    display: flex;
 	}
@@ -104,7 +104,7 @@ export default{
 	    color: #333;
 	    height: 120px;
 	    font-size: 16px;
-	    background: #fafafa;
+	   // background: #fafafa;
 	    position: relative;
 	    box-sizing: border-box;
 	    padding: 15px 15px 5px 130px;

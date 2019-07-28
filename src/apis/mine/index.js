@@ -50,7 +50,12 @@ const mine = {
   },
   updatePwd(params) {
     return post("/seller/sweb/updatePwd", params);
+  },
+  getCntOrder(params) {
+    return lift(post("/sorder/cntOrders", params));
   }
+
+  
 };
 
 export default mine;

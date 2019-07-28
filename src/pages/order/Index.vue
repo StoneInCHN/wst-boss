@@ -9,10 +9,18 @@
             <li v-if="currentState === 'PENDING'"><a @click="toFinish">送达</a></li>
             <li v-if="currentState === 'PROCESSING'"><a @click="toService">送达</a></li>
         </ul>
-        <Tabs :actice="active"  class="order-tabs" @click="onTabsClick">
+        <Tabs v-model="active"  class="order-tabs" @click="onTabsClick">
             <Tab v-for="item in tabDatas" :title="item.title" :key="item.status"/>
         </Tabs>
       </div>
+      <div class="query">
+          <select @change="orderedTypeChange">
+            <option value="" :selected="orderedType === ''">全部订单</option>
+            <option value="QR_CODE" :selected="orderedType === 'QR_CODE'">二维码订单</option>
+            <option value="PHONE" :selected="orderedType === 'PHONE'">电话订单</option>
+          </select>
+          <span>订单数量：{{count}}</span>
+        </div>
       <WstScroll class="order-list" 
         :data="orderList"
         :pullup="pullup"
@@ -28,7 +36,9 @@
                 :editable="editable"
           />
       </WstScroll>
+      <!--
       <Footer/>
+      -->
       <CallAction/>
       <CommonAssign/>
   </div>
@@ -81,10 +91,11 @@ export default {
         },
         {
           title: "已完成",
-          status: "Other"
+          status: "OTHER"
         }
       ],
       currentState: "PENDING",
+      orderedType: null,
       tabTitles: [
         ["PENDING"],
         ["PROCESSING"],
@@ -94,11 +105,14 @@ export default {
     };
   },
   mounted() {
-    this.getListByStatus(["PENDING"], "PENDING");
-    this.$eventBus.$on("order:print", this.printSO);
+    const stateArr = ["PENDING", "PROCESSING", "OTHER"];
+    const { type = "" } = this.$route.query;
+    const active = stateArr.indexOf(type);
+    this.active = active;
+    this.onTabsClick(active);
   },
-  beforeDestroy () {
-    this.$eventBus.$off('order:print')
+  beforeDestroy() {
+    this.$eventBus.$off("order:print");
   },
   computed: {
     ...mapGetters(["checkedOrders", "userId", "orderList", "editable"]),
@@ -124,6 +138,7 @@ export default {
     },
     onTabsClick(i) {
       this.setEditable(false);
+      this.orderedType = ""
       const status = this.tabTitles[i];
       if (i === 0) {
         this.currentState = "PENDING";
@@ -205,9 +220,19 @@ export default {
         pageSize: 50,
         userId: Number(this.userId)
       };
-      this.$api.order.pageShopOrders(params).then(r => {
-        this.reserveOrderList(r);
-      });
+      this.$api.order
+        .pageShopOrders(params)
+        .then(r => {
+          if ("0000" === r.code) {
+            this.reserveOrderList(r.msg || []);
+            this.count = r.desc;
+          } else {
+            Toast(r.desc);
+          }
+        })
+        .catch(e => {
+          Toast(e.message);
+        });
     },
     printSO(params, callback) {
       Object.assign(params, { userId: Number(this.userId) });
@@ -218,7 +243,7 @@ export default {
           duration: 4000
         });
         const { orderList } = this;
-        const { entityIds } = params
+        const { entityIds } = params;
         const tempList = orderList.map(orderItem => {
           if (entityIds.includes(orderItem.id)) {
             Object.assign(orderItem, { printStatus: "COMPLETE" });
@@ -232,6 +257,35 @@ export default {
           });
         }
       });
+    },
+    orderedTypeChange(e) {
+      const value = e.target.value;
+      this.orderedType = value
+      const oStatus = this.tabTitles[this.active];
+
+      this.reserveOrderList([]);
+      let params = {
+        oStatus,
+        pageNumber: 1,
+        pageSize: 50,
+        userId: Number(this.userId)
+      };
+      if (value) {
+        params.orderedType = value;
+      }
+      this.$api.order
+        .pageShopOrders(params)
+        .then(r => {
+          if ("0000" === r.code) {
+            this.reserveOrderList(r.msg || []);
+            this.count = r.desc;
+          } else {
+            Toast(r.desc);
+          }
+        })
+        .catch(e => {
+          Toast(e.message);
+        });
     }
   }
 };
@@ -299,6 +353,20 @@ export default {
     .van-tabs--line {
       padding-top: 44px;
     }
+  }
+}
+.query {
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  background: #fff;
+  select {
+    background: #fff;
+  }
+  span {
+    font-size: 12px;
   }
 }
 .order-list {

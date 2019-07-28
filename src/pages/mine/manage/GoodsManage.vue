@@ -12,16 +12,17 @@
 				<GoodsCrumb v-for="(goods, index) in brand.gInfo" :goods="goods" :editable="editable" :editIds="editIds" :key="index"/>
 			</Tab>	
 		</Tabs>
-		<p class="fixed" v-if="editable==false">			
-			<a @click="add" class="right">新建</a>
-		</p>
-		<p class="fixed" v-else>			
-			<Tabbar v-model="menu">
+		<p class="operation-fixed" v-if="editable">			
+			<Tabbar class="operation-btns" v-model="menu">
 				<TabbarItem @click="goodsDel">删除</TabbarItem>
 				<TabbarItem @click="goodsUp">上架</TabbarItem>
 				<TabbarItem @click="goodsDown">下架</TabbarItem>
 			</Tabbar>
 		</p>
+    <p class="operation-fixed" v-else>			
+			<a @click="add" class="add">新建</a>
+		</p>
+    <Footer/>
 	</div>
 </template>
 
@@ -170,15 +171,29 @@ export default {
 
 <style lang="less">
 .manage-goods {
-  .fixed {
+  position: relative;
+  height: 100vh;
+  padding-bottom: 100px;
+  padding-bottom: 100px;
+  .operation-fixed {
     position: fixed;
     width: 100%;
-    bottom: 0;
+    bottom: 55px;
     right: 0;
-    background-color: #fafafa;
-    padding: 10px 0;
+    //padding: 10px 0;
+    height: 40px;
     margin: 0;
     color: #46af44;
+    .operation-btns{
+      bottom: 50px;
+    }
+    .add {
+      float: right;
+      margin-right: 15px;
+      color: #4db1e5;
+      font-size: 14px;
+      line-height: 40px;
+    }
   }
   .cell-title {
     margin: 10px 0 10px 15px;
@@ -191,17 +206,19 @@ export default {
     font-size: 14px;
   }
   .van-tab--active {
-      color: #4db1e5;
-    }
-    .van-tabs__line , .van-tabs__nav-bar {
+    color: #4db1e5;
+  }
+  .van-tabs__line,
+  .van-tabs__nav-bar {
+    background-color: #4db1e5;
+  }
+  .order-item-checkbox {
+    position: absolute;
+    .van-checkbox--checked,
+    .van-checkbox__control:checked + .van-icon-success {
+      border-color: #4db1e5;
       background-color: #4db1e5;
     }
-    .order-item-checkbox {
-      position: absolute;
-      .van-checkbox--checked ,.van-checkbox__control:checked + .van-icon-success {
-        border-color: #4db1e5;
-        background-color: #4db1e5;
-      }
-	}
+  }
 }
 </style>

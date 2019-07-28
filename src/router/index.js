@@ -3,6 +3,7 @@ import Router from "vue-router";
 
 // 异步加载组件 减少首屏等待时间
 const Home = () => import("@/pages/home/Home");
+const Index = () => import("@/pages/index/Index"); //首页
 
 const Mine = () => import("@/pages/mine/Mine");
 //我的-->统计
@@ -45,17 +46,16 @@ const Order = () => import("@/pages/order/Index");
 const Register = () => import("@/pages/register/Boss");
 const RegisterSuccess = () => import("@/pages/register/RegisterSuccess");
 
-
 //商品
 const Goods = () => import("@/pages/goods/Index");
 
 //通知
-const Notify =() => import("@/pages/mine/notify")
+const Notify = () => import("@/pages/mine/notify");
 
 //关于云水站
-const About =() => import("@/pages/mine/about")
+const About = () => import("@/pages/mine/about");
 
-const UpdatePwd =()=> import("@/pages/mine/updatePwd")
+const UpdatePwd = () => import("@/pages/mine/updatePwd");
 
 Vue.use(Router);
 
@@ -65,6 +65,11 @@ export default new Router({
       path: "/",
       name: "Home",
       component: Home
+    },
+    {
+      path: "/index",
+      name: "index",
+      component: Index
     },
     //我的
     {
@@ -228,18 +233,19 @@ export default new Router({
       component: Goods
     },
     {
-      path:"/manage/about",
-      name:"about",
-      component:About
+      path: "/manage/about",
+      name: "about",
+      component: About
     },
     {
-      path:"/manage/notify",
-      name:"notify",
-      component:Notify
-    },{
-      path:"/manage/updatePwd",
-      name:"updatePwd",
-      component:UpdatePwd
+      path: "/manage/notify",
+      name: "notify",
+      component: Notify
+    },
+    {
+      path: "/manage/updatePwd",
+      name: "updatePwd",
+      component: UpdatePwd
     }
   ]
 });

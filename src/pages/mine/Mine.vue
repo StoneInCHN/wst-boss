@@ -1,5 +1,6 @@
 <template>
 	<div class="mine">
+    <!--
 		<div class="statistical">
 			<div class="statistical-title">
 				<h2 class="title">收支统计</h2>
@@ -32,9 +33,12 @@
 				<p class="total">累计支出：{{data.totalEmpExp}}</p>
 			</div>
 		</div>
-		<CellGroup>
-			<Cell title="我的水站" icon="shop" :label="userName" is-link to="/manage/storeManage" />
-			<Cell title="员工管理" icon="contact" is-link to="/manage/workerManage" />
+    -->
+		<CellGroup class="shopName">
+			<Cell :title="shopName" icon="shop" :label="userName" is-link to="/manage/storeManage" />
+		</CellGroup>
+    <CellGroup>
+    	<Cell title="员工管理" icon="contact" is-link to="/manage/workerManage" />
 			<Cell title="二维码管理" icon="qr" is-link to="/manage/qrManage" />
       <Cell title="通知消息" icon="chat" is-link to="/manage/notify" />
       <Cell title="关于我们" icon="location" is-link to="/manage/about" />
@@ -61,7 +65,8 @@ export default {
         totalEmpExp: "--",
         totalIncome: "--",
       },
-      userName:""
+      userName:"",
+      shopName:"我的水站"
     };
   },
   mounted() {
@@ -83,7 +88,8 @@ export default {
         userId : this.userId
       };
       this.$api.mine.getInfo(params).then(res => {
-        this.userName = res.userName ? "账号: " + res.userName : ""
+        this.userName = res.userName ? "账号: " + res.userName : "",
+        this.shopName = res.shopName  || "我的水站"
       });
     },
     viewStatisticalDetails() {
@@ -93,8 +99,11 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .mine {
+  .shopName{
+    padding-top: 20px;
+  }
   .statistical {
     &-title {
       display: flex;

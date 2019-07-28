@@ -52,7 +52,8 @@ export default {
           })
           .then(r => {
             this.setCobType(r.cobPayType);
-            this.$router.replace("/order");
+            //this.$router.replace("/order");
+            this.$router.replace("/index")
           });
       } else if (paramsObj.state === "2") {
         const params = {
@@ -111,7 +112,8 @@ export default {
         .then(r => {
           console.log({ r });
           this.setCobType(r.cobPayType);
-          this.$router.replace("/order");
+          //this.$router.replace("/order");
+          this.$router.replace("/index")
         });
     }
   }

@@ -3,6 +3,7 @@
   <div class="order-item">
        <section class="order-item-section">
            <p>{{item.createDate | formatDate }}</p>
+           <p class="order-type">二维码订单</p>
            <Tag type="primary" plain class="tag">{{item.seriUserNum}}</Tag>
        </section>
        <section class="order-item-section item-section-title">
@@ -309,7 +310,7 @@ export default {
   }
 };
 </script>
-<style lang="less">
+<style lang="less" scpoed>
 .order-item {
   position: relative;
   box-sizing: border-box;
@@ -334,6 +335,9 @@ export default {
       span {
         margin-left: 20px;
       }
+    }
+    .order-type{
+      color: #38f;
     }
     > span {
       position: absolute;
