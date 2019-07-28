@@ -3,7 +3,7 @@
   <div class="order-item">
        <section class="order-item-section">
            <p>{{item.createDate | formatDate }}</p>
-           <p class="order-type">二维码订单</p>
+           <p class="order-type">{{ orderedType }}</p>
            <Tag type="primary" plain class="tag">{{item.seriUserNum}}</Tag>
        </section>
        <section class="order-item-section item-section-title">
@@ -56,10 +56,17 @@
 <script>
 import { Tag, Checkbox, Popup, Dialog, Toast, CellSwipe } from "vant";
 import { mapActions, mapGetters } from "vuex";
-import { CobPayTypeEnum, OrderOtherStatus, CommonActionTypeEnum } from "@/shared/consts";
+import {
+  CobPayTypeEnum,
+  OrderOtherStatus,
+  CommonActionTypeEnum
+} from "@/shared/consts";
 import { formatDateTime, toDecimal2 } from "@/utils";
 import validate from "../../utils/validate";
-
+const OrderTypeText = {
+  QR_CODE: "二维码订单",
+  PHONE: "电话订单"
+};
 export default {
   name: "OrderItem",
   components: {
@@ -135,13 +142,22 @@ export default {
       const { oStatus } = this.item;
       return OrderOtherStatus[oStatus] || "";
     },
-    printText(){
-      const { printStatus } = this.item
-      return  printStatus === "COMPLETE" ? "已打印" : "未打印"
+    printText() {
+      const { printStatus } = this.item;
+      return printStatus === "COMPLETE" ? "已打印" : "未打印";
     },
-    printStyle(){
-      const { printStatus } = this.item
-      return  printStatus !== "COMPLETE" ? {color: "red"} : {}
+    printStyle() {
+      const { printStatus } = this.item;
+      return printStatus !== "COMPLETE" ? { color: "red" } : {};
+    },
+    orderedType() {
+      const { orderedType } = this.item;
+      if ("PHONE" === orderedType) {
+        return "电话订单";
+      } else if ("QR_CODE" === orderedType) {
+        return "二维码订单";
+      }
+      return "";
     }
   },
   watch: {
@@ -161,9 +177,9 @@ export default {
         }
       }
     },
-    editable(val){
-      if(!val){
-        this.checked = false
+    editable(val) {
+      if (!val) {
+        this.checked = false;
       }
     }
   },
@@ -184,9 +200,9 @@ export default {
           break;
         case "right":
           if (this.isPending) {
-            this.refuse()
+            this.refuse();
           } else if (this.isProcessing) {
-            this.unDelivery()
+            this.unDelivery();
           }
           break;
       }
@@ -200,44 +216,44 @@ export default {
       this.setCallActions(callActions);
     },
     printOrder() {
-      const { id } = this.item
-      this.$eventBus.$emit('order:print',{entityIds:[id]})
+      const { id } = this.item;
+      this.$eventBus.$emit("order:print", { entityIds: [id] });
     },
     toAssign() {
       //指派
-      const { id } = this.item
+      const { id } = this.item;
       const action = {
         ids: [id],
         actionType: CommonActionTypeEnum.ASSIGN
-      }
-      this.assignAction(action)
+      };
+      this.assignAction(action);
     },
-    toReassignment(){
+    toReassignment() {
       //改派
-      const { id } = this.item
+      const { id } = this.item;
       const action = {
         ids: [id],
         actionType: CommonActionTypeEnum.REASSIGNMENT
-      }
-      this.assignAction(action)
+      };
+      this.assignAction(action);
     },
     toFinish() {
       //指派时直接完成
-      const { id } = this.item
+      const { id } = this.item;
       const action = {
         ids: [id],
         actionType: CommonActionTypeEnum.FINISH
-      }
-      this.assignAction(action)
+      };
+      this.assignAction(action);
     },
-    toService(){
+    toService() {
       //对配送中的订单 执行送达
-      const { id } = this.item
+      const { id } = this.item;
       const action = {
         ids: [id],
         actionType: CommonActionTypeEnum.SERVICE
-      }
-      this.assignAction(action)
+      };
+      this.assignAction(action);
     },
     unDelivery() {
       Dialog.confirm({
@@ -253,12 +269,12 @@ export default {
           oprStatus: "UNDELIVER",
           userId: Number(this.userId)
         };
-        this.oprSO(params, ()=>{
-          const { orderList } = this
-            const tempList = orderList.filter(orderItem=>{
-              return id !== orderItem.id
-            })
-            this.reserveOrderList(tempList)
+        this.oprSO(params, () => {
+          const { orderList } = this;
+          const tempList = orderList.filter(orderItem => {
+            return id !== orderItem.id;
+          });
+          this.reserveOrderList(tempList);
         });
       });
     },
@@ -274,12 +290,12 @@ export default {
             oprStatus: "REJECT",
             userId: Number(this.userId)
           };
-          this.oprSO(params, ()=>{
-            const { orderList } = this
-            const tempList = orderList.filter(orderItem=>{
-              return id !== orderItem.id
-            })
-            this.reserveOrderList(tempList)
+          this.oprSO(params, () => {
+            const { orderList } = this;
+            const tempList = orderList.filter(orderItem => {
+              return id !== orderItem.id;
+            });
+            this.reserveOrderList(tempList);
           });
         })
         .catch(() => {
@@ -290,11 +306,10 @@ export default {
       if (params) {
         this.$api.order.oprSO(params).then(r => {
           Toast.success("操作成功");
-          if(callback){
-            callback()
+          if (callback) {
+            callback();
           }
         });
-        
       }
     }
   },
@@ -336,7 +351,7 @@ export default {
         margin-left: 20px;
       }
     }
-    .order-type{
+    .order-type {
       color: #38f;
     }
     > span {
@@ -366,7 +381,7 @@ export default {
       color: #06bf04;
     }
   }
-  .section-flex{
+  .section-flex {
     display: flex;
     align-items: center;
   }
