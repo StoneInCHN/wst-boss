@@ -18,7 +18,7 @@
 				<div class="sub-title">
 					<CellGroup>
 						<Cell :value="searchInfoText" ></Cell>
-						<Cell :value="reportValue"></Cell>
+						<Cell :title="reportValue" :value="orderCountText"></Cell>
 					</CellGroup>
 				</div>				
 				<div class="orderStatist" v-for="(detail, index) in detailList" :key="index">
@@ -72,7 +72,8 @@ import {
   Actionsheet,
   DatetimePicker,
   Icon,
-  Picker
+  Picker,
+  Toast
 } from "vant";
 import Header from "../../wechat/Header";
 import Footer from "../../wechat/Footer";
@@ -159,7 +160,8 @@ export default {
       empId: null,
       report: {},
       detailList: [],
-      empList: []
+      empList: [],
+      orderCount: 0
     };
   },
   computed: {
@@ -200,17 +202,18 @@ export default {
           value = `支出：${this.totalEmpExp}`;
         }
       } else {
-        value = `收入：${this.totalIncome}，支出：${
-          this.totalEmpExp
-        }`;
+        value = `收入：${this.totalIncome}，支出：${this.totalEmpExp}`;
       }
       return value;
     },
-    totalIncome(){
-      return this.calcPrice("INCOME")
+    orderCountText() {
+      return `订单数: ${this.orderCount}`;
     },
-    totalEmpExp(){
-      return this.calcPrice("OUTCOME")
+    totalIncome() {
+      return this.calcPrice("INCOME");
+    },
+    totalEmpExp() {
+      return this.calcPrice("OUTCOME");
     }
   },
   methods: {
@@ -221,18 +224,18 @@ export default {
         return 0;
       }
     },
-    calcPrice(t){
-      let price = 0
-      const { detailList } = this
-      if(detailList && detailList.length >0){
-        detailList.forEach(item=>{
-          const { amount, type } = item
-          if( t === type ){
-            price = utils.numAdd(price, amount)
+    calcPrice(t) {
+      let price = 0;
+      const { detailList } = this;
+      if (detailList && detailList.length > 0) {
+        detailList.forEach(item => {
+          const { amount, type } = item;
+          if (t === type) {
+            price = utils.numAdd(price, amount);
           }
-        })
+        });
       }
-      return price
+      return price;
     },
     allDetail() {
       const {
@@ -259,7 +262,12 @@ export default {
       this.$api.mine
         .pageFinDetail(req)
         .then(res => {
-          this.detailList = res;
+          if ("0000" === res.code) {
+            this.detailList = res.msg || [];
+            this.orderCount = res.desc || 0;
+          } else {
+            Toast(res.desc);
+          }
         })
         .catch(error => {
           console.error(error);

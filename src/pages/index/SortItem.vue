@@ -19,9 +19,6 @@ export default {
   props: {
     item: Object,
     index: Number
-  },
-  mounted() {
-    console.log("this.props", this.item);
   }
 };
 </script>

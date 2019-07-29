@@ -110,6 +110,9 @@ export default {
     const active = stateArr.indexOf(type);
     this.active = active;
     this.onTabsClick(active);
+    this.$eventBus.$on("order:print", (params)=>{
+      this.printSO(params, ()=>{})
+    });
   },
   beforeDestroy() {
     this.$eventBus.$off("order:print");

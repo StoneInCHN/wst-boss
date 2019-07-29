@@ -23,7 +23,7 @@ const mine = {
     return lift(post("/shop/finReport", params)); //商家收支统计
   },
   pageFinDetail(params) {
-    return lift(post("/shop/pageFinDetail", params)); //商家收支明细
+    return post("/shop/pageFinDetail", params); //商家收支明细
   },
   getGList(params) {
     return lift(post("/sGoods/getGList", params)); //商品管理列表

@@ -110,7 +110,7 @@ export default {
           return this.$api.common.getCobType();
         })
         .then(r => {
-          console.log({ r });
+          //console.log({ r });
           this.setCobType(r.cobPayType);
           //this.$router.replace("/order");
           this.$router.replace("/index")

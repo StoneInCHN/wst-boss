@@ -2,12 +2,12 @@
     <div class="index">
         <h4>{{shopName}}</h4>
         <div class="flex-warp income-warp">
-            <div class="flex-warp-item">
+            <div class="flex-warp-item" @click="goStatistics">
                 <div>今日收入</div>
                 <p>{{data.dayIncome}}</p>
             </div>
             <div class="divide"></div>
-             <div class="flex-warp-item">
+             <div class="flex-warp-item" @click="goStatistics">
                 <div>本月收入</div>
                 <p>{{data.monIncome}}</p>
             </div>
@@ -115,6 +115,9 @@ export default {
       this.$api.mine.finReport({ userId }).then(res => {
         Object.assign(this.data, res);
       });
+    },
+    goStatistics(){
+      this.$router.push({ path: "/statistics/monthIncome"});
     },
     getCntOrders() {
       const { userId } = this;
