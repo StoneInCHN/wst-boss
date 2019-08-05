@@ -48,7 +48,8 @@ const validate = (() => {
     },
     isPrice(val, msg){
       const reg = /^(([1-9][0-9]*)|(([0]\.\d{1,2}|[1-9][0-9]*\.\d{1,2})))$/;
-      if (!reg.test(val)) {
+
+      if (!reg.test(val) && 0 !== Number(val)) {
         return msg;
       }
     },
