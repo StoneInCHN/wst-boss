@@ -17,7 +17,7 @@ export const ORDER_CHECKED_ORDERS = 'ORDER_CHECKED_ORDERS' //批量处理时选�
 export const ORDER_EMP_INCOME = 'ORDER_EMP_INCOME' //订单指派时员工提成金额
 export const ORDER_EMP_ID = 'ORDER_EMP_ID' //订单指派时员工id
 export const ORDER_RESERVE_ORDER_LIST = 'ORDER_RESERVE_ORDER_LIST' //
-
+export const ORDER_QUERY_PARAMS = 'ORDER_QUERY_PARAMS' 
 
 //mine
 

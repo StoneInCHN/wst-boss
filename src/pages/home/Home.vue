@@ -23,8 +23,8 @@ export default {
     if (process.env.NODE_ENV == "production") {
       this.initData();
     } else {
-      //this.initTest();
-      this.initData();
+      this.initTest();
+      //this.initData();
     }
   },
   computed: {

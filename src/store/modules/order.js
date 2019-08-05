@@ -8,7 +8,8 @@ const state = {
   orderList: getItem("orderList") || [],
   checkedOrders: [],
   empIncome: 0,
-  empId: -1
+  empId: -1,
+  queryParams:{}
 };
 
 const actions = {
@@ -32,6 +33,9 @@ const actions = {
   },
   reserveOrderList({ commit }, orderList) {
     commit(types.ORDER_RESERVE_ORDER_LIST, orderList);
+  },
+  setQueryParams({ commit }, params) {
+    commit(types.ORDER_QUERY_PARAMS, params);
   }
 };
 
@@ -40,7 +44,6 @@ const getters = {
   pendingList: state => {
     const { pendingList } = state;
     let lists = [];
-    console.log({pendingList})
     if (pendingList && pendingList.length > 0) {
       lists = pendingList.filter(item => {
         return item.oStatus === "PENDING";
@@ -51,7 +54,6 @@ const getters = {
   //配送中的订单
   processingList: state => {
     const { processingList } = state;
-    console.log({processingList})
     let lists = [];
     if (processingList && processingList.length > 0) {
       lists = processingList.filter(item => {
@@ -64,7 +66,6 @@ const getters = {
   otherList: state => {
     const { otherList } = state;
     let lists = [];
-    console.log({otherList})
     if (otherList && otherList.length > 0) {
       lists = otherList.filter(item => {
         return item.oStatus !== "PENDING" && item.oStatus !== "PROCESSING";
@@ -76,7 +77,8 @@ const getters = {
   checkedOrders: state => state.checkedOrders ,
   empIncome: state => state.empIncome,
   empId: state => state.empId,
-  orderList: state => state.orderList
+  orderList: state => state.orderList,
+  queryParams: state => state.queryParams
 };
 
 const mutations = {
@@ -105,6 +107,10 @@ const mutations = {
   [types.ORDER_RESERVE_ORDER_LIST](state, orderList) {
     state.orderList = orderList;
     sessionStorage.setItem("orderList", JSON.stringify(orderList));
+  },
+  [types.ORDER_QUERY_PARAMS](state, queryParams) {
+    state.queryParams = queryParams;
+    sessionStorage.setItem("queryParams", JSON.stringify(queryParams));
   }
 };
 

@@ -42,33 +42,30 @@ export default {
       default: "取消"
     }
   },
-  data(){
+  data() {
     return {
       show: true
-    }
+    };
   },
-  watch:{
-    isShow(newVal){
-      this.show = newVal
+  watch: {
+    isShow(newVal) {
+      this.show = newVal;
     }
   },
   methods: {
     click() {
       this.show = false;
-      this.close()
+      this.close();
     },
-    pConfirm(value, index){
-      console.log({value, index})
-      this.confirm(value, index)
+    pConfirm(value, index) {
+      this.confirm(value, index);
     },
     cancel() {
-      console.log("取消");
       this.close();
     }
   }
 };
 </script>
 <style>
-
 </style>
 

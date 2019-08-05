@@ -40,7 +40,7 @@
       <Footer/>
       -->
       <CallAction/>
-      <CommonAssign/>
+      <CommonAssign :refresh="refresh"/>
   </div>
 </template>
 <script>
@@ -110,21 +110,22 @@ export default {
     const active = stateArr.indexOf(type);
     this.active = active;
     this.onTabsClick(active);
-    this.$eventBus.$on("order:print", (params)=>{
-      this.printSO(params, ()=>{})
+    this.$eventBus.$on("order:print", params => {
+      this.printSO(params, () => {});
     });
   },
   beforeDestroy() {
     this.$eventBus.$off("order:print");
   },
   computed: {
-    ...mapGetters(["checkedOrders", "userId", "orderList", "editable"]),
+    ...mapGetters(["checkedOrders", "userId", "orderList", "editable", "queryParams"]),
     settingText() {
       return this.editable ? "取消" : "管理";
     },
     contentStyle() {
       const flag = !!this.editable;
-      return flag ? { marginTop: "10.7vw" } : {};
+      //return flag ? { marginTop: "10.7vw" } : {};
+      return {};
     }
   },
   methods: {
@@ -133,7 +134,8 @@ export default {
       "setEditable",
       "reserveOrderList",
       "setToken",
-      "assignAction"
+      "assignAction",
+      "setQueryParams"
     ]),
     setting() {
       this.setCheckedOrders([]);
@@ -141,7 +143,7 @@ export default {
     },
     onTabsClick(i) {
       this.setEditable(false);
-      this.orderedType = ""
+      this.orderedType = "";
       const status = this.tabTitles[i];
       if (i === 0) {
         this.currentState = "PENDING";
@@ -216,19 +218,27 @@ export default {
       }
     },
     getListByStatus(oStatus, type) {
-      this.reserveOrderList([]);
       const params = {
         oStatus,
         pageNumber: 1,
         pageSize: 50,
         userId: Number(this.userId)
       };
+      this.pageShopOrders(params)
+    },
+    refresh(){
+      const { queryParams } =this
+      queryParams && this.pageShopOrders(queryParams)
+    },
+    pageShopOrders(params) {
+      this.reserveOrderList([]);
       this.$api.order
         .pageShopOrders(params)
         .then(r => {
           if ("0000" === r.code) {
             this.reserveOrderList(r.msg || []);
             this.count = r.desc;
+            this.setQueryParams(params);
           } else {
             Toast(r.desc);
           }
@@ -263,7 +273,7 @@ export default {
     },
     orderedTypeChange(e) {
       const value = e.target.value;
-      this.orderedType = value
+      this.orderedType = value;
       const oStatus = this.tabTitles[this.active];
 
       this.reserveOrderList([]);
@@ -282,6 +292,7 @@ export default {
           if ("0000" === r.code) {
             this.reserveOrderList(r.msg || []);
             this.count = r.desc;
+            this.setQueryParams(params);
           } else {
             Toast(r.desc);
           }

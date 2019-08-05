@@ -32,6 +32,9 @@ export default {
     type: {
       type: String,
       default: PayMethodActionTypeEnum.DIRECT_FINISH
+    },
+    refresh: {
+      type: Function
     }
   },
   data() {
@@ -55,38 +58,39 @@ export default {
     ...mapActions(["setEditable", "reserveOrderList"]),
     confirm(value, index) {
       const cobType = this.cobType[index];
-      const { type, userId } = this
-      const entityIds = this.ids.concat() || []
-      const  params = {
+      const { type, userId } = this;
+      const entityIds = this.ids.concat() || [];
+      const params = {
         entityIds,
         oprStatus: "FINISH",
         cobType,
         userId: Number(userId)
       };
-      if( type === PayMethodActionTypeEnum.ASSIGN_2_FINISH ){
-        this.assign2Finish(params)
-      }else if(type === PayMethodActionTypeEnum.DIRECT_FINISH ){
-        this.directFinish(params)
-      }else{
-        console.log("未知操作...")
+      if (type === PayMethodActionTypeEnum.ASSIGN_2_FINISH) {
+        this.assign2Finish(params);
+      } else if (type === PayMethodActionTypeEnum.DIRECT_FINISH) {
+        this.directFinish(params);
+      } else {
+        console.log("未知操作...");
       }
     },
-    assign2Finish(params){
-      Object.assign(params, this.employee) 
-      this.oprSO(params)
+    assign2Finish(params) {
+      Object.assign(params, this.employee);
+      this.oprSO(params);
     },
-    directFinish(params){
-      this.oprSO(params)
+    directFinish(params) {
+      this.oprSO(params);
     },
-    oprSO(params){
+    oprSO(params) {
       this.$api.order.oprSO(params).then(r => {
         Toast.success("操作成功", 1.5);
-        const { orderList } = this;
-        const { entityIds } = params
-        const tempList = orderList.filter(orderItem => {
-            return !entityIds.includes(orderItem.id);
-        });
-        this.reserveOrderList(tempList);
+        // const { orderList } = this;
+        // const { entityIds } = params;
+        // const tempList = orderList.filter(orderItem => {
+        //   return !entityIds.includes(orderItem.id);
+        // });
+        // this.reserveOrderList(tempList);
+        this.refresh && this.refresh()
         this.close();
       });
     }
