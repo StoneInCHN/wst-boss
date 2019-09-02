@@ -43,20 +43,20 @@
 			</Tab>	
 		</Tabs>
 	    </div>
-		<Actionsheet v-model="showStartDate" title="选择开始时间">
+		<ActionSheet v-model="showStartDate" title="选择开始时间">
 			<DatetimePicker @confirm="confirmStartDate" @cancel="cancelSelect"
 			  type="date"
 			  :min-date="minDate"
 			/>
-		</Actionsheet>
-		<Actionsheet v-model="showEndDate" title="选择结束时间">
+		</ActionSheet>
+		<ActionSheet v-model="showEndDate" title="选择结束时间">
 			<DatetimePicker @confirm="confirmEndDate" @cancel="cancelSelect"
 			  type="date"
 			  :min-date="minDate"
 			/>
-		</Actionsheet>
-		<Actionsheet v-model="showSelectType"  :actions="payways" cancel-text="取消"/>
-		<Actionsheet v-model="showSelectEmp"  :actions="emps" cancel-text="取消"/>
+		</ActionSheet>
+		<ActionSheet v-model="showSelectType"  :actions="payways" cancel-text="取消"/>
+		<ActionSheet v-model="showSelectEmp"  :actions="emps" cancel-text="取消"/>
 		<Footer/>
 	</div>
 </template>
@@ -69,7 +69,7 @@ import {
   Tabs,
   Cell,
   CellGroup,
-  Actionsheet,
+  ActionSheet,
   DatetimePicker,
   Icon,
   Picker,
@@ -91,7 +91,7 @@ export default {
     Tabs,
     Cell,
     CellGroup,
-    Actionsheet,
+    ActionSheet,
     DatetimePicker,
     Icon,
     Picker

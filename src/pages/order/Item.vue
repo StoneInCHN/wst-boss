@@ -58,7 +58,7 @@
    <AssignPicker v-if="openAssign2Finish" :close="toggleAssign2Finish" :isBatch="false" :item="item" type="assign2Finish"/>
    <PayMethodPicker v-if="openFinish" :close="toggleFinish" :item="item"/>
    <PayMethodPicker v-if="openFinish4Assign"  :close="closeFinish4Assign" :item="item" type="assign2Finish"/>
-   <Actionsheet v-model="showCall" :actions="callActions" cancel-text="取消" />
+   <ActionSheet v-model="showCall" :actions="callActions" cancel-text="取消" />
    <Popup
     v-model="showCommissionModel"
     class="commission-popup"
@@ -80,7 +80,7 @@
 import {
   Tag,
   Checkbox,
-  Actionsheet,
+  ActionSheet,
   Popup,
   Picker,
   Dialog,
@@ -100,7 +100,7 @@ export default {
   components: {
     Tag,
     Checkbox,
-    Actionsheet,
+    ActionSheet,
     Popup,
     Picker,
     Dialog,

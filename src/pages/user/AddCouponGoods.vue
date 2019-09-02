@@ -14,7 +14,7 @@
 				</CellGroup>
 			</div>	
 		</Panel>
-		<Actionsheet  v-model="showdGoodsList" :actions="allDGoods" cancel-text="取消"/>
+		<ActionSheet  v-model="showdGoodsList" :actions="allDGoods" cancel-text="取消"/>
 		<NumInput :show="show" :input="keyWords" extraKey="."  @hide="hideNumInput" @input="inputKey"/>
 	</div>
 </template>
@@ -26,7 +26,7 @@ import {
   Field,
   Button,
   Cell,
-  Actionsheet,
+  ActionSheet,
   Toast
 } from "vant";
 import { mapGetters, mapActions } from "vuex";
@@ -39,7 +39,7 @@ export default {
     Field,
     Button,
     Cell,
-    Actionsheet,
+    ActionSheet,
     NumInput,
     Toast
   },

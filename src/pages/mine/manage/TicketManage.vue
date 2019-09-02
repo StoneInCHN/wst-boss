@@ -9,13 +9,13 @@
 		</p>
 		<Tabs :active="active" type="card" @click="changeTab">
 			<Tab title="未添加水票" >
-				<div v-for="item in withoutTickets">
+				<div v-for="(item, index) in withoutTickets" :key="index">
 					<h2 class="sub_title">{{item.brand}}</h2>
 					<TicketCrumb v-for="(ticket, index) in item.ticketList" :ticket="ticket" :editable="editable" :key="index"/>
 				</div>				
 			</Tab>	
 			<Tab title="已添加水票" >
-				<div v-for="item in withTickets">
+				<div v-for="(item, index) in withTickets" :key="index">
 					<h2 class="sub_title">{{item.brand}}</h2>
 					<TicketCrumb v-for="(ticket, index) in item.ticketList" :ticket="ticket" :editable="editable" :key="index"/>
 				</div>				
@@ -25,18 +25,18 @@
 			<a v-if="tabIndex == 0" @click="addTicket" class="add"><Icon name="add-o"/> 添加</a>
 			<a v-else @click="deleteTicket" class="delete"><Icon name="delete"/> 删除</a>
 		</p>
-		<Actionsheet v-model="showAction" :actions="actions" cancel-text="取消"/>
+		<ActionSheet v-model="showAction" :actions="actions" cancel-text="取消"/>
 	</div>
 </template>
 
 <script>
-import { Tab, Tabs, Actionsheet, Icon } from 'vant'
+import { Tab, Tabs, ActionSheet, Icon } from 'vant'
 import Header from "../../wechat/Header"
 import Footer from "../../wechat/Footer"
 import TicketCrumb from "./TicketCrumb"
 export default{
 	name: "Mine",
-	components: { Header, Footer, TicketCrumb, Tab, Tabs, Actionsheet, Icon},
+	components: { Header, Footer, TicketCrumb, Tab, Tabs, ActionSheet, Icon},
 	data () {
 		return {
 			tabIndex:0,

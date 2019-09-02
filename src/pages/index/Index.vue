@@ -90,15 +90,16 @@ export default {
   },
   methods: {
     showOrder(type) {
-      this.$router.push({ path: "/order", query: { type } });
+      const { shopName = "" } = this;
+      this.$router.push({ path: "/order", query: { type, shopName: encodeURIComponent(shopName) } });
     },
     getStoreInfo() {
       const params = {
-        userId : this.userId
+        userId: this.userId
       };
       this.$api.mine.getInfo(params).then(res => {
         //this.userName = res.userName ? "账号: " + res.userName : "",
-        this.shopName = res.shopName  || "我的水站"
+        this.shopName = res.shopName || "我的水站";
       });
     },
     handleShowAll() {
@@ -116,8 +117,8 @@ export default {
         Object.assign(this.data, res);
       });
     },
-    goStatistics(){
-      this.$router.push({ path: "/statistics/monthIncome"});
+    goStatistics() {
+      this.$router.push({ path: "/statistics/monthIncome" });
     },
     getCntOrders() {
       const { userId } = this;

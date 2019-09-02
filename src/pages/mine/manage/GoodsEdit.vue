@@ -17,15 +17,15 @@
 				</CellGroup>
 			</div>	
 		</Panel>
-		<Actionsheet  v-model="brand" :actions="allBrand" cancel-text="取消"/>
-		<Actionsheet  v-model="goodsName" :actions="allGoodsName" cancel-text="取消"/>
-		<Actionsheet  v-model="size" :actions="allSize" cancel-text="取消"/>
+		<ActionSheet  v-model="brand" :actions="allBrand" cancel-text="取消"/>
+		<ActionSheet  v-model="goodsName" :actions="allGoodsName" cancel-text="取消"/>
+		<ActionSheet  v-model="size" :actions="allSize" cancel-text="取消"/>
 		<NumInput :show="show" :input="keyWords" extraKey="."  @hide="hideNumInput" @input="inputKey"/>
 	</div>
 </template>
 
 <script>
-import { Panel, CellGroup, Field, Button, Cell, Icon, Actionsheet,Toast } from 'vant'
+import { Panel, CellGroup, Field, Button, Cell, Icon, ActionSheet,Toast } from 'vant'
 import Header from "../../wechat/Header"
 import Footer from "../../wechat/Footer"
 import {mapGetters} from 'vuex'
@@ -33,7 +33,7 @@ import NumInput from "../../../components/NumInput"
 export default{
 	computed: { ...mapGetters([ "userId"]) },
 	name: "AddAccount",
-	components: { Header, Footer, Panel, CellGroup, Field, Button, Cell, Icon, Actionsheet, Toast,NumInput},
+	components: { Header, Footer, Panel, CellGroup, Field, Button, Cell, Icon, ActionSheet, Toast,NumInput},
 	data () {
 		return {
 			originPrice:null,

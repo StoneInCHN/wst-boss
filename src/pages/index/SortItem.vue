@@ -9,7 +9,7 @@
                 <span class="origin-price">￥{{item.originPrice}}</span>
             </p>
         </div>
-        <span>{{item.saleCount}}瓶</span>
+        <span>{{item.saleCount}}桶</span>
     </div>
 </template>
 

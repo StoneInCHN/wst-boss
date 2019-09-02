@@ -313,6 +313,7 @@ export default {
   .order-nav {
     position: relative;
     height: 45px;
+    background-color: #fff;
     .order-setting {
       position: absolute;
       right: 15px;
@@ -365,7 +366,7 @@ export default {
       display: flex;
     }
     .van-tabs--line {
-      padding-top: 44px;
+      //padding-top: 44px;
     }
   }
 }

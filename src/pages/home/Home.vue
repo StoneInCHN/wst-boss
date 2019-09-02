@@ -53,7 +53,7 @@ export default {
           .then(r => {
             this.setCobType(r.cobPayType);
             //this.$router.replace("/order");
-            this.$router.replace("/index")
+            this.$router.replace("/index");
           });
       } else if (paramsObj.state === "2") {
         const params = {
@@ -88,7 +88,7 @@ export default {
               signature,
               jsApiList: ["scanQRCode", "closeWindow"]
             });
-          }else{
+          } else {
             this.$wechat.error(res => {
               console.log("wx loading error");
             });
@@ -99,10 +99,11 @@ export default {
         });
     },
     initTest() {
-      let userId = 12;
+      let userId = 16;
+      console.log({userId})
       this.$api.common
         .auth({
-          userId: userId
+          userId
         })
         .then(r => {
           this.setToken(r.token);
@@ -113,7 +114,7 @@ export default {
           //console.log({ r });
           this.setCobType(r.cobPayType);
           //this.$router.replace("/order");
-          this.$router.replace("/index")
+          this.$router.replace("/index");
         });
     }
   }

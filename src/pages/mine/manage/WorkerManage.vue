@@ -12,12 +12,12 @@
 				<a v-if="editable==false" @click="searchWorker" class="add">添加</a>
 				<a v-else @click="deleteWork" class="delete"><Icon name="delete"/> 删除</a>
 			</p>
-			<Actionsheet v-model="showAction" :actions="actions" cancel-text="取消"/>
+			<ActionSheet v-model="showAction" :actions="actions" cancel-text="取消"/>
 	</div>
 </template>
 
 <script>
-import { Row, Col, Icon, Checkbox, Actionsheet, Toast, Dialog } from "vant";
+import { Row, Col, Icon, Checkbox, ActionSheet, Toast, Dialog } from "vant";
 import Header from "../../wechat/Header";
 import WorkerCrumb from "./WorkerCrumb";
 import { mapGetters } from "vuex";
@@ -30,7 +30,7 @@ export default {
     Col,
     Icon,
     Checkbox,
-    Actionsheet,
+    ActionSheet,
     Toast,
     Dialog,
     WorkerCrumb

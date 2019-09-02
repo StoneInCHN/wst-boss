@@ -4,7 +4,7 @@
         <Cell>
                 <h4 class="title">修改密码</h4>
         </Cell>
-            <Cell class="update-pwd-account" title="账号" value="13568952709" ></Cell>
+            <Cell class="update-pwd-account" title="账号" :value="account" ></Cell>
             <Field label="原密码" required type="password" v-model="oldPwd" :error-message="errorMessage.oldPwd" @blur="validateCheck('oldPwd')" placeholder="请输入原密码" />
             <Field label="新密码" required type="password" v-model="newPwd" :error-message="errorMessage.newPwd" @blur="validateCheck('newPwd')" placeholder="请输入新密码" />
             <Field label="再次输入新密码" required type="password" v-model="confirmPwd" :error-message="errorMessage.confirmPwd" @blur="validateCheck('confirmPwd')" placeholder="请再次新密码" />
@@ -20,7 +20,6 @@ import {
   Field,
   Button,
   Cell,
-  Actionsheet,
   DatetimePicker,
   Toast,
   Icon,
@@ -44,7 +43,6 @@ export default {
   },
   data() {
     return {
-      account: "",
       oldPwd: "",
       newPwd: "",
       confirmPwd: "",
@@ -62,6 +60,9 @@ export default {
   },
   computed: {
     ...mapGetters(["userId"]),
+    account(){
+      return this.$route.query.account || ""
+    },
     checkRules() {
       return [
         {
@@ -129,6 +130,7 @@ export default {
       this.$api.mine.updatePwd(params).then(res => {
         if ("0000" === res.code) {
           Toast.success("修改成功");
+          this.$router.go(-1)
         } else {
           Toast.fail(res.desc);
         }
@@ -142,6 +144,11 @@ export default {
         }
         cb && cb();
       });
+    },
+    goBack () {
+      window.history.length > 1
+        ? this.$router.go(-1)
+        : this.$router.push('/manage/storeManage')
     }
   }
 };

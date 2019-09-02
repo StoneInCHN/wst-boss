@@ -20,7 +20,7 @@
 				  <Field label=" "  v-model="store.bussEndTime" required placeholder="请选择结束时间"  type="datetime" :error-message="errorMessage.endTime" @click="selectTime(1)"/>
 				</CellGroup>
 				<div class="qr-uploader">
-					<label >微信收款码:</label>
+					<label class="required">微信收款码:</label>
 					<div class="uploader-view-img" v-show="wxPayCodeUrlShow" @click.stop.prevent="previewHandel('wx')" :style="wxViewStyle" />
 					<Icon class="remove-img" v-show="wxPayCodeUrlShow" name="delete" @click="removeWxPayUrl"/>
 					<Uploader class="uploder" :after-read="uploaderWxPayImg" v-show="!wxPayCodeUrlShow">
@@ -28,7 +28,7 @@
 					</Uploader>
 				</div>
 				<div class="qr-uploader">
-					<label >支付宝收款码:</label>
+					<label class="required">支付宝收款码:</label>
 					<div class="uploader-view-img" v-show="aliPayCodeUrlShow" @click.stop.prevent="previewHandel('alipay')" :style="aliViewStyle"/>
 					<Icon class="remove-img" v-show="aliPayCodeUrlShow" name="delete" @click="removeAliPayUrl"/>
 					<Uploader class="uploder" :after-read="uploaderAliPayImg" v-show="!aliPayCodeUrlShow">
@@ -157,7 +157,7 @@ export default {
             { rule: "isNoNull", msg: "送水电话不能为空" },
             {
               rule: "specialPhoneNo",
-              msg: "送水电话不正确，只能为手机号或者座机号"
+              msg: "送水电话不正确，只能为手机号获取座机号"
             }
           ]
         },
@@ -192,14 +192,14 @@ export default {
       } else {
         const { store, userId } = this;
         const { wxPayCodeUrl, aliPayCodeUrl } = store;
-        // if (!wxPayCodeUrl || wxPayCodeUrl === "") {
-        //   Toast("微信收款码不能为空", 1.5);
-        //   return;
-        // }
-        // if (!aliPayCodeUrl || aliPayCodeUrl === "") {
-        //   Toast("支付宝收款码不能为空", 1.5);
-        //   return;
-        // }
+        if (!wxPayCodeUrl || wxPayCodeUrl === "") {
+          Toast("微信收款码不能为空", 1.5);
+          return;
+        }
+        if (!aliPayCodeUrl || aliPayCodeUrl === "") {
+          Toast("支付宝收款码不能为空", 1.5);
+          return;
+        }
         Object.assign(store, {
           userId: Number(userId),
           alipayCodeUrl: aliPayCodeUrl
@@ -305,10 +305,7 @@ export default {
       ImagePreview([this.previewUrl[type]]);
     },
     changePwd() {
-      this.$router.push({
-        path: "/manage/updatePwd",
-        query: { account: this.store.userName }
-      });
+      this.$router.push({path:"/manage/updatePwd", query:{account: this.store.userName}});
     }
   }
 };

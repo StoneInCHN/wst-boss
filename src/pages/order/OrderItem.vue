@@ -1,5 +1,5 @@
 <template>
-<CellSwipe :right-width="swipeRightWidth" :on-close="onSwipeClose">
+<SwipeCell :right-width="swipeRightWidth" :on-close="onSwipeClose">
   <div class="order-item">
        <section class="order-item-section">
            <p>{{item.createDate | formatDate }}</p>
@@ -23,7 +23,7 @@
          <p class="total-price">合计 : <span>￥{{item.amount | firmatPrice}}</span></p>
        </section>
        <section class="order-item-section" v-if="isProcessing">
-           <p>配送员<span>{{item.empName}}</span> </p>
+           <p>配送员<span>{{assignName}}</span> </p>
            <p>提成金额:<span>{{item.empAmout | firmatPrice}}元</span></p>
        </section>
        <div  class="order-item-footer" >
@@ -43,7 +43,7 @@
                <li class="state">
                  <Tag plain type="primary">{{otherStatusText}}</Tag>
                </li>
-               <li>{{item.empName}}</li>
+               <li>{{assignName}}</li>
                <li>提成金额:</li>
                <li>{{ item.empAmout | firmatPrice }}元</li>
            </ul>
@@ -51,10 +51,10 @@
        <Checkbox class="order-item-checkbox" v-model="checked" v-if="editable"/>
     </div>
     <span slot="right">{{swipeText}}</span>
-  </CellSwipe>
+  </SwipeCell>
 </template>
 <script>
-import { Tag, Checkbox, Popup, Dialog, Toast, CellSwipe } from "vant";
+import { Tag, Checkbox, Popup, Dialog, Toast, SwipeCell } from "vant";
 import { mapActions, mapGetters } from "vuex";
 import {
   CobPayTypeEnum,
@@ -75,7 +75,7 @@ export default {
     Popup,
     Dialog,
     Toast,
-    CellSwipe
+    SwipeCell
   },
   props: {
     item: {
@@ -118,7 +118,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(["checkedOrders", "userId", "orderList"]),
+    ...mapGetters(["checkedOrders", "userId", "orderList", "store"]),
     isPending() {
       return this.state === "PENDING";
     },
@@ -158,12 +158,21 @@ export default {
         return "二维码订单";
       }
       return "";
+    },
+    assignName() {
+      let name = "";
+      if (this.item.empName) {
+        name = this.item.empName;
+      } else if (this.$route.query.shopName) {
+        name = decodeURIComponent(this.$route.query.shopName);
+      }
+      return name;
     }
   },
   watch: {
     checked(newVal, oldVal) {
       const { id } = this.item;
-      const desc = `的checked 监听:`;
+      //const desc = `的checked 监听:`;
       if (this.editable && id) {
         const checkedOrders = this.checkedOrders || [];
         if (newVal) {
@@ -469,7 +478,7 @@ export default {
     display: flex;
   }
 }
-.van-cell-swipe__right {
+.van-swipe-cell__right {
   display: flex;
   align-items: center;
   justify-content: center;

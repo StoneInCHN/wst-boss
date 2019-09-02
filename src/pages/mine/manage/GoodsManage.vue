@@ -63,6 +63,7 @@ export default {
     },
     manage() {
       this.editable = !this.editable;
+      //this.editIds= []
     },
     canDel() {
       let canDel = true;
@@ -165,6 +166,13 @@ export default {
   },
   mounted() {
     this.getGList();
+  },
+  watch:{
+    editable(val){
+      if(!val){
+        this.editIds = []
+      }
+    }
   }
 };
 </script>

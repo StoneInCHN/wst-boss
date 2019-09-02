@@ -29,18 +29,18 @@
 				</Col>				
 			</Row>			
 		</div>
-		<Actionsheet  v-model="show" :actions="workers" cancel-text="取消"/>
+		<ActionSheet  v-model="show" :actions="workers" cancel-text="取消"/>
 		<Footer/>
 	</div>
 </template>
 
 <script>
-import { Row, Col, Actionsheet, Toast } from 'vant'
+import { Row, Col, ActionSheet, Toast } from 'vant'
 import Header from "../../wechat/Header"
 import Footer from "../../wechat/Footer"
 export default{
 	name: "AddAccount",
-	components: { Header, Footer, Row, Col, Actionsheet, Toast },
+	components: { Header, Footer, Row, Col, ActionSheet, Toast },
 	data () {
 		return {
 			show:false,

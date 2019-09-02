@@ -1,13 +1,13 @@
 <template>
-    <Actionsheet v-model="show" :actions="actions" cancel-text="取消"></Actionsheet>
+    <ActionSheet v-model="show" :actions="actions" cancel-text="取消"></ActionSheet>
 </template>
 <script>
-import { Actionsheet } from "vant";
+import { ActionSheet } from "vant";
 import { mapGetters } from "vuex";
 export default {
   name: "CallAction",
   components: {
-    Actionsheet
+    ActionSheet
   },
   data() {
     return {

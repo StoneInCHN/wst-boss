@@ -24,7 +24,7 @@
 				</Col>
 			</Row>
 		</Panel>
-		<Actionsheet  v-model="showGoods" :actions="allGoods" cancel-text="取消"/>
+		<ActionSheet  v-model="showGoods" :actions="allGoods" cancel-text="取消"/>
 	</div>
 </template>
 
@@ -35,7 +35,7 @@ import {
   Field,
   Button,
   Cell,
-  Actionsheet,
+  ActionSheet,
   Stepper,
   Row,
   Col
@@ -51,7 +51,7 @@ export default {
     Field,
     Button,
     Cell,
-    Actionsheet,
+    ActionSheet,
     Stepper,
     Row,
     Col

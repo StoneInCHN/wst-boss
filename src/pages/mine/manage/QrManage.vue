@@ -7,15 +7,16 @@
 		    v-model="count"
 		    label="输入数量"
 		    placeholder="请输入生成二维码数量"
-		    @click-icon='genQrPdf'  @focus='numKeyboard'>
-		    <Button slot="icon" size="small" type="primary">批量生成</Button>
+		    @focus='numKeyboard'>
+		    <Button slot="button" size="small" type="primary" @click='genQrPdf'>批量生成</Button>
 		  </Field>
 		  <Field id="qrUrlValue" v-if="qrUrl"
 		    v-model="qrUrl"
 		    label="二维码链接"
-		    @click-icon='copyQrPdf'>
-		    <Button slot="icon" size="small" type="primary" 
-		    	class="copyBtn" data-clipboard-target = "#qrUrlValue">复制链接</Button>
+			autosize
+			>
+		    <Button slot="button" size="small" type="primary" 
+		    	class="copyBtn" data-clipboard-target = "#qrUrlValue" @click='copyQrPdf'>复制链接</Button>
 		  </Field>
 		</CellGroup>
 		<Footer/>

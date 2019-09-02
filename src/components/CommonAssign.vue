@@ -5,6 +5,7 @@
           class="commission-popup"
         >
           <h4>提成金额</h4>
+            <!--
             <Cell title="指派人员:" class="commission-person">
               <select v-model="assignId" placeholder="请选择指派人员">
                 <option v-for="item in employees" :key="item.id" :value="item.id">
@@ -12,6 +13,14 @@
                 </option>
               </select>
             </Cell>
+            -->
+            <Field
+              v-model="assignName"
+              disabled
+              label="指派人员:"
+              placeholder="请选择指派人员"
+              @click="selectAssignId"
+            />
             <Field
               v-model="commissionPrice"
               label="提成金额:"
@@ -23,12 +32,13 @@
             <Button size="large" :loading="commissionLoading" @click="onCommissionConfirm">确定</Button>
         </Popup>
         <AssignPicker v-if="showAssign" :empIncome="commissionPrice" :close="closeAssgin" />
+        <ActionSheet v-model="showEmployee" :actions="employeeActions" @select="selectEmployee"></ActionSheet>
         <PayMethodPicker v-if="showFinish" :ids="orderIds4Assign" :employee="employee" :close="closeFinish" :type="payMethodType" :refresh="refresh" ></PayMethodPicker>
     </div>
 </template>
 
 <script>
-import { Button, Field, Popup, Cell, Toast } from "vant";
+import { Button, Field, Popup, Cell, Toast, ActionSheet } from "vant";
 import AssignPicker from "@/components/AssignPicker";
 import PayMethodPicker from "@/components/PayMethodPicker";
 import { mapActions, mapGetters } from "vuex";
@@ -43,7 +53,8 @@ export default {
     Popup,
     Cell,
     AssignPicker,
-    PayMethodPicker
+    PayMethodPicker,
+    ActionSheet
   },
   props: {
     refresh: Function
@@ -55,6 +66,7 @@ export default {
       commissionLoading: false,
       showAssign: false,
       showFinish: false,
+      showEmployee: false,
       payMethodType: PayMethodActionTypeEnum.DIRECT_FINISH,
       employee: {},
       ids: [],
@@ -62,7 +74,8 @@ export default {
         commissionPrice: ""
       },
       employees: [],
-      assignId: 0
+      assignId: null,
+      assignName: ""
     };
   },
   mounted() {
@@ -76,6 +89,18 @@ export default {
       "editable",
       "orderList"
     ]),
+    employeeActions() {
+      let actions = [];
+      if (this.employees && this.employees.length) {
+        actions = this.employees.map(item => {
+          return {
+            name: item.realName,
+            id: item.id
+          };
+        });
+      }
+      return actions;
+    },
     checkRules() {
       return [
         {
@@ -115,28 +140,39 @@ export default {
         //this.showAssign = true;
         const { commissionPrice = 0, assignId } = this;
         //将assignId存到本地, 下次默认选中
-        if (assignId) {
-          localStorage.setItem("assignId", assignId);
-          //关闭 金额提成输入框
-          this.showCommissionModel = false;
-          const employee = this.employees.filter(
-            i => this.assignId === i.id
-          )[0];
-          const { realName } = employee;
-          const emp = {
-            id: assignId,
-            empIncome: commissionPrice,
-            realName
-          };
-          this.employee = Object.assign({}, employee, emp);
-          const ids = this.orderIds4Assign.concat();
-          const { actionType } = this;
-          if (actionType === CommonActionTypeEnum.FINISH) {
-            //直接关闭
-            const employee = Object.assign({}, emp);
-            this.closeAssgin({ employee, ids, actionType });
+        if (assignId || this.actionType === CommonActionTypeEnum.FINISH) {
+          if (assignId) {
+            localStorage.setItem("assignId", assignId);
+            const employee = this.employees.filter(
+              i => this.assignId === i.id
+            )[0];
+            const { realName } = employee;
+            const emp = {
+              id: assignId,
+              empIncome: commissionPrice,
+              realName
+            };
+            this.employee = Object.assign({}, employee, emp);
+            //关闭 金额提成输入框
+            this.showCommissionModel = false;
+            const ids = this.orderIds4Assign.concat();
+            if (this.actionType === CommonActionTypeEnum.FINISH) {
+              //直接关闭
+              const employee = Object.assign({}, emp);
+              this.closeAssgin({ employee, ids, actionType });
+            } else {
+              this.assignOrder(emp, ids, this.closeAssgin());
+            }
           } else {
-            this.assignOrder(emp, ids, this.closeAssgin());
+            const ids = this.orderIds4Assign.concat();
+            const emp = {
+              id: 0,
+              empIncome: commissionPrice,
+              realName: ""
+            };
+            //关闭 金额提成输入框
+            this.showCommissionModel = false;
+            this.closeAssgin({ emp, ids, actionType: this.actionType });
           }
         } else {
           Toast("请选择指派人员!");
@@ -189,13 +225,13 @@ export default {
       this.$api.order.oprSO(params).then(r => {
         if (actionType === CommonActionTypeEnum.ASSIGN) {
           Toast.success("指派成功");
-          this.refresh && this.refresh()
+          this.refresh && this.refresh();
           if (callback) {
             callback();
           }
         } else if (actionType === CommonActionTypeEnum.REASSIGNMENT) {
           Toast.success("改派成功");
-          this.refresh && this.refresh()
+          this.refresh && this.refresh();
           if (callback) {
             callback();
           }
@@ -210,6 +246,14 @@ export default {
         .then(r => {
           this.employees = r;
         });
+    },
+    selectAssignId() {
+      this.showEmployee = !this.showEmployee;
+    },
+    selectEmployee(item) {
+      this.showEmployee = false;
+      this.assignId = item.id;
+      this.assignName = item.name;
     }
   }
 };
@@ -240,6 +284,9 @@ export default {
       margin-top: 0.5rem;
       background-color: #00a0e9;
       color: #fff;
+    }
+    .van-field__control:disabled {
+      color: #333;
     }
   }
 }
